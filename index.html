@@ -6,18 +6,29 @@
     <title>One-Stop Shop Web App - SDO Biñan City</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .logo-glow {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+        }
+    </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
 
-    <!-- Top Header -->
+    <!-- Top Header with Logos & White Glow -->
     <header class="bg-blue-900 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
-            <div class="text-center sm:text-left">
-                <p class="text-xs tracking-wider text-blue-200">Republic of the Philippines | Department of Education</p>
-                <h1 class="text-lg font-bold">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <!-- Logos Section -->
+            <div class="flex items-center space-x-4">
+                <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-12 w-auto object-contain logo-glow">
+                <img src="Bagong_Pilipinas_Logo.svg - Copy.png" alt="Bagong Pilipinas Logo" class="h-12 w-auto object-contain logo-glow">
+                <img src="DOB_LOGO.png" alt="SDO Biñan Logo" class="h-12 w-auto object-contain logo-glow">
             </div>
-            <div class="mt-2 sm:mt-0 bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-100">
-                <i class="fa-solid fa-circle-check text-green-400 mr-1"></i> System Online (2025-2026)
+
+            <!-- Title Section -->
+            <div class="text-center md:text-right">
+                <p class="text-xs tracking-wider text-blue-200">Republic of the Philippines | Department of Education</p>
+                <h1 class="text-base sm:text-lg font-bold">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
             </div>
         </div>
     </header>
@@ -49,8 +60,8 @@
                     <h4 class="font-bold text-base text-slate-900 mb-1">Automatic MPS Generator</h4>
                     <p class="text-xs text-slate-500 mb-4">Automatically compute Mean Performance Score (MPS), Standard Deviation, and Mastery Levels across grade levels and quarters.</p>
                 </div>
-                <button onclick="launchApp('mps')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-sm transition">
-                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                <button id="btn-mps" onclick="launchApp('mps')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                    <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </div>
 
@@ -63,8 +74,8 @@
                     <h4 class="font-bold text-base text-slate-900 mb-1">SUMMARY K123 Dashboard</h4>
                     <p class="text-xs text-slate-500 mb-4">Division-wide consolidation and performance comparisons across elementary and junior high school institutions.</p>
                 </div>
-                <button onclick="launchApp('summary')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-xl text-sm transition">
-                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                <button id="btn-summary" onclick="launchApp('summary')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                    <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </div>
 
@@ -77,8 +88,8 @@
                     <h4 class="font-bold text-base text-slate-900 mb-1">School Portals (35+ Schools)</h4>
                     <p class="text-xs text-slate-500 mb-4">Individual school modules for BINHS, BES, CES, PLES, and all participating elementary & high schools in Biñan.</p>
                 </div>
-                <button onclick="launchApp('schools')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-xl text-sm transition">
-                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                <button id="btn-schools" onclick="launchApp('schools')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                    <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </div>
 
@@ -91,8 +102,8 @@
                     <h4 class="font-bold text-base text-slate-900 mb-1">General Instructions & Policy Hub</h4>
                     <p class="text-xs text-slate-500 mb-4">Official guidelines, submission timelines, focal person directories, and assessment manuals.</p>
                 </div>
-                <button onclick="launchApp('guidelines')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 rounded-xl text-sm transition">
-                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                <button id="btn-guidelines" onclick="launchApp('guidelines')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                    <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
             </div>
 
@@ -121,17 +132,33 @@
             }
         }
 
+        // Dynamic button notification feedback loop
         function launchApp(appId) {
-            if(appId === 'mps') {
-                alert("Opening Automatic Mean Percentage Score (MPS) Generator module...");
-                // Route to MPS generator workspace
-            } else if(appId === 'summary') {
-                alert("Loading SUMMARY K123 Performance Analytics...");
-            } else if(appId === 'schools') {
-                alert("Opening School Directory & Consolidation Portal...");
-            } else if(appId === 'guidelines') {
-                alert("Opening General Instructions & Policy Manual...");
-            }
+            const btn = document.getElementById(`btn-${appId}`);
+            
+            // Step 1: Notify loading state
+            btn.disabled = true;
+            btn.className = "w-full bg-slate-400 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-wait";
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Preparing Module...</span>`;
+
+            setTimeout(() => {
+                // Step 2: Notify success state
+                btn.className = "w-full bg-green-600 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2";
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Module Loaded Successfully!</span>`;
+
+                // Reset back to normal after 2.5 seconds
+                setTimeout(() => {
+                    btn.disabled = false;
+                    let originalColor = "bg-blue-600 hover:bg-blue-700";
+                    if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
+                    if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
+                    if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
+
+                    btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
+                    btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+                }, 2500);
+
+            }, 1000);
         }
     </script>
 </body>
