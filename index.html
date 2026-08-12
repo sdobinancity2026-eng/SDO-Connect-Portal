@@ -8,28 +8,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .logo-glow {
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
         }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
 
-    <!-- Top Header with Logos & White Glow -->
-    <header class="bg-blue-900 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- Top Header with Logos and Title Side-by-Side -->
+    <header class="bg-blue-900 text-white shadow-lg py-3 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
-            <!-- Logos Section -->
-            <div class="flex items-center space-x-4">
-                <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-12 w-auto object-contain logo-glow">
-                <img src="Bagong_Pilipinas_Logo.svg - Copy.png" alt="Bagong Pilipinas Logo" class="h-12 w-auto object-contain logo-glow">
-                <img src="DOB_LOGO.png" alt="SDO Biñan Logo" class="h-12 w-auto object-contain logo-glow">
+            <!-- Combined Logos & Title Section (Side-by-Side) -->
+            <div class="flex flex-wrap sm:flex-nowrap items-center justify-center md:justify-start gap-3 sm:gap-4 text-center sm:text-left">
+                
+                <!-- Logos Row -->
+                <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                    <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
+                    <img src="Bagong_Pilipinas_Logo.svg - Copy.png" alt="Bagong Pilipinas Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
+                    <img src="DOB_LOGO.png" alt="SDO Biñan Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
+                </div>
+
+                <!-- Divider Line for Desktop -->
+                <div class="hidden sm:block h-10 w-px bg-blue-700"></div>
+
+                <!-- Title Text beside Logo -->
+                <div>
+                    <p class="text-[11px] sm:text-xs tracking-wider text-blue-200 font-medium">Republic of the Philippines &nbsp;|&nbsp; Department of Education</p>
+                    <h1 class="text-sm sm:text-base md:text-lg font-bold tracking-wide uppercase">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
+                </div>
             </div>
 
-            <!-- Title Section -->
-            <div class="text-center md:text-right">
-                <p class="text-xs tracking-wider text-blue-200">Republic of the Philippines | Department of Education</p>
-                <h1 class="text-base sm:text-lg font-bold">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
+            <!-- Status Indicator Badge -->
+            <div class="bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-100 shrink-0 border border-blue-700 shadow-inner">
+                <i class="fa-solid fa-circle-check text-green-400 mr-1.5"></i> System Online (2025-2026)
             </div>
+
         </div>
     </header>
 
