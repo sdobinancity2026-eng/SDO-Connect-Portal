@@ -12,10 +12,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800">
+<body class="bg-slate-100 font-sans text-slate-800 h-screen flex flex-col overflow-hidden">
 
-    <!-- Top Header with Logos and Title Side-by-Side (Single Instance) -->
-    <header class="bg-blue-900 text-white shadow-lg py-3 px-4">
+    <!-- Top Header (Fixed at Top) -->
+    <header class="bg-blue-900 text-white shadow-lg py-3 px-4 shrink-0 z-20">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
             <!-- Combined Logos & Title Section (Side-by-Side) -->
@@ -46,8 +46,9 @@
         </div>
     </header>
 
-    <!-- ================= MAIN HUB VIEW ================= -->
-    <div id="mainHubView">
+    <!-- Scrollable Content Area -->
+    <div class="flex-1 overflow-y-auto">
+
         <!-- Hero / App Title Banner -->
         <section class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white py-8 px-4 text-center">
             <div class="max-w-3xl mx-auto">
@@ -138,65 +139,14 @@
 
             </div>
         </main>
+
+        <!-- Footer (Pinned at the bottom of the scrollable layout) -->
+        <footer class="bg-white border-t border-slate-200 text-center py-6 mt-12 text-xs text-slate-500 shrink-0">
+            <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
+            <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
+        </footer>
+
     </div>
-
-    <!-- ================= TRANSPORTATION REQUEST MODULE VIEW (Initially Hidden) ================= -->
-    <div id="transportView" class="hidden max-w-4xl mx-auto px-4 py-8">
-        <div class="mb-6 flex items-center justify-between">
-            <button onclick="goBackToHub()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Back to Main Hub
-            </button>
-            <span class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full">Module: Transportation Request</span>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-            <div class="border-b pb-4 mb-6">
-                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-car-side text-teal-600"></i> Official Vehicle & Transportation Request Form
-                </h3>
-                <p class="text-xs text-slate-500 mt-1">Fill out the details below for official division travel and vehicle booking schedules.</p>
-            </div>
-
-            <form onsubmit="event.preventDefault(); alert('Transportation request submitted successfully!');" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Requesting Official / Name:</label>
-                        <input type="text" required class="w-full border rounded-xl p-2.5 text-sm" placeholder="Enter full name">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">School / Office / Division Unit:</label>
-                        <input type="text" required class="w-full border rounded-xl p-2.5 text-sm" placeholder="e.g., SDO Biñan / BINHS">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Date of Travel:</label>
-                        <input type="date" required class="w-full border rounded-xl p-2.5 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Destination:</label>
-                        <input type="text" required class="w-full border rounded-xl p-2.5 text-sm" placeholder="Enter destination address/location">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Purpose of Travel:</label>
-                    <textarea rows="3" required class="w-full border rounded-xl p-2.5 text-sm" placeholder="State purpose of official travel..."></textarea>
-                </div>
-
-                <button type="submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl text-sm transition">
-                    Submit Transportation Request
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 text-center py-6 mt-12 text-xs text-slate-500">
-        <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
-        <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
-    </footer>
 
     <script>
         // Real-time program search filtering
@@ -214,7 +164,7 @@
             }
         }
 
-        // Dynamic button notification feedback loop & In-Page view switcher
+        // Dynamic button notification feedback loop & redirection
         function launchApp(appId) {
             const btn = document.getElementById(`btn-${appId}`);
             
@@ -226,38 +176,26 @@
             setTimeout(() => {
                 // Step 2: Notify success state
                 btn.className = "w-full bg-green-600 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2";
-                btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Module Loaded Successfully!</span>`;
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Redirecting to Module...</span>`;
 
                 setTimeout(() => {
                     if (appId === 'transport') {
-                        // Switch view to Transportation Request form page without opening new tab
-                        document.getElementById('mainHubView').classList.add('hidden');
-                        document.getElementById('transportView').classList.remove('hidden');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        window.location.href = "https://chuckfuentes40-blip.github.io/Transportation-Request/";
                     } else {
                         alert(`Launching ${appId.toUpperCase()} module...`);
+                        
+                        btn.disabled = false;
+                        let originalColor = "bg-blue-600 hover:bg-blue-700";
+                        if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
+                        if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
+                        if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
+
+                        btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
+                        btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
                     }
-
-                    // Reset button state
-                    btn.disabled = false;
-                    let originalColor = "bg-blue-600 hover:bg-blue-700";
-                    if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
-                    if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
-                    if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
-                    if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
-
-                    btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
-                    btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
                 }, 1000);
 
             }, 800);
-        }
-
-        // Return to main hub dashboard
-        function goBackToHub() {
-            document.getElementById('transportView').classList.add('hidden');
-            document.getElementById('mainHubView').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
