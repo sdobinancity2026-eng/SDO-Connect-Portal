@@ -265,6 +265,8 @@
 
     <!-- Alpine.js Application Logic -->
     <script>
+       <!-- Alpine.js Application Logic -->
+    <script>
         function schoolData() {
             return {
                 mainView: 'students', 
@@ -353,23 +355,45 @@
                     return uniqueSet.size;
                 },
 
+                // Proper column summation for track/grade level totals
                 get totals() {
-                    let t = { kinder: {m: 0, f: 0}, elem: {m: 0, f: 0}, jhs: {m: 0, f: 0}, shs: {m: 0, f: 0} };
+                    let t = { 
+                        kinder: {m: 0, f: 0}, 
+                        elem: {m: 0, f: 0}, 
+                        jhs: {m: 0, f: 0}, 
+                        shs: {m: 0, f: 0} 
+                    };
+                    
                     this.schools.forEach(s => {
-                        if(s.kinder) { t.kinder.m += Number(s.kinder.m) || 0; t.kinder.f += Number(s.kinder.f) || 0; }
-                        if(s.elem) { t.elem.m += Number(s.elem.m) || 0; t.elem.f += Number(s.elem.f) || 0; }
-                        if(s.jhs) { t.jhs.m += Number(s.jhs.m) || 0; t.jhs.f += Number(s.jhs.f) || 0; }
-                        if(s.shs) { t.shs.m += Number(s.shs.m) || 0; t.shs.f += Number(s.shs.f) || 0; }
+                        if (s.kinder) { 
+                            t.kinder.m += Number(s.kinder.m) || 0; 
+                            t.kinder.f += Number(s.kinder.f) || 0; 
+                        }
+                        if (s.elem) { 
+                            t.elem.m += Number(s.elem.m) || 0; 
+                            t.elem.f += Number(s.elem.f) || 0; 
+                        }
+                        if (s.jhs) { 
+                            t.jhs.m += Number(s.jhs.m) || 0; 
+                            t.jhs.f += Number(s.jhs.f) || 0; 
+                        }
+                        if (s.shs) { 
+                            t.shs.m += Number(s.shs.m) || 0; 
+                            t.shs.f += Number(s.shs.f) || 0; 
+                        }
                     });
                     return t;
                 },
 
+                // Compute horizontal aggregate correctly by combining the exact track totals
                 get grandTotalMale() {
                     return this.totals.kinder.m + this.totals.elem.m + this.totals.jhs.m + this.totals.shs.m;
                 },
+                
                 get grandTotalFemale() {
                     return this.totals.kinder.f + this.totals.elem.f + this.totals.jhs.f + this.totals.shs.f;
                 },
+                
                 get grandTotalEnrollment() {
                     return this.grandTotalMale + this.grandTotalFemale;
                 },
