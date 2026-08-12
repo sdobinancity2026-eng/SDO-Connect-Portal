@@ -289,7 +289,7 @@
 
                 switchTeacherTab(tab) {
                     this.teacherTab = tab;
-                    this.searchQuery = '';
+ and                   this.searchQuery = '';
                     this.fetchData();
                 },
 
@@ -383,7 +383,7 @@
                     return t;
                 },
 
-                // Compute horizontal aggregate correctly by combining the exact track totals
+                // Compute horizontal aggregate strictly by summing individual Male & Female sub-columns
                 get grandTotalMale() {
                     return this.totals.kinder.m + this.totals.elem.m + this.totals.jhs.m + this.totals.shs.m;
                 },
