@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <!-- Metric Cards Grid -->
+        <!-- Metric Cards Grid (Students View) -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" x-show="mainView === 'students'">
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Enrollment (K-12)</p>
@@ -95,12 +95,12 @@
             </div>
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Active Schools</p>
-                <p class="text-2xl font-bold text-green-600 mt-1" x-text="schools.length">0</p>
+                <p class="text-2xl font-bold text-green-600 mt-1" x-text="uniqueSchoolCount">0</p>
             </div>
         </div>
 
-        <!-- Metric Cards for Teachers View -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" x-show="mainView === 'teachers'">
+        <!-- Metric Cards Grid (Teachers View) -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" x-show="mainView === 'teachers'">
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider" x-text="teacherTab + ' Total Teachers'"></p>
                 <p class="text-2xl font-bold text-blue-600 mt-1" x-text="grandTotalTeachers.toLocaleString()">0</p>
@@ -112,6 +112,10 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Female Teachers</p>
                 <p class="text-2xl font-bold text-pink-600 mt-1" x-text="totalFemaleTeachers.toLocaleString()">0</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Active Schools</p>
+                <p class="text-2xl font-bold text-green-600 mt-1" x-text="uniqueSchoolCount">0</p>
             </div>
         </div>
 
@@ -139,13 +143,13 @@
 
         <!-- STUDENTS VIEW TABLE -->
         <div x-show="!loading && mainView === 'students'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-left text-xs">
-                    <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider">
+            <div class="overflow-x-auto max-h-[600px]">
+                <table class="min-w-full divide-y divide-gray-200 text-left text-xs relative">
+                    <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-20 shadow-sm">
                         <tr>
-                            <th class="px-3 py-3 border-r">#</th>
-                            <th class="px-3 py-3 border-r">School ID</th>
-                            <th class="px-3 py-3 border-r">School Name</th>
+                            <th class="px-3 py-3 border-r bg-gray-100">#</th>
+                            <th class="px-3 py-3 border-r bg-gray-100">School ID</th>
+                            <th class="px-3 py-3 border-r bg-gray-100">School Name</th>
                             <th class="px-3 py-3 text-center border-r bg-blue-50" colspan="3">Kindergarten</th>
                             <th class="px-3 py-3 text-center border-r bg-indigo-50" colspan="3">Elementary Total</th>
                             <th class="px-3 py-3 text-center border-r bg-green-50" colspan="3">Junior High Total</th>
@@ -153,7 +157,7 @@
                             <th class="px-3 py-3 text-center bg-gray-200" colspan="3">Grand Total</th>
                         </tr>
                         <tr class="bg-gray-50 text-[10px]">
-                            <th colspan="3" class="border-r"></th>
+                            <th colspan="3" class="border-r bg-gray-50"></th>
                             <th class="px-2 py-1 text-center border-r">M</th><th class="px-2 py-1 text-center border-r">F</th><th class="px-2 py-1 text-center border-r">Total</th>
                             <th class="px-2 py-1 text-center border-r">M</th><th class="px-2 py-1 text-center border-r">F</th><th class="px-2 py-1 text-center border-r">Total</th>
                             <th class="px-2 py-1 text-center border-r">M</th><th class="px-2 py-1 text-center border-r">F</th><th class="px-2 py-1 text-center border-r">Total</th>
@@ -162,7 +166,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 text-gray-800">
-                        <template x-for="(school, index) in filteredSchools" :key="school.id">
+                        <template x-for="(school, index) in filteredSchools" :key="school.id + '-' + index">
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-3 py-2.5 border-r font-medium text-gray-500" x-text="index + 1"></td>
                                 <td class="px-3 py-2.5 border-r font-mono text-gray-600" x-text="school.id"></td>
@@ -190,23 +194,23 @@
                             </tr>
                         </template>
                     </tbody>
-                    <tfoot class="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300">
+                    <tfoot class="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300 sticky bottom-0 z-20">
                         <tr>
-                            <td colspan="3" class="px-3 py-3 text-right uppercase tracking-wider border-r">Grand Total:</td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.kinder.m"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.kinder.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.kinder.m + totals.kinder.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.elem.m"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.elem.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.elem.m + totals.elem.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.jhs.m"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.jhs.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.jhs.m + totals.jhs.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.shs.m"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.shs.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="totals.shs.m + totals.shs.f"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="grandTotalMale"></td>
-                            <td class="px-2 py-3 text-center border-r" x-text="grandTotalFemale"></td>
+                            <td colspan="3" class="px-3 py-3 text-right uppercase tracking-wider border-r bg-gray-100">Grand Total:</td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.kinder.m"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.kinder.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.kinder.m + totals.kinder.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.elem.m"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.elem.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.elem.m + totals.elem.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.jhs.m"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.jhs.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.jhs.m + totals.jhs.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.shs.m"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.shs.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.shs.m + totals.shs.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="grandTotalMale"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="grandTotalFemale"></td>
                             <td class="px-2 py-3 text-center bg-blue-100 text-blue-900" x-text="grandTotalEnrollment"></td>
                         </tr>
                     </tfoot>
@@ -216,20 +220,20 @@
 
         <!-- TEACHERS VIEW TABLE -->
         <div x-show="!loading && mainView === 'teachers'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-left text-xs">
-                    <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider">
+            <div class="overflow-x-auto max-h-[600px]">
+                <table class="min-w-full divide-y divide-gray-200 text-left text-xs relative">
+                    <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-20 shadow-sm">
                         <tr>
-                            <th class="px-4 py-3 border-r">#</th>
-                            <th class="px-4 py-3 border-r">School ID</th>
-                            <th class="px-4 py-3 border-r">School Name</th>
+                            <th class="px-4 py-3 border-r bg-gray-100">#</th>
+                            <th class="px-4 py-3 border-r bg-gray-100">School ID</th>
+                            <th class="px-4 py-3 border-r bg-gray-100">School Name</th>
                             <th class="px-4 py-3 text-center border-r bg-indigo-50">Male Teachers</th>
                             <th class="px-4 py-3 text-center border-r bg-pink-50">Female Teachers</th>
                             <th class="px-4 py-3 text-center bg-gray-200">Total Teachers</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 text-gray-800">
-                        <template x-for="(school, index) in filteredSchools" :key="school.id">
+                        <template x-for="(school, index) in filteredSchools" :key="school.id + '-' + index">
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-4 py-3 border-r font-medium text-gray-500" x-text="index + 1"></td>
                                 <td class="px-4 py-3 border-r font-mono text-gray-600" x-text="school.id"></td>
@@ -240,11 +244,11 @@
                             </tr>
                         </template>
                     </tbody>
-                    <tfoot class="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300">
+                    <tfoot class="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300 sticky bottom-0 z-20">
                         <tr>
-                            <td colspan="3" class="px-4 py-3 text-right uppercase tracking-wider border-r">Total:</td>
-                            <td class="px-4 py-3 text-center border-r text-indigo-700" x-text="totalMaleTeachers"></td>
-                            <td class="px-4 py-3 text-center border-r text-pink-700" x-text="totalFemaleTeachers"></td>
+                            <td colspan="3" class="px-4 py-3 text-right uppercase tracking-wider border-r bg-gray-100">Total:</td>
+                            <td class="px-4 py-3 text-center border-r text-indigo-700 bg-gray-100" x-text="totalMaleTeachers"></td>
+                            <td class="px-4 py-3 text-center border-r text-pink-700 bg-gray-100" x-text="totalFemaleTeachers"></td>
                             <td class="px-4 py-3 text-center bg-blue-100 text-blue-900" x-text="grandTotalTeachers"></td>
                         </tr>
                     </tfoot>
@@ -253,17 +257,18 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto py-4 text-center text-xs text-gray-500">
-        Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.
+    <!-- Footer (Pinned at the bottom of the screen) -->
+    <footer class="bg-white border-t border-slate-200 text-center py-6 mt-12 text-xs text-slate-500 shrink-0">
+        <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
+        <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
     </footer>
 
     <!-- Alpine.js Application Logic -->
     <script>
         function schoolData() {
             return {
-                mainView: 'students', // 'students' or 'teachers'
-                teacherTab: 'ELEM',    // 'ELEM', 'JHS', or 'SHS'
+                mainView: 'students', 
+                teacherTab: 'ELEM',    
                 searchQuery: '',
                 loading: true,
                 refreshing: false,
@@ -338,13 +343,23 @@
                     );
                 },
 
+                // Unique School count to handle duplicates properly
+                get uniqueSchoolCount() {
+                    let uniqueSet = new Set();
+                    this.schools.forEach(s => {
+                        let identifier = (s.id ? String(s.id).trim() : '') + '-' + (s.name ? String(s.name).trim().toLowerCase() : '');
+                        uniqueSet.add(identifier);
+                    });
+                    return uniqueSet.size;
+                },
+
                 get totals() {
                     let t = { kinder: {m: 0, f: 0}, elem: {m: 0, f: 0}, jhs: {m: 0, f: 0}, shs: {m: 0, f: 0} };
                     this.schools.forEach(s => {
-                        if(s.kinder) { t.kinder.m += s.kinder.m; t.kinder.f += s.kinder.f; }
-                        if(s.elem) { t.elem.m += s.elem.m; t.elem.f += s.elem.f; }
-                        if(s.jhs) { t.jhs.m += s.jhs.m; t.jhs.f += s.jhs.f; }
-                        if(s.shs) { t.shs.m += s.shs.m; t.shs.f += s.shs.f; }
+                        if(s.kinder) { t.kinder.m += Number(s.kinder.m) || 0; t.kinder.f += Number(s.kinder.f) || 0; }
+                        if(s.elem) { t.elem.m += Number(s.elem.m) || 0; t.elem.f += Number(s.elem.f) || 0; }
+                        if(s.jhs) { t.jhs.m += Number(s.jhs.m) || 0; t.jhs.f += Number(s.jhs.f) || 0; }
+                        if(s.shs) { t.shs.m += Number(s.shs.m) || 0; t.shs.f += Number(s.shs.f) || 0; }
                     });
                     return t;
                 },
@@ -360,10 +375,10 @@
                 },
 
                 get totalMaleTeachers() {
-                    return this.schools.reduce((acc, s) => acc + (s.teachers?.m || 0), 0);
+                    return this.schools.reduce((acc, s) => acc + (Number(s.teachers?.m) || 0), 0);
                 },
                 get totalFemaleTeachers() {
-                    return this.schools.reduce((acc, s) => acc + (s.teachers?.f || 0), 0);
+                    return this.schools.reduce((acc, s) => acc + (Number(s.teachers?.f) || 0), 0);
                 },
                 get grandTotalTeachers() {
                     return this.totalMaleTeachers + this.totalFemaleTeachers;
@@ -379,8 +394,8 @@
                     } else {
                         csv = `School ID,School Name,Male Teachers,Female Teachers,Total Teachers\n`;
                         this.schools.forEach(s => {
-                            let tm = s.teachers?.m || 0;
-                            let tf = s.teachers?.f || 0;
+                            let tm = Number(s.teachers?.m) || 0;
+                            let tf = Number(s.teachers?.f) || 0;
                             csv += `${s.id},"${s.name}",${tm},${tf},${tm + tf}\n`;
                         });
                     }
