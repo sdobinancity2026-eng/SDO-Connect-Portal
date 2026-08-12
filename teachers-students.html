@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js CDN -->
+    <!-- Alpine.js CDN - Must load before initialization -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,8 +30,8 @@
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8" x-data="schoolData()">
+    <!-- Main Content Container with Alpine data scope properly loaded -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8" x-data="schoolData">
         
         <!-- Page Title & Navigation Controls -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
@@ -257,16 +257,16 @@
         </div>
     </main>
 
-    <!-- Footer (Pinned at the bottom of the screen) -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 text-center py-6 mt-12 text-xs text-slate-500 shrink-0">
         <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
         <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
     </footer>
 
-    <!-- Alpine.js Application Logic -->
+    <!-- Alpine.js Application Logic registered as an object and assigned to Alpine properly -->
     <script>
-        function schoolData() {
-            return {
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('schoolData', () => ({
                 mainView: 'students', 
                 teacherTab: 'ELEM',    
                 searchQuery: '',
@@ -425,8 +425,8 @@
                     a.setAttribute('download', `SDO_Binan_${this.mainView === 'students' ? 'Students' : 'Teachers_' + this.teacherTab}_Data.csv`);
                     a.click();
                 }
-            }
-        }
+            }));
+        });
     </script>
 </body>
 </html>
