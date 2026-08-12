@@ -152,9 +152,9 @@
                             <th class="px-3 py-3 border-r bg-gray-100">School Name</th>
                             <th class="px-3 py-3 text-center border-r bg-blue-50" colspan="3">Kindergarten</th>
                             <th class="px-3 py-3 text-center border-r bg-indigo-50" colspan="3">Elementary Total</th>
-                            <th class="px-3 py-3 text-center border-r bg-green-50" colspan="3">Junior High Total</th>
-                            <th class="px-3 py-3 text-center border-r bg-purple-50" colspan="3">Senior High Total</th>
-                            <th class="px-3 py-3 text-center bg-gray-200" colspan="3">Grand Total</th>
+                            <th class="px-3 py-3 text-center border-r bg-green-50" colspan="3">Junior High School Total</th>
+                            <th class="px-3 py-3 text-center border-r bg-purple-50" colspan="3">Grade 11 Total</th>
+                            <th class="px-3 py-3 text-center border-r bg-amber-50" colspan="3">Grade 12 Total</th>
                         </tr>
                         <tr class="bg-gray-50 text-[10px]">
                             <th colspan="3" class="border-r bg-gray-50"></th>
@@ -179,18 +179,18 @@
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.elem.m"></td>
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.elem.f"></td>
                                 <td class="px-2 py-2.5 text-center border-r font-medium bg-indigo-50/50" x-text="school.elem.m + school.elem.f"></td>
-                                <!-- Junior High -->
+                                <!-- Junior High School -->
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.jhs.m"></td>
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.jhs.f"></td>
                                 <td class="px-2 py-2.5 text-center border-r font-medium bg-green-50/50" x-text="school.jhs.m + school.jhs.f"></td>
-                                <!-- Senior High -->
-                                <td class="px-2 py-2.5 text-center border-r" x-text="school.shs.m"></td>
-                                <td class="px-2 py-2.5 text-center border-r" x-text="school.shs.f"></td>
-                                <td class="px-2 py-2.5 text-center border-r font-medium bg-purple-50/50" x-text="school.shs.m + school.shs.f"></td>
-                                <!-- Grand Total -->
-                                <td class="px-2 py-2.5 text-center border-r font-semibold" x-text="school.kinder.m + school.elem.m + school.jhs.m + school.shs.m"></td>
-                                <td class="px-2 py-2.5 text-center border-r font-semibold" x-text="school.kinder.f + school.elem.f + school.jhs.f + school.shs.f"></td>
-                                <td class="px-2 py-2.5 text-center font-bold bg-gray-100" x-text="(school.kinder.m + school.elem.m + school.jhs.m + school.shs.m) + (school.kinder.f + school.elem.f + school.jhs.f + school.shs.f)"></td>
+                                <!-- Grade 11 -->
+                                <td class="px-2 py-2.5 text-center border-r" x-text="school.g11?.m || 0"></td>
+                                <td class="px-2 py-2.5 text-center border-r" x-text="school.g11?.f || 0"></td>
+                                <td class="px-2 py-2.5 text-center border-r font-medium bg-purple-50/50" x-text="(school.g11?.m || 0) + (school.g11?.f || 0)"></td>
+                                <!-- Grade 12 -->
+                                <td class="px-2 py-2.5 text-center border-r" x-text="school.g12?.m || 0"></td>
+                                <td class="px-2 py-2.5 text-center border-r" x-text="school.g12?.f || 0"></td>
+                                <td class="px-2 py-2.5 text-center font-medium bg-amber-50/50" x-text="(school.g12?.m || 0) + (school.g12?.f || 0)"></td>
                             </tr>
                         </template>
                     </tbody>
@@ -206,12 +206,12 @@
                             <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.jhs.m"></td>
                             <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.jhs.f"></td>
                             <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.jhs.m + totals.jhs.f"></td>
-                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.shs.m"></td>
-                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.shs.f"></td>
-                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.shs.m + totals.shs.f"></td>
-                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="grandTotalMale"></td>
-                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="grandTotalFemale"></td>
-                            <td class="px-2 py-3 text-center bg-blue-100 text-blue-900" x-text="grandTotalEnrollment"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.g11.m"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.g11.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.g11.m + totals.g11.f"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.g12.m"></td>
+                            <td class="px-2 py-3 text-center border-r bg-gray-100" x-text="totals.g12.f"></td>
+                            <td class="px-2 py-3 text-center bg-gray-100" x-text="totals.g12.m + totals.g12.f"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -299,7 +299,7 @@
                 },
 
                 get pageSubtitle() {
-                    if (this.mainView === 'students') return 'Official Master Enrollment Summary across Kindergarten, Elementary, JHS, and SHS tracks.';
+                    if (this.mainView === 'students') return 'Official Master Enrollment Summary across Kindergarten, Elementary, JHS, Grade 11, and Grade 12.';
                     return `Official teacher breakdown and deployment records for ${this.teacherTab} schools.`;
                 },
 
@@ -316,9 +316,6 @@
                         targetUrl += `?tab=students`;
                     }
                     
-                    // Fixed CORS issue by appending mode: 'no-cors' or handling JSONP/Text fallback if Google Apps Script redirects. 
-                    // Note: When using no-cors with Apps Script, response.json() will fail because the response type is opaque.
-                    // Instead, use text() and parse JSON safely, or ensure your Google Apps Script handles content service correctly.
                     fetch(targetUrl, { method: 'GET', redirect: 'follow' })
                         .then(response => {
                             if (!response.ok) throw new Error('Network response was not ok');
@@ -366,7 +363,8 @@
                         kinder: {m: 0, f: 0}, 
                         elem: {m: 0, f: 0}, 
                         jhs: {m: 0, f: 0}, 
-                        shs: {m: 0, f: 0} 
+                        g11: {m: 0, f: 0},
+                        g12: {m: 0, f: 0} 
                     };
                     
                     this.schools.forEach(s => {
@@ -382,20 +380,28 @@
                             t.jhs.m += Number(s.jhs.m) || 0; 
                             t.jhs.f += Number(s.jhs.f) || 0; 
                         }
-                        if (s.shs) { 
-                            t.shs.m += Number(s.shs.m) || 0; 
-                            t.shs.f += Number(s.shs.f) || 0; 
+                        if (s.g11) { 
+                            t.g11.m += Number(s.g11.m) || 0; 
+                            t.g11.f += Number(s.g11.f) || 0; 
+                        } else if (s.shs) {
+                            // Fallback if backend still sends combined SHS object
+                            t.g11.m += Number(s.shs.m) || 0;
+                            t.g11.f += Number(s.shs.f) || 0;
+                        }
+                        if (s.g12) { 
+                            t.g12.m += Number(s.g12.m) || 0; 
+                            t.g12.f += Number(s.g12.f) || 0; 
                         }
                     });
                     return t;
                 },
 
                 get grandTotalMale() {
-                    return this.totals.kinder.m + this.totals.elem.m + this.totals.jhs.m + this.totals.shs.m;
+                    return this.totals.kinder.m + this.totals.elem.m + this.totals.jhs.m + this.totals.g11.m + this.totals.g12.m;
                 },
                 
                 get grandTotalFemale() {
-                    return this.totals.kinder.f + this.totals.elem.f + this.totals.jhs.f + this.totals.shs.f;
+                    return this.totals.kinder.f + this.totals.elem.f + this.totals.jhs.f + this.totals.g11.f + this.totals.g12.f;
                 },
                 
                 get grandTotalEnrollment() {
@@ -415,9 +421,9 @@
                 exportData() {
                     let csv = '';
                     if (this.mainView === 'students') {
-                        csv = 'School ID,School Name,Kinder M,Kinder F,Elem M,Elem F,JHS M,JHS F,SHS M,SHS F\n';
+                        csv = 'School ID,School Name,Kinder M,Kinder F,Elem M,Elem F,JHS M,JHS F,Grade 11 M,Grade 11 F,Grade 12 M,Grade 12 F\n';
                         this.schools.forEach(s => {
-                            csv += `${s.id},"${s.name}",${s.kinder?.m || 0},${s.kinder?.f || 0},${s.elem?.m || 0},${s.elem?.f || 0},${s.jhs?.m || 0},${s.jhs?.f || 0},${s.shs?.m || 0},${s.shs?.f || 0}\n`;
+                            csv += `${s.id},"${s.name}",${s.kinder?.m || 0},${s.kinder?.f || 0},${s.elem?.m || 0},${s.elem?.f || 0},${s.jhs?.m || 0},${s.jhs?.f || 0},${s.g11?.m || 0},${s.g11?.f || 0},${s.g12?.m || 0},${s.g12?.f || 0}\n`;
                         });
                     } else {
                         csv = `School ID,School Name,Male Teachers,Female Teachers,Total Teachers\n`;
