@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teachers & Students Data - SDO Biñan City</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js CDN -->
@@ -31,14 +33,54 @@
     <!-- Main Content Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8" x-data="schoolData()">
         
-        <!-- Page Title & Summary Stats -->
-        <div class="mb-8">
-            <h1 class="text-2xl font-extrabold text-gray-900">Teachers & Students Enrollment Data</h1>
-            <p class="text-sm text-gray-600 mt-1">Official Master Enrollment Summary across Kindergarten, Elementary, Junior High School, and Senior High School tracks.</p>
+        <!-- Page Title & Navigation Controls -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+            <div class="w-full">
+                <!-- Main Category Switcher (Students vs Teachers) -->
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <div class="inline-flex bg-gray-200 p-1 rounded-xl shadow-inner">
+                        <button @click="switchMainView('students')" :class="mainView === 'students' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'" class="px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-user-graduate"></i>
+                            <span>Students Data</span>
+                        </button>
+                        <button @click="switchMainView('teachers')" :class="mainView === 'teachers' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-700 hover:text-gray-900'" class="px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span>Teachers Data</span>
+                        </button>
+                    </div>
+
+                    <!-- Sub-options for Teachers (ELEM, JHS, SHS) -->
+                    <div x-show="mainView === 'teachers'" class="inline-flex bg-amber-100 border border-amber-200 p-1 rounded-xl shadow-inner transition-all">
+                        <button @click="switchTeacherTab('ELEM')" :class="teacherTab === 'ELEM' ? 'bg-amber-600 text-white shadow-sm' : 'text-amber-900 hover:text-amber-950'" class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
+                            ELEM Tab
+                        </button>
+                        <button @click="switchTeacherTab('JHS')" :class="teacherTab === 'JHS' ? 'bg-amber-600 text-white shadow-sm' : 'text-amber-900 hover:text-amber-950'" class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
+                            JHS Tab
+                        </button>
+                        <button @click="switchTeacherTab('SHS')" :class="teacherTab === 'SHS' ? 'bg-amber-600 text-white shadow-sm' : 'text-amber-900 hover:text-amber-950'" class="px-3 py-2 rounded-lg text-xs font-bold transition-all">
+                            SHS Tab
+                        </button>
+                    </div>
+                </div>
+
+                <h1 class="text-2xl font-extrabold text-gray-900" x-text="pageTitle"></h1>
+                <p class="text-sm text-gray-600 mt-1" x-text="pageSubtitle"></p>
+            </div>
+
+            <div class="flex items-center space-x-3 shrink-0">
+                <div class="flex items-center space-x-2 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg text-xs font-medium text-green-700">
+                    <span class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span>Real-time Sync Active (<span x-text="lastUpdated"></span>)</span>
+                </div>
+                <button @click="fetchData()" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition">
+                    <i class="fa-solid fa-rotate mr-1.5" :class="{'fa-spin': refreshing}"></i>
+                    Refresh Now
+                </button>
+            </div>
         </div>
 
         <!-- Metric Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8" x-show="mainView === 'students'">
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Enrollment (K-12)</p>
                 <p class="text-2xl font-bold text-blue-600 mt-1" x-text="grandTotalEnrollment.toLocaleString()">0</p>
@@ -54,6 +96,22 @@
             <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Active Schools</p>
                 <p class="text-2xl font-bold text-green-600 mt-1" x-text="schools.length">0</p>
+            </div>
+        </div>
+
+        <!-- Metric Cards for Teachers View -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" x-show="mainView === 'teachers'">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider" x-text="teacherTab + ' Total Teachers'"></p>
+                <p class="text-2xl font-bold text-blue-600 mt-1" x-text="grandTotalTeachers.toLocaleString()">0</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Male Teachers</p>
+                <p class="text-2xl font-bold text-indigo-600 mt-1" x-text="totalMaleTeachers.toLocaleString()">0</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Female Teachers</p>
+                <p class="text-2xl font-bold text-pink-600 mt-1" x-text="totalFemaleTeachers.toLocaleString()">0</p>
             </div>
         </div>
 
@@ -73,14 +131,14 @@
             </div>
         </div>
 
-        <!-- Loading State -->
+        <!-- Initial Loading State -->
         <div x-show="loading" class="bg-white border-x border-b border-gray-200 p-12 text-center text-gray-500 rounded-b-xl">
             <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600 mb-3"></i>
-            <p class="text-sm font-medium">Syncing live enrollment records from Google Sheets...</p>
+            <p class="text-sm font-medium">Syncing live records from Google Sheets...</p>
         </div>
 
-        <!-- Data Table Container -->
-        <div x-show="!loading" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- STUDENTS VIEW TABLE -->
+        <div x-show="!loading && mainView === 'students'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 text-left text-xs">
                     <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider">
@@ -132,7 +190,6 @@
                             </tr>
                         </template>
                     </tbody>
-                    <!-- Table Footer Summary Row -->
                     <tfoot class="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300">
                         <tr>
                             <td colspan="3" class="px-3 py-3 text-right uppercase tracking-wider border-r">Grand Total:</td>
@@ -156,6 +213,44 @@
                 </table>
             </div>
         </div>
+
+        <!-- TEACHERS VIEW TABLE -->
+        <div x-show="!loading && mainView === 'teachers'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-left text-xs">
+                    <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider">
+                        <tr>
+                            <th class="px-4 py-3 border-r">#</th>
+                            <th class="px-4 py-3 border-r">School ID</th>
+                            <th class="px-4 py-3 border-r">School Name</th>
+                            <th class="px-4 py-3 text-center border-r bg-indigo-50">Male Teachers</th>
+                            <th class="px-4 py-3 text-center border-r bg-pink-50">Female Teachers</th>
+                            <th class="px-4 py-3 text-center bg-gray-200">Total Teachers</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 text-gray-800">
+                        <template x-for="(school, index) in filteredSchools" :key="school.id">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 border-r font-medium text-gray-500" x-text="index + 1"></td>
+                                <td class="px-4 py-3 border-r font-mono text-gray-600" x-text="school.id"></td>
+                                <td class="px-4 py-3 border-r font-semibold text-gray-900" x-text="school.name"></td>
+                                <td class="px-4 py-3 text-center border-r font-medium text-indigo-700" x-text="school.teachers?.m || 0"></td>
+                                <td class="px-4 py-3 text-center border-r font-medium text-pink-700" x-text="school.teachers?.f || 0"></td>
+                                <td class="px-4 py-3 text-center font-bold bg-gray-100" x-text="(school.teachers?.m || 0) + (school.teachers?.f || 0)"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                    <tfoot class="bg-gray-100 font-bold text-gray-900 border-t-2 border-gray-300">
+                        <tr>
+                            <td colspan="3" class="px-4 py-3 text-right uppercase tracking-wider border-r">Total:</td>
+                            <td class="px-4 py-3 text-center border-r text-indigo-700" x-text="totalMaleTeachers"></td>
+                            <td class="px-4 py-3 text-center border-r text-pink-700" x-text="totalFemaleTeachers"></td>
+                            <td class="px-4 py-3 text-center bg-blue-100 text-blue-900" x-text="grandTotalTeachers"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -163,29 +258,75 @@
         Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.
     </footer>
 
-    <!-- Alpine.js Data Script with Live Google Apps Script Integration -->
+    <!-- Alpine.js Application Logic -->
     <script>
         function schoolData() {
             return {
+                mainView: 'students', // 'students' or 'teachers'
+                teacherTab: 'ELEM',    // 'ELEM', 'JHS', or 'SHS'
                 searchQuery: '',
                 loading: true,
+                refreshing: false,
+                lastUpdated: 'Just now',
                 schools: [],
-                scriptUrl: 'https://script.google.com/macros/s/AKfycbxcRlusTzvKSYZgN4We_cdOWAxNvrYNW1WLQBDFlUusFjDib7oyOBnKSX2itdffgqIs/exec',
+                baseScriptUrl: 'https://script.google.com/macros/s/AKfycbzlNc7qgUrcUk1uAyXnM6v3cFmo6wBWw_By803v16uPfg0C5EGWH-5ovAT5wcQaSZP0/exec',
 
                 init() {
                     this.fetchData();
+                    setInterval(() => { this.fetchData(true); }, 15000);
                 },
 
-                fetchData() {
-                    fetch(this.scriptUrl)
-                        .then(response => response.json())
+                switchMainView(view) {
+                    this.mainView = view;
+                    this.searchQuery = '';
+                    this.fetchData();
+                },
+
+                switchTeacherTab(tab) {
+                    this.teacherTab = tab;
+                    this.searchQuery = '';
+                    this.fetchData();
+                },
+
+                get pageTitle() {
+                    if (this.mainView === 'students') return 'Students Enrollment Master Data';
+                    return `Teachers & Personnel Data (${this.teacherTab} Track)`;
+                },
+
+                get pageSubtitle() {
+                    if (this.mainView === 'students') return 'Official Master Enrollment Summary across Kindergarten, Elementary, JHS, and SHS tracks.';
+                    return `Official teacher breakdown and deployment records for ${this.teacherTab} schools.`;
+                },
+
+                fetchData(isBackground = false) {
+                    if (!isBackground) {
+                        this.refreshing = true;
+                        this.loading = true;
+                    }
+                    
+                    let targetUrl = this.baseScriptUrl;
+                    if (this.mainView === 'teachers') {
+                        targetUrl += `?tab=${this.teacherTab}`;
+                    } else {
+                        targetUrl += `?tab=students`;
+                    }
+                    
+                    fetch(targetUrl)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
                         .then(data => {
-                            this.schools = data;
+                            this.schools = Array.isArray(data) ? data : [];
                             this.loading = false;
+                            this.refreshing = false;
+                            let now = new Date();
+                            this.lastUpdated = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         })
                         .catch(error => {
-                            console.error('Error fetching sheet data:', error);
+                            console.error('Error fetching live sheet data:', error);
                             this.loading = false;
+                            this.refreshing = false;
                         });
                 },
 
@@ -200,10 +341,10 @@
                 get totals() {
                     let t = { kinder: {m: 0, f: 0}, elem: {m: 0, f: 0}, jhs: {m: 0, f: 0}, shs: {m: 0, f: 0} };
                     this.schools.forEach(s => {
-                        t.kinder.m += s.kinder.m; t.kinder.f += s.kinder.f;
-                        t.elem.m += s.elem.m; t.elem.f += s.elem.f;
-                        t.jhs.m += s.jhs.m; t.jhs.f += s.jhs.f;
-                        t.shs.m += s.shs.m; t.shs.f += s.shs.f;
+                        if(s.kinder) { t.kinder.m += s.kinder.m; t.kinder.f += s.kinder.f; }
+                        if(s.elem) { t.elem.m += s.elem.m; t.elem.f += s.elem.f; }
+                        if(s.jhs) { t.jhs.m += s.jhs.m; t.jhs.f += s.jhs.f; }
+                        if(s.shs) { t.shs.m += s.shs.m; t.shs.f += s.shs.f; }
                     });
                     return t;
                 },
@@ -218,16 +359,36 @@
                     return this.grandTotalMale + this.grandTotalFemale;
                 },
 
+                get totalMaleTeachers() {
+                    return this.schools.reduce((acc, s) => acc + (s.teachers?.m || 0), 0);
+                },
+                get totalFemaleTeachers() {
+                    return this.schools.reduce((acc, s) => acc + (s.teachers?.f || 0), 0);
+                },
+                get grandTotalTeachers() {
+                    return this.totalMaleTeachers + this.totalFemaleTeachers;
+                },
+
                 exportData() {
-                    let csv = 'School ID,School Name,Kinder M,Kinder F,Elem M,Elem F,JHS M,JHS F,SHS M,SHS F\n';
-                    this.schools.forEach(s => {
-                        csv += `${s.id},"${s.name}",${s.kinder.m},${s.kinder.f},${s.elem.m},${s.elem.f},${s.jhs.m},${s.jhs.f},${s.shs.m},${s.shs.f}\n`;
-                    });
+                    let csv = '';
+                    if (this.mainView === 'students') {
+                        csv = 'School ID,School Name,Kinder M,Kinder F,Elem M,Elem F,JHS M,JHS F,SHS M,SHS F\n';
+                        this.schools.forEach(s => {
+                            csv += `${s.id},"${s.name}",${s.kinder?.m || 0},${s.kinder?.f || 0},${s.elem?.m || 0},${s.elem?.f || 0},${s.jhs?.m || 0},${s.jhs?.f || 0},${s.shs?.m || 0},${s.shs?.f || 0}\n`;
+                        });
+                    } else {
+                        csv = `School ID,School Name,Male Teachers,Female Teachers,Total Teachers\n`;
+                        this.schools.forEach(s => {
+                            let tm = s.teachers?.m || 0;
+                            let tf = s.teachers?.f || 0;
+                            csv += `${s.id},"${s.name}",${tm},${tf},${tm + tf}\n`;
+                        });
+                    }
                     let blob = new Blob([csv], { type: 'text/csv' });
                     let url = window.URL.createObjectURL(blob);
                     let a = document.createElement('a');
                     a.setAttribute('href', url);
-                    a.setAttribute('download', 'SDO_Binan_Teachers_Students_Data.csv');
+                    a.setAttribute('download', `SDO_Binan_${this.mainView === 'students' ? 'Students' : 'Teachers_' + this.teacherTab}_Data.csv`);
                     a.click();
                 }
             }
