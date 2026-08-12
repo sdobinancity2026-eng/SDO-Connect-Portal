@@ -289,7 +289,7 @@
 
                 switchTeacherTab(tab) {
                     this.teacherTab = tab;
- and                   this.searchQuery = '';
+                    this.searchQuery = '';
                     this.fetchData();
                 },
 
@@ -343,7 +343,6 @@
                     );
                 },
 
-                // Unique School count to handle duplicates properly
                 get uniqueSchoolCount() {
                     let uniqueSet = new Set();
                     this.schools.forEach(s => {
@@ -353,7 +352,6 @@
                     return uniqueSet.size;
                 },
 
-                // Proper column summation for track/grade level totals
                 get totals() {
                     let t = { 
                         kinder: {m: 0, f: 0}, 
@@ -383,7 +381,6 @@
                     return t;
                 },
 
-                // Compute horizontal aggregate strictly by summing individual Male & Female sub-columns
                 get grandTotalMale() {
                     return this.totals.kinder.m + this.totals.elem.m + this.totals.jhs.m + this.totals.shs.m;
                 },
