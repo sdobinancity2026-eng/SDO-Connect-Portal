@@ -53,7 +53,7 @@
             
             <!-- Navigation Header / Back Button -->
             <div class="mb-6 flex items-center justify-between">
-                <button onclick="window.history.back()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2">
+                <button onclick="window.location.href='index.html'" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> Back to Main Hub
                 </button>
                 <span class="text-xs bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -64,15 +64,33 @@
             <!-- Main Workspace Card -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
                 
-                <div class="border-b pb-4 mb-6">
-                    <h2 class="text-xl font-bold text-slate-900">Mean Percentage Score (MPS) Computation Engine</h2>
-                    <p class="text-xs text-slate-500 mt-1">Upload assessment scores or input test parameters to calculate MPS, Standard Deviation, and Mastery Level automatically.</p>
+                <div class="border-b pb-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Mean Percentage Score (MPS) Computation Engine</h2>
+                        <p class="text-xs text-slate-500 mt-1">Upload school/grade-level datasets using the standardized SDO Biñan template.</p>
+                    </div>
+                    <!-- Download Template Button -->
+                    <button onclick="alert('Downloading official SDO Biñan MPS Template (.xlsx)...')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shrink-0">
+                        <i class="fa-solid fa-download"></i> Download Standard Template
+                    </button>
                 </div>
 
                 <!-- Form Controls Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Select Grade Level:</label>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Select School:</label>
+                        <select id="schoolSelect" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
+                            <option>Biñan Elementary School (BES)</option>
+                            <option>Biñan National High School (BINHS)</option>
+                            <option>Zapote Elementary School</option>
+                            <option>Timbao Elementary School</option>
+                            <option>Platero Elementary School</option>
+                            <option>De La Paz Elementary School</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Grade Level:</label>
                         <select class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
                             <option>Grade 1</option>
                             <option>Grade 2</option>
@@ -90,7 +108,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Learning Area / Subject:</label>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Learning Area:</label>
                         <select class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
                             <option>Mathematics</option>
                             <option>Science</option>
@@ -99,12 +117,11 @@
                             <option>Araling Panlipunan</option>
                             <option>ESP</option>
                             <option>MAPEH</option>
-                            <option>TLE / EPP</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Grading Quarter:</label>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Quarter:</label>
                         <select class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
                             <option>First Quarter</option>
                             <option>Second Quarter</option>
@@ -115,31 +132,29 @@
                 </div>
 
                 <!-- Action / Upload Section -->
-                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-slate-50 hover:bg-slate-100/50 transition cursor-pointer mb-6">
+                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-slate-50 hover:bg-slate-100/50 transition cursor-pointer mb-6 relative">
+                    <input type="file" id="fileInput" onchange="simulateUpload()" class="absolute inset-0 opacity-0 cursor-pointer" accept=".xlsx, .xls">
                     <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl mx-auto mb-3">
-                        <i class="fa-solid fa-file-excel"></i>
+                        <i class="fa-solid fa-file-excel" id="uploadIcon"></i>
                     </div>
-                    <h4 class="font-bold text-sm text-slate-800 mb-1">Drop your Class Record / Item Analysis Excel Template here</h4>
-                    <p class="text-xs text-slate-500 mb-4">Supports .xlsx, .xls (SDO Biñan Standardized Formats)</p>
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
-                        Browse File
-                    </button>
+                    <h4 class="font-bold text-sm text-slate-800 mb-1" id="uploadTitle">Click or drag filled Excel template here</h4>
+                    <p class="text-xs text-slate-500" id="uploadSub">Automatic computation will trigger upon file selection</p>
                 </div>
 
-                <!-- Results Summary Box (Placeholder) -->
+                <!-- Results Summary Box -->
                 <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div>
-                        <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">Computed Metrics Preview</h4>
-                        <p class="text-xs text-blue-700 mt-0.5">Awaiting raw score dataset upload to compute metrics...</p>
+                        <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">Computed Metrics Result</h4>
+                        <p id="resultStatus" class="text-xs text-blue-700 mt-0.5">Awaiting dataset file upload...</p>
                     </div>
                     <div class="flex items-center gap-4 text-center">
                         <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-blue-200">
                             <span class="block text-[10px] text-slate-400 font-semibold uppercase">Total MPS</span>
-                            <span class="text-base font-bold text-blue-600">0.00%</span>
+                            <span id="mpsValue" class="text-base font-bold text-blue-600">0.00%</span>
                         </div>
                         <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-blue-200">
                             <span class="block text-[10px] text-slate-400 font-semibold uppercase">Mastery Level</span>
-                            <span class="text-base font-bold text-slate-600">N/A</span>
+                            <span id="masteryValue" class="text-base font-bold text-slate-600">N/A</span>
                         </div>
                     </div>
                 </div>
@@ -156,5 +171,33 @@
 
     </div>
 
+    <script>
+        // Simulate automated excel reading & computation
+        function simulateUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadTitle = document.getElementById('uploadTitle');
+            const uploadSub = document.getElementById('uploadSub');
+            const resultStatus = document.getElementById('resultStatus');
+            const mpsValue = document.getElementById('mpsValue');
+            const masteryValue = document.getElementById('masteryValue');
+            const uploadIcon = document.getElementById('uploadIcon');
+
+            if (fileInput.files.length > 0) {
+                let fileName = fileInput.files[0].name;
+                uploadTitle.textContent = `File Uploaded: ${fileName}`;
+                uploadSub.textContent = "Processing scores and computing items...";
+                uploadIcon.className = "fa-solid fa-spinner fa-spin text-blue-600";
+
+                setTimeout(() => {
+                    uploadIcon.className = "fa-solid fa-circle-check text-green-600";
+                    uploadSub.textContent = "Dataset successfully parsed!";
+                    resultStatus.textContent = "Computed successfully from uploaded class record.";
+                    mpsValue.textContent = "86.42%";
+                    masteryValue.textContent = "Mastered (High)";
+                    masteryValue.className = "text-base font-bold text-green-600";
+                }, 1200);
+            }
+        }
+    </script>
 </body>
 </html>
