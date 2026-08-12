@@ -1,84 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDO Biñan City Connect Portal</title>
+    <title>One-Stop Shop Web App - SDO Biñan City</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
 
-    <link rel="manifest" href="manifest.json">
+    <!-- Top Header -->
+    <header class="bg-blue-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="text-center sm:text-left">
+                <p class="text-xs tracking-wider text-blue-200">Republic of the Philippines | Department of Education</p>
+                <h1 class="text-lg font-bold">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
+            </div>
+            <div class="mt-2 sm:mt-0 bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-100">
+                <i class="fa-solid fa-circle-check text-green-400 mr-1"></i> System Online (2025-2026)
+            </div>
+        </div>
+    </header>
 
-    <link rel="icon" href="comments.png" type="image/jpg">
-    <link rel="apple-touch-icon" href="comments.png">
+    <!-- Hero / App Title Banner -->
+    <section class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white py-8 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">One-Stop Shop Educational Hub</h2>
+            <p class="text-sm text-blue-200 mb-6">Centralized portal for division assessments, analytics, and automated reporting systems.</p>
+            <div class="relative">
+                <input type="text" id="searchBox" onkeyup="filterApps()" placeholder="Search programs or projects (e.g., MPS, Summary, Guidelines)..." class="w-full py-3 px-4 pl-10 rounded-xl text-slate-800 text-sm focus:outline-none shadow-md">
+                <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
+            </div>
+        </div>
+    </section>
 
-    <style>
-      body, html { 
-        margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
-        background: #003366; 
-      }
-      
-      #splash-screen {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        /* Replaced solid color with your background image */
-        background: url('SdoBuilding.png'); 
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        color: white;
-        display: flex; flex-direction: column; 
-        align-items: center; justify-content: center;
-        z-index: 9999;
-        cursor: pointer;
-        transition: opacity 0.5s ease;
-        font-family: sans-serif;
-      }
+    <!-- Main Grid of Programs -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <h3 class="text-lg font-bold text-slate-700 mb-4"><i class="fa-solid fa-grid-2 text-blue-600 mr-2"></i>Available Division Programs & Projects</h3>
+        
+        <div id="appGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1: Automatic MPS Generator -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="automatic mean percentage score mps generator">
+                <div>
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h4 class="font-bold text-base text-slate-900 mb-1">Automatic MPS Generator</h4>
+                    <p class="text-xs text-slate-500 mb-4">Automatically compute Mean Performance Score (MPS), Standard Deviation, and Mastery Levels across grade levels and quarters.</p>
+                </div>
+                <button onclick="launchApp('mps')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl text-sm transition">
+                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </button>
+            </div>
 
-      /* Optional: Dark overlay to make the white text easier to read over the image */
-      #splash-screen::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 51, 102, 0.65); /* Dark blue tint with 65% opacity */
-        z-index: -1;
-      }
+            <!-- Card 2: Summary K123 Analytics -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="summary k123 analytics dashboard consolidation">
+                <div>
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h4 class="font-bold text-base text-slate-900 mb-1">SUMMARY K123 Dashboard</h4>
+                    <p class="text-xs text-slate-500 mb-4">Division-wide consolidation and performance comparisons across elementary and junior high school institutions.</p>
+                </div>
+                <button onclick="launchApp('summary')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-xl text-sm transition">
+                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </button>
+            </div>
 
-      iframe { 
-        width: 100%; height: 100%; border: none; 
-      }
-    </style>
-  </head>
-  <body>
+            <!-- Card 3: School Profiles & Submissions -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="school profiles binhs bes ces ples desm">
+                <div>
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+                    <h4 class="font-bold text-base text-slate-900 mb-1">School Portals (35+ Schools)</h4>
+                    <p class="text-xs text-slate-500 mb-4">Individual school modules for BINHS, BES, CES, PLES, and all participating elementary & high schools in Biñan.</p>
+                </div>
+                <button onclick="launchApp('schools')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded-xl text-sm transition">
+                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </button>
+            </div>
 
-    <div id="splash-screen" onclick="launchApp()">
-      <div style="text-align: center;">
-        <h1>SDO Biñan City</h1>
-        <p>Connect Portal</p>
-        <br>
-        <p style="font-weight: bold; border: 1px solid white; padding: 10px; background: rgba(0, 0, 0, 0.4);">
-          CLICK TO ENTER
-        </p>
-      </div>
-    </div>
+            <!-- Card 4: General Instructions & Policies -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="general instruction policies guidelines">
+                <div>
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h4 class="font-bold text-base text-slate-900 mb-1">General Instructions & Policy Hub</h4>
+                    <p class="text-xs text-slate-500 mb-4">Official guidelines, submission timelines, focal person directories, and assessment manuals.</p>
+                </div>
+                <button onclick="launchApp('guidelines')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 rounded-xl text-sm transition">
+                    Launch Module <i class="fa-solid fa-arrow-right ml-1 text-xs"></i>
+                </button>
+            </div>
 
-    <iframe 
-      id="appFrame"
-      src="https://script.google.com/macros/s/AKfycbwjRYXPq2S3WEyJ6GiWrmXyt8d6Oms7HqLakoCQ5WHwTrtf05CWtNGTs3qKWTk8AHlfBA/exec"
-      allow="geolocation; camera; microphone" 
-      allowfullscreen="true">
-    </iframe>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 text-center py-6 mt-12 text-xs text-slate-500">
+        <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
+        <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
+    </footer>
 
     <script>
-      function launchApp() {
-        const splash = document.getElementById("splash-screen");
-        
-        // Hide Splash
-        splash.style.opacity = '0';
-        setTimeout(() => { splash.style.display = 'none'; }, 500);
-        
-        // Request Fullscreen
-        document.documentElement.requestFullscreen().catch((err) => {
-          console.warn(`Fullscreen skipped: ${err.message}`);
-        });
-      }
+        // Real-time program search filtering
+        function filterApps() {
+            let input = document.getElementById('searchBox').value.toLowerCase();
+            let cards = document.getElementsByClassName('app-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].getAttribute('data-title');
+                if (title.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        function launchApp(appId) {
+            if(appId === 'mps') {
+                alert("Opening Automatic Mean Percentage Score (MPS) Generator module...");
+                // Route to MPS generator workspace
+            } else if(appId === 'summary') {
+                alert("Loading SUMMARY K123 Performance Analytics...");
+            } else if(appId === 'schools') {
+                alert("Opening School Directory & Consolidation Portal...");
+            } else if(appId === 'guidelines') {
+                alert("Opening General Instructions & Policy Manual...");
+            }
+        }
     </script>
-  </body>
+</body>
 </html>
