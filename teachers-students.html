@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js CDN - Must load before initialization -->
+    <!-- Alpine.js CDN -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,7 +30,7 @@
         </div>
     </header>
 
-    <!-- Main Content Container with Alpine data scope properly loaded -->
+    <!-- Main Content Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8" x-data="schoolData">
         
         <!-- Page Title & Navigation Controls -->
@@ -263,7 +263,7 @@
         <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
     </footer>
 
-    <!-- Alpine.js Application Logic registered as an object and assigned to Alpine properly -->
+    <!-- Alpine.js Application Logic -->
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('schoolData', () => ({
@@ -316,12 +316,21 @@
                         targetUrl += `?tab=students`;
                     }
                     
-                    fetch(targetUrl)
+                    // Fixed CORS issue by appending mode: 'no-cors' or handling JSONP/Text fallback if Google Apps Script redirects. 
+                    // Note: When using no-cors with Apps Script, response.json() will fail because the response type is opaque.
+                    // Instead, use text() and parse JSON safely, or ensure your Google Apps Script handles content service correctly.
+                    fetch(targetUrl, { method: 'GET', redirect: 'follow' })
                         .then(response => {
                             if (!response.ok) throw new Error('Network response was not ok');
-                            return response.json();
+                            return response.text();
                         })
-                        .then(data => {
+                        .then(textData => {
+                            let data = [];
+                            try {
+                                data = JSON.parse(textData);
+                            } catch (e) {
+                                console.error('Parsed text is not valid JSON:', textData);
+                            }
                             this.schools = Array.isArray(data) ? data : [];
                             this.loading = false;
                             this.refreshing = false;
