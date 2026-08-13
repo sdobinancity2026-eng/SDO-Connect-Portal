@@ -157,19 +157,19 @@
                             </svg>
                         </a>
                     </div>
-                           <!-- Card: GABAY Leadership & Performance -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="gabay leadership performance tracking management leaders">
-                        <div>
-                            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl mb-4">
-                                <i class="fa-solid fa-shield-halved"></i>
+                         <!-- Card: GABAY Leadership & Performance -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="gabay leadership performance tracking management leaders">
+                            <div>
+                                <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <h4 class="font-bold text-base text-slate-900 mb-1">GABAY</h4>
+                                <p class="text-xs text-slate-500 mb-4">Leadership & Performance tracking and management system.</p>
                             </div>
-                            <h4 class="font-bold text-base text-slate-900 mb-1">GABAY</h4>
-                            <p class="text-xs text-slate-500 mb-4">Leadership & Performance tracking and management system.</p>
+                            <a href="https://leadtrack-nine.vercel.app/admin/leaders" id="btn-gabay" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                                <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
                         </div>
-                        <a href="https://leadtrack-nine.vercel.app/" target="_blank" rel="noopener noreferrer" id="btn-gabay" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
-                            <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </a>
-                    </div>
 
                 </div>
             </main>
@@ -184,25 +184,25 @@
     </div>
 
     <script>
-        // Reset all buttons when returning via browser back button
-        window.addEventListener('pageshow', function(event) {
-            const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport'];
-            apps.forEach(appId => {
-                const btn = document.getElementById(`btn-${appId}`);
-                if (btn) {
-                    btn.disabled = false;
-                    let originalColor = "bg-blue-600 hover:bg-blue-700";
-                    if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
-                    if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
-                    if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
-                    if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
+   // Reset all buttons when returning via browser back button
+window.addEventListener('pageshow', function(event) {
+    const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'gabay'];
+    apps.forEach(appId => {
+        const btn = document.getElementById(`btn-${appId}`);
+        if (btn) {
+            btn.disabled = false;
+            let originalColor = "bg-blue-600 hover:bg-blue-700";
+            if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
+            if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
+            if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
+            if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
+            if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
 
-                    btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
-                    btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
-                }
-            });
-        });
-
+            btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
+            btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+        }
+    });
+});
         // Real-time program search filtering
         function filterApps() {
             let input = document.getElementById('searchBox').value.toLowerCase();
