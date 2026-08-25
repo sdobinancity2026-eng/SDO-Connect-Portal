@@ -151,27 +151,30 @@
             </div>
         </div>
 
-        <!-- TEACHERS VIEW TABLE -->
+       <!-- TEACHERS VIEW TABLE (ELEM TAB) -->
         <div x-show="!loading && mainView === 'teachers'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto max-h-[650px]">
                 <table class="min-w-full divide-y divide-gray-200 text-left text-xs relative">
                     <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-20 shadow-sm">
                         <tr>
-                            <th class="px-4 py-3 border-r bg-gray-100">#</th>
-                            <th class="px-4 py-3 border-r bg-gray-100">School ID</th>
-                            <th class="px-4 py-3 border-r bg-gray-100">Name of School</th>
-                            <th class="px-4 py-3 text-center border-r bg-indigo-50">Male Teachers</th>
-                            <th class="px-4 py-3 text-center border-r bg-pink-50">Female Teachers</th>
+                            <th class="px-3 py-3 border-r bg-gray-100" rowspan="2">#</th>
+                            <th class="px-3 py-3 border-r bg-gray-100" rowspan="2">School ID</th>
+                            <th class="px-3 py-3 border-r bg-gray-100" rowspan="2">Name of School</th>
+                            <th class="px-3 py-3 text-center border-r bg-indigo-50" colspan="2">TOTAL TEACHERS</th>
+                        </tr>
+                        <tr class="bg-gray-50 text-[10px]">
+                            <th class="px-2 py-1 text-center border-r bg-indigo-50/50">MALE</th>
+                            <th class="px-2 py-1 text-center bg-pink-50/50">FEMALE</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 text-gray-800">
                         <template x-for="(school, index) in filteredSchools" :key="school.id + '-' + index">
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3 border-r font-medium text-gray-500" x-text="index + 1"></td>
-                                <td class="px-4 py-3 border-r font-mono text-gray-600" x-text="school.id"></td>
-                                <td class="px-4 py-3 border-r font-semibold text-gray-900" x-text="school.name"></td>
-                                <td class="px-4 py-3 text-center border-r font-medium text-indigo-700" x-text="school.teachers?.m || 0"></td>
-                                <td class="px-4 py-3 text-center font-medium text-pink-700" x-text="school.teachers?.f || 0"></td>
+                                <td class="px-3 py-2.5 border-r font-medium text-gray-500" x-text="index + 1"></td>
+                                <td class="px-3 py-2.5 border-r font-mono text-gray-600" x-text="school.id"></td>
+                                <td class="px-3 py-2.5 border-r font-semibold text-gray-900 whitespace-nowrap" x-text="school.name"></td>
+                                <td class="px-3 py-2.5 text-center border-r font-bold text-indigo-700" x-text="school.teachers?.m || 0"></td>
+                                <td class="px-3 py-2.5 text-center font-bold text-pink-700" x-text="school.teachers?.f || 0"></td>
                             </tr>
                         </template>
                     </tbody>
@@ -196,7 +199,7 @@
                 refreshing: false,
                 lastUpdated: 'Just now',
                 schools: [],
-                baseScriptUrl: 'https://script.google.com/macros/s/AKfycbzlNc7qgUrcUk1uAyXnM6v3cFmo6wBWw_By803v16uPfg0C5EGWH-5ovAT5wcQaSZP0/exec',
+                baseScriptUrl: 'https://script.google.com/macros/s/AKfycbxHv047bPlXmA_uq5wN6alj1gmG7781kc5BS6O2GNP0O4h4FogEJG1-V_M-R8mGFWUz/exec',
 
                 init() {
                     this.fetchData();
