@@ -38,9 +38,19 @@
                 </div>
             </div>
 
-            <!-- Status Indicator Badge -->
-            <div class="bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-100 shrink-0 border border-blue-700 shadow-inner">
-                <i class="fa-solid fa-circle-check text-green-400 mr-1.5"></i> System Online (2025-2026)
+            <!-- Right Controls: Status & Admin Login -->
+            <div class="flex items-center gap-3 shrink-0">
+                <!-- Status Indicator Badge -->
+                <div class="bg-blue-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-blue-100 border border-blue-700 shadow-inner flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check text-green-400"></i>
+                    <span>System Online</span>
+                </div>
+
+                <!-- Admin Login Button -->
+                <a href="admin.html" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 shadow-md">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Admin Portal</span>
+                </a>
             </div>
 
         </div>
@@ -138,11 +148,10 @@
                         </button>
                     </div>
 
-                         <!-- Teachers & Students Data Card -->
+                    <!-- Teachers & Students Data Card -->
                     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between">
                         <div>
                             <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
-                                <!-- Icon: Users / Graduation Cap -->
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
@@ -157,19 +166,20 @@
                             </svg>
                         </a>
                     </div>
-                         <!-- Card: GABAY Leadership & Performance -->
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="gabay leadership performance tracking management leaders">
-                            <div>
-                                <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl mb-4">
-                                    <i class="fa-solid fa-shield-halved"></i>
-                                </div>
-                                <h4 class="font-bold text-base text-slate-900 mb-1">GABAY</h4>
-                                <p class="text-xs text-slate-500 mb-4">Leadership & Performance tracking and management system.</p>
+
+                    <!-- Card: GABAY Leadership & Performance -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="gabay leadership performance tracking management leaders">
+                        <div>
+                            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                                <i class="fa-solid fa-shield-halved"></i>
                             </div>
-                            <a href="https://leadtrack-nine.vercel.app/" id="btn-gabay" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
-                                <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </a>
+                            <h4 class="font-bold text-base text-slate-900 mb-1">GABAY</h4>
+                            <p class="text-xs text-slate-500 mb-4">Leadership & Performance tracking and management system.</p>
                         </div>
+                        <a href="https://leadtrack-nine.vercel.app/" id="btn-gabay" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
 
                 </div>
             </main>
@@ -184,73 +194,74 @@
     </div>
 
     <script>
-   // Reset all buttons when returning via browser back button
-window.addEventListener('pageshow', function(event) {
-    const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'gabay'];
-    apps.forEach(appId => {
-        const btn = document.getElementById(`btn-${appId}`);
-        if (btn) {
-            btn.disabled = false;
-            let originalColor = "bg-blue-600 hover:bg-blue-700";
-            if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
-            if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
-            if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
-            if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
-            if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
+    // Reset all buttons when returning via browser back button
+    window.addEventListener('pageshow', function(event) {
+        const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'gabay'];
+        apps.forEach(appId => {
+            const btn = document.getElementById(`btn-${appId}`);
+            if (btn) {
+                btn.disabled = false;
+                let originalColor = "bg-blue-600 hover:bg-blue-700";
+                if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
+                if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
+                if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
+                if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
+                if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
 
-            btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
-            btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
-        }
+                btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
+                btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+            }
+        });
     });
-});
-        // Real-time program search filtering
-        function filterApps() {
-            let input = document.getElementById('searchBox').value.toLowerCase();
-            let cards = document.getElementsByClassName('app-card');
-            
-            for (let i = 0; i < cards.length; i++) {
-                let title = cards[i].getAttribute('data-title');
-                if (title.includes(input)) {
-                    cards[i].style.display = "flex";
-                } else {
-                    cards[i].style.display = "none";
-                }
+
+    // Real-time program search filtering
+    function filterApps() {
+        let input = document.getElementById('searchBox').value.toLowerCase();
+        let cards = document.getElementsByClassName('app-card');
+        
+        for (let i = 0; i < cards.length; i++) {
+            let title = cards[i].getAttribute('data-title');
+            if (title.includes(input)) {
+                cards[i].style.display = "flex";
+            } else {
+                cards[i].style.display = "none";
             }
         }
+    }
 
-        // Dynamic button notification feedback loop & redirection
-        function launchApp(appId) {
-            const btn = document.getElementById(`btn-${appId}`);
-            
-            // Step 1: Notify loading state
-            btn.disabled = true;
-            btn.className = "w-full bg-slate-400 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-wait";
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Preparing Module...</span>`;
+    // Dynamic button notification feedback loop & redirection
+    function launchApp(appId) {
+        const btn = document.getElementById(`btn-${appId}`);
+        
+        // Step 1: Notify loading state
+        btn.disabled = true;
+        btn.className = "w-full bg-slate-400 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-wait";
+        btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Preparing Module...</span>`;
+
+        setTimeout(() => {
+            // Step 2: Notify success state
+            btn.className = "w-full bg-green-600 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2";
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Redirecting to Module...</span>`;
 
             setTimeout(() => {
-                // Step 2: Notify success state
-                btn.className = "w-full bg-green-600 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2";
-                btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Redirecting to Module...</span>`;
+                if (appId === 'transport') {
+                    window.location.href = "https://chuckfuentes40-blip.github.io/Transportation-Request/";
+                } else {
+                    alert(`Launching ${appId.toUpperCase()} module...`);
+                    
+                    btn.disabled = false;
+                    let originalColor = "bg-blue-600 hover:bg-blue-700";
+                    if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
+                    if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
+                    if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
 
-                setTimeout(() => {
-                    if (appId === 'transport') {
-                        window.location.href = "https://chuckfuentes40-blip.github.io/Transportation-Request/";
-                    } else {
-                        alert(`Launching ${appId.toUpperCase()} module...`);
-                        
-                        btn.disabled = false;
-                        let originalColor = "bg-blue-600 hover:bg-blue-700";
-                        if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
-                        if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
-                        if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
+                    btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
+                    btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+                }
+            }, 1000);
 
-                        btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
-                        btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
-                    }
-                }, 1000);
-
-            }, 800);
-        }
+        }, 800);
+    }
     </script>
 </body>
 </html>
