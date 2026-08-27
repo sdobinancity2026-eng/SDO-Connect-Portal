@@ -291,80 +291,87 @@
         }
 
         // Excel Parser & Supabase Uploader
-        async function processAndUploadExcel() {
-            const schoolYear = document.getElementById('schoolYear').value;
-            const fileInput = document.getElementById('excelFileInput');
-            const file = fileInput.files[0];
+async function processAndUploadExcel() {
+    const schoolYear = document.getElementById('schoolYear').value;
+    const fileInput = document.getElementById('excelFileInput');
+    const file = fileInput.files[0];
 
-            if (!schoolYear) {
-                showAlert('error', 'Please select a School Year before uploading.');
-                return;
-            }
+    if (!schoolYear) {
+        showAlert('error', 'Please select a School Year before uploading.');
+        return;
+    }
 
-            if (!file) {
-                showAlert('error', 'Please select an Excel file (`Teacher.xlsx`).');
-                return;
-            }
+    if (!file) {
+        showAlert('error', 'Please select an Excel file (`Teacher.xlsx`).');
+        return;
+    }
 
-            showAlert('loading', 'Reading Excel workbook...');
+    showAlert('loading', 'Reading Excel workbook...');
 
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    const uploadRows = [];
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            const uploadRows = [];
 
-                    // Iterate through ELEM, JHS, SHS sheets if present
-                    workbook.SheetNames.forEach(sheetName => {
-                        const worksheet = workbook.Sheets[sheetName];
-                        const jsonSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            // Iterate through sheets
+            workbook.SheetNames.forEach(sheetName => {
+                const cleanSheetName = sheetName.trim();
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                        // Process rows (Skip headers, look for school names)
-                        jsonSheet.forEach((row) => {
-                            if (!row || row.length < 2) return;
+                // Process rows (Skip headers, look for school names)
+                jsonSheet.forEach((row) => {
+                    if (!row || row.length < 2) return;
 
-                            // Identify valid rows containing school names
-                            const firstCol = String(row[0] || '').trim();
-                            const secondCol = String(row[1] || '').trim();
+                    const firstCol = String(row[0] || '').trim();
+                    const secondCol = String(row[1] || '').trim();
 
-                            // Filter out title, header, and total rows
-                            if (secondCol && secondCol.toUpperCase() !== 'NAME OF SCHOOL' && secondCol.toUpperCase() !== 'NAME OF SCHOOLS' && secondCol.toUpperCase() !== 'TOTAL' && !firstCol.toUpperCase().includes('NUMBER OF')) {
-                                uploadRows.push({
-                                    school_year: schoolYear,
-                                    level: sheetName.toUpperCase(),
-                                    school_name: secondCol,
-                                    data: row.slice(2) // Save raw numeric counts in JSON format
-                                });
-                            }
+                    // Filter out header, title, and summary rows
+                    if (
+                        secondCol && 
+                        secondCol.toUpperCase() !== 'NAME OF SCHOOL' && 
+                        secondCol.toUpperCase() !== 'NAME OF SCHOOLS' && 
+                        secondCol.toUpperCase() !== 'TOTAL' && 
+                        !firstCol.toUpperCase().includes('NUMBER OF') &&
+                        !firstCol.toUpperCase().includes('SCHOOL ID')
+                    ) {
+                        uploadRows.push({
+                            school_year: schoolYear,
+                            level: cleanSheetName, // Now safely accepts sheet names up to 50 characters
+                            school_name: secondCol,
+                            data: row.slice(2) // Save raw numeric counts in JSON format
                         });
-                    });
-
-                    if (uploadRows.length === 0) {
-                        showAlert('error', 'No valid school data records were detected in the uploaded file.');
-                        return;
                     }
+                });
+            });
 
-                    showAlert('loading', `Uploading ${uploadRows.length} records to Supabase...`);
+            if (uploadRows.length === 0) {
+                showAlert('error', 'No valid school data records were detected in the uploaded file.');
+                return;
+            }
 
-                    // Batch Insert into Supabase
-                    const { data: insertResult, error } = await supabaseClient
-                        .from('teachers_data')
-                        .insert(uploadRows);
+            showAlert('loading', `Uploading ${uploadRows.length} records to Supabase...`);
 
-                    if (error) throw error;
+            // Batch Insert into Supabase
+            const { data: insertResult, error } = await supabaseClient
+                .from('teachers_data')
+                .insert(uploadRows);
 
-                    showAlert('success', `Successfully processed and saved ${uploadRows.length} teacher records for ${schoolYear}!`);
-                    fileInput.value = '';
+            if (error) throw error;
 
-                } catch (err) {
-                    showAlert('error', `Upload Failed: ${err.message || 'Error processing spreadsheet file.'}`);
-                }
-            };
+            showAlert('success', `Successfully processed and saved ${uploadRows.length} teacher records for ${schoolYear}!`);
+            fileInput.value = '';
 
-            reader.readAsArrayBuffer(file);
+        } catch (err) {
+            showAlert('error', `Upload Failed: ${err.message || 'Error processing spreadsheet file.'}`);
         }
+    };
+
+    reader.readAsArrayBuffer(file);
+}
 
         // Logout
         function handleLogout() {
