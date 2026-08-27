@@ -78,6 +78,25 @@
     .print-header {
       display: none;
     }
+
+    /* Enable sticky positioning for left columns */
+.sticky-col-1 {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+}
+
+.sticky-col-2 {
+  position: sticky;
+  left: 48px; /* Width of the first column (No.) */
+  z-index: 20;
+}
+
+/* Ensure sticky headers remain on top during horizontal & vertical scroll */
+#tableHead th.sticky-col-1,
+#tableHead th.sticky-col-2 {
+  z-index: 30;
+}
   </style>
 </head>
 <body class="bg-gray-100 h-screen flex flex-col font-sans text-gray-800 overflow-hidden">
@@ -297,10 +316,11 @@ function renderStudentsTable(records) {
 
   const totalCols = (elemGrades.length + jhsGrades.length + shsG11Tracks.length + shsG12Tracks.length) * 2;
 
+  // Header with sticky left columns
   thead.innerHTML = `
     <tr class="text-xs uppercase tracking-wider text-center text-white">
-      <th rowspan="3" class="p-2 w-12 bg-slate-700 border border-slate-500">No.</th>
-      <th rowspan="3" class="p-2 bg-slate-700 border border-slate-500 min-w-[220px] text-left">Name of School</th>
+      <th rowspan="3" class="p-2 w-12 bg-slate-700 border border-slate-500 sticky-col-1">No.</th>
+      <th rowspan="3" class="p-2 bg-slate-700 border border-slate-500 min-w-[220px] text-left sticky-col-2">Name of School</th>
       <th colspan="${elemGrades.length * 2}" class="p-1.5 bg-sky-600 border border-slate-500">Elementary Level</th>
       <th colspan="${jhsGrades.length * 2}" class="p-1.5 bg-amber-600 border border-slate-500">Junior High School Level</th>
       <th colspan="${(shsG11Tracks.length + shsG12Tracks.length) * 2}" class="p-1.5 bg-emerald-700 border border-slate-500">Senior High School Level</th>
@@ -320,14 +340,15 @@ function renderStudentsTable(records) {
   const columnSums = new Array(totalCols).fill(0);
   let grandTotal = 0;
 
+  // Body rows with sticky left cells
   tbody.innerHTML = records.map((record, index) => {
     const metrics = Array.isArray(record.data) ? record.data : [];
     let rowSum = 0;
 
     let rowHTML = `
       <tr class="hover:bg-blue-50/50 transition-colors text-xs text-center border-b border-gray-200">
-        <td class="p-2 font-mono text-gray-500 border-r">${index + 1}</td>
-        <td class="p-2 text-left font-semibold text-gray-800 border-r whitespace-nowrap">${record.school_name}</td>
+        <td class="p-2 font-mono text-gray-500 border-r bg-white sticky-col-1">${index + 1}</td>
+        <td class="p-2 text-left font-semibold text-gray-800 border-r whitespace-nowrap bg-white sticky-col-2">${record.school_name}</td>
     `;
 
     for (let i = 0; i < totalCols; i++) {
@@ -342,9 +363,10 @@ function renderStudentsTable(records) {
     return rowHTML;
   }).join('');
 
+  // Footer row with sticky left totals label
   let footHTML = `
     <tr class="text-xs font-bold text-center bg-gray-100 border-t-2 border-slate-400">
-      <td colspan="2" class="p-2 text-right text-gray-800">TOTAL:</td>
+      <td colspan="2" class="p-2 text-right text-gray-800 bg-gray-100 sticky-col-1 border-r border-gray-300">TOTAL:</td>
   `;
 
   for (let i = 0; i < totalCols; i++) {
