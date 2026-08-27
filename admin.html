@@ -102,10 +102,10 @@
     </div>
 
     <script>
-        // Initialize Supabase Client
+        // Initialize Supabase Client with a distinct variable name
         const SUPABASE_URL = "https://dykqemuqzthhfgostjyg.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_cWi7ZqfNlPy5Tp8IQAH1gA_DKwikowm";
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Helper function for showing alerts
         function showNotification(type, message) {
@@ -146,8 +146,8 @@
             showNotification('info', 'Connecting to Supabase and verifying credentials...');
 
             try {
-                // 1. Fetch user by username
-                const { data: users, error } = await supabase
+                // 1. Fetch user by username using supabaseClient
+                const { data: users, error } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('username', usernameInput)
@@ -166,7 +166,7 @@
 
                 const user = users[0];
 
-                // 3. Password Check (Note: Plaintext comparison used for demonstration; replace with hashed check if needed)
+                // 3. Password Check
                 if (user.password !== passwordInput) {
                     showNotification('error', 'Authentication failed: Incorrect password.');
                     resetButton();
@@ -184,7 +184,7 @@
                 // 5. Successful Login State
                 showNotification('success', `Welcome back, ${user.username}! Redirecting to dashboard...`);
 
-                // Store session info if required
+                // Store session info
                 sessionStorage.setItem('adminUser', JSON.stringify({
                     username: user.username,
                     role: user.user_role
