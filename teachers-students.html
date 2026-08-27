@@ -17,23 +17,35 @@
       filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.4));
     }
 
+    /* Sticky Headers for Nested Rows */
+    #tableHead th {
+      position: sticky;
+      z-index: 10;
+    }
+
+    /* Table border utility to closely replicate spreadsheet formats */
+    .table-bordered th, .table-bordered td {
+      border: 1px solid #cbd5e1;
+    }
+
     /* Print Styles */
     @media print {
       body {
         background-color: white !important;
         color: black !important;
+        height: auto !important;
+        overflow: visible !important;
       }
 
-      /* Hide non-printable UI elements */
       .no-print, header, footer, #loading, #emptyState {
         display: none !important;
       }
 
-      /* Printable Container Adjustments */
       main {
         max-width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
+        overflow: visible !important;
       }
 
       .print-header {
@@ -45,27 +57,25 @@
       #tableWrapper {
         display: block !important;
         overflow: visible !important;
+        max-height: none !important;
       }
 
       table {
         width: 100% !important;
         border-collapse: collapse !important;
-        font-size: 10pt !important;
+        font-size: 8pt !important;
       }
 
       th, td {
-        border: 1px solid #cbd5e1 !important;
-        padding: 6px 8px !important;
+        border: 1px solid #64748b !important;
+        padding: 4px 6px !important;
       }
 
       th {
-        background-color: #f1f5f9 !important;
-        color: #0f172a !important;
+        position: static !important;
       }
 
-      /* Ensure total columns remain visible and styled for print */
       tfoot {
-        background-color: #f8fafc !important;
         font-weight: bold;
       }
     }
@@ -75,9 +85,9 @@
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col font-sans text-gray-800">
+<body class="bg-gray-100 h-screen flex flex-col font-sans text-gray-800 overflow-hidden">
 
-  <!-- Top Header -->
+  <!-- Fixed Top Header -->
   <header class="bg-blue-900 text-white shadow-lg py-3 px-4 shrink-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       
@@ -105,7 +115,7 @@
     </div>
   </header>
 
-  <!-- Print Header Document Layout (Visible only during window.print()) -->
+  <!-- Print Header Document Layout -->
   <div class="print-header">
     <h2 class="text-xs font-bold tracking-wider text-gray-600 uppercase">Republic of the Philippines • Department of Education</h2>
     <h1 class="text-base font-bold uppercase text-gray-900">Schools Division Office of Biñan City</h1>
@@ -114,10 +124,10 @@
   </div>
 
   <!-- Main Content Container -->
-  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col min-h-0 space-y-4">
 
     <!-- Controls Bar -->
-    <div class="no-print bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="no-print bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
       <div>
         <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
           <i class="fa-solid fa-chart-pie text-blue-600"></i> Division Data Analytics
@@ -166,31 +176,32 @@
       </div>
     </div>
 
-    <!-- Data Table Card -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <!-- Data Table Card Container -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex-1 min-h-0 flex flex-col overflow-hidden">
+      
       <!-- Loading Indicator -->
-      <div id="loading" class="p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-3">
+      <div id="loading" class="p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-3 my-auto">
         <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i>
         <span class="font-medium text-sm">Fetching records from Supabase...</span>
       </div>
 
       <!-- Empty State Indicator -->
-      <div id="emptyState" class="hidden p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-2">
+      <div id="emptyState" class="hidden p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-2 my-auto">
         <i class="fa-solid fa-folder-open text-4xl text-gray-300"></i>
         <span class="font-medium text-base text-gray-700">No records found</span>
         <p class="text-xs text-gray-400">There is no data available for the selected School Year and Level category.</p>
       </div>
 
-      <!-- Data Table -->
-      <div id="tableWrapper" class="hidden overflow-x-auto">
-        <table class="w-full text-left border-collapse text-sm">
-          <thead id="tableHead" class="bg-slate-800 text-slate-100 uppercase text-xs tracking-wider">
-            <!-- Dynamic Headers -->
+      <!-- Scrollable Data Table Wrapper -->
+      <div id="tableWrapper" class="hidden flex-1 overflow-auto">
+        <table class="w-full text-left border-collapse text-xs table-bordered">
+          <thead id="tableHead" class="text-gray-900 font-bold uppercase tracking-wider text-[11px]">
+            <!-- Dynamic Category Headers -->
           </thead>
-          <tbody id="tableBody" class="divide-y divide-gray-200 bg-white">
+          <tbody id="tableBody" class="divide-y divide-gray-200 bg-white text-center">
             <!-- Dynamic Rows -->
           </tbody>
-          <tfoot id="tableFoot" class="bg-slate-50 font-bold border-t-2 border-gray-300 text-gray-900">
+          <tfoot id="tableFoot" class="bg-gray-100 font-bold border-t-2 border-gray-400 text-gray-900 sticky bottom-0 text-center">
             <!-- Dynamic Totals -->
           </tfoot>
         </table>
@@ -199,9 +210,9 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 mt-auto py-5">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 space-y-1">
+  <!-- Fixed Bottom Footer -->
+  <footer class="bg-white border-t border-gray-200 py-3 shrink-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 space-y-0.5">
       <p>&copy; 2026 Schools Division Office of Biñan City. All rights reserved.</p>
       <p class="text-gray-400">Integrated with Supabase Database Engine</p>
     </div>
@@ -269,63 +280,154 @@
       const tbody = document.getElementById("tableBody");
       const tfoot = document.getElementById("tableFoot");
 
-      let maxMetricsLength = 0;
-      records.forEach(r => {
-        if (Array.isArray(r.data) && r.data.length > maxMetricsLength) {
-          maxMetricsLength = r.data.length;
-        }
-      });
+      if (category === 'ELEM' || category === 'JHS') {
+        const grades = category === 'ELEM' 
+          ? ['K', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6']
+          : ['G7', 'G8', 'G9', 'G10'];
+        
+        const gradesColSpan = grades.length * 2;
+        const totalColumnsCount = gradesColSpan + 1 + 2 + 2 + 3; // Grades (M/F), Grades Total, SPED (M/F), ALS (M/F), No, Name, Total
 
-      let headerHTML = `
-        <tr>
-          <th class="p-3.5 w-12 text-center border-b border-slate-700">No.</th>
-          <th class="p-3.5 border-b border-slate-700 min-w-[200px]">School Name (${category})</th>
-      `;
-
-      for (let i = 1; i <= maxMetricsLength; i++) {
-        headerHTML += `<th class="p-3.5 text-center border-b border-slate-700">Metric ${i}</th>`;
-      }
-      headerHTML += `<th class="p-3.5 text-center bg-slate-950 border-b border-slate-700">Total Teachers</th></tr>`;
-      thead.innerHTML = headerHTML;
-
-      const columnSums = new Array(maxMetricsLength).fill(0);
-      let grandTotalSum = 0;
-
-      tbody.innerHTML = records.map((record, index) => {
-        const metrics = Array.isArray(record.data) ? record.data : [];
-        let rowSum = 0;
-
-        let rowHTML = `
-          <tr class="hover:bg-blue-50/50 transition-colors border-b border-gray-100">
-            <td class="p-3 text-center font-mono text-xs text-gray-500">${index + 1}</td>
-            <td class="p-3 font-semibold text-gray-800">${record.school_name}</td>
+        // Multi-level Header Construction
+        thead.innerHTML = `
+          <tr class="bg-lime-200">
+            <th rowspan="3" class="p-2 w-12 text-center border-b border-gray-400 top-0">No.</th>
+            <th rowspan="3" class="p-2 border-b border-gray-400 min-w-[200px] text-left top-0">Name of School</th>
+            <th colspan="${gradesColSpan + 5}" class="p-1.5 text-center bg-lime-300 border-b border-gray-400 top-0">Number of Teachers</th>
+            <th rowspan="3" class="p-2 text-center bg-lime-100 border-b border-gray-400 top-0">Total</th>
+          </tr>
+          <tr class="bg-lime-200">
+            ${grades.map(g => `<th colspan="2" class="p-1 text-center border-b border-gray-400 top-[29px]">${g}</th>`).join('')}
+            <th rowspan="2" class="p-1 text-center bg-lime-300 border-b border-gray-400 top-[29px]">Total</th>
+            <th colspan="2" class="p-1 text-center bg-amber-500 text-black border-b border-gray-400 top-[29px]">SPED</th>
+            <th colspan="2" class="p-1 text-center bg-amber-600 text-black border-b border-gray-400 top-[29px]">ALS</th>
+          </tr>
+          <tr class="bg-lime-200 text-[10px]">
+            ${grades.map(() => `<th class="p-1 border-b border-gray-400 top-[53px]">Male</th><th class="p-1 border-b border-gray-400 top-[53px]">Female</th>`).join('')}
+            <th class="p-1 bg-amber-500 border-b border-gray-400 top-[53px]">Male</th>
+            <th class="p-1 bg-amber-500 border-b border-gray-400 top-[53px]">Female</th>
+            <th class="p-1 bg-amber-600 border-b border-gray-400 top-[53px]">Male</th>
+            <th class="p-1 bg-amber-600 border-b border-gray-400 top-[53px]">Female</th>
+          </tr>
         `;
 
-        for (let i = 0; i < maxMetricsLength; i++) {
-          const val = Number(metrics[i]) || 0;
-          rowSum += val;
-          columnSums[i] += val;
+        const columnSums = new Array(gradesColSpan + 5).fill(0);
+        let grandTotal = 0;
 
-          rowHTML += `<td class="p-3 text-center font-medium text-gray-700">${val}</td>`;
+        tbody.innerHTML = records.map((record, index) => {
+          const metrics = Array.isArray(record.data) ? record.data : [];
+          let rowHTML = `
+            <tr class="hover:bg-blue-50/50 transition-colors">
+              <td class="p-2 font-mono text-gray-500">${index + 1}</td>
+              <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
+          `;
+
+          let rowSum = 0;
+          for (let i = 0; i < columnSums.length; i++) {
+            const val = Number(metrics[i]) || 0;
+            rowSum += val;
+            columnSums[i] += val;
+            rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
+          }
+
+          grandTotal += rowSum;
+          rowHTML += `<td class="p-2 font-bold text-gray-900 bg-lime-50">${rowSum}</td></tr>`;
+          return rowHTML;
+        }).join('');
+
+        let footHTML = `
+          <tr>
+            <td colspan="2" class="p-2 text-right font-bold text-gray-800">TOTAL:</td>
+        `;
+
+        for (let i = 0; i < columnSums.length; i++) {
+          footHTML += `<td class="p-2 font-bold">${columnSums[i]}</td>`;
         }
 
-        grandTotalSum += rowSum;
-        rowHTML += `<td class="p-3 text-center font-bold text-gray-900 bg-gray-50/80">${rowSum}</td></tr>`;
+        footHTML += `<td class="p-2 text-gray-900 font-extrabold bg-lime-200">${grandTotal}</td></tr>`;
+        tfoot.innerHTML = footHTML;
 
-        return rowHTML;
-      }).join('');
+      } else if (category === 'SHS') {
+        const tracks = ['Academic Track', 'Arts & Design Track', 'Sports Track', 'TVL Track'];
+        const numTracks = tracks.length;
 
-      let footHTML = `
-        <tr>
-          <td colspan="2" class="p-3.5 text-right font-bold text-gray-700">GRAND TOTAL:</td>
-      `;
+        // Multi-level Header Construction for Senior High School
+        thead.innerHTML = `
+          <tr class="bg-lime-400 text-gray-900">
+            <th rowspan="3" class="p-2 w-12 text-center border-b border-gray-400 top-0">No.</th>
+            <th rowspan="3" class="p-2 border-b border-gray-400 min-w-[200px] text-left top-0">Name of School</th>
+            <th colspan="${(numTracks * 4) + 3}" class="p-1.5 text-center bg-lime-500 border-b border-gray-400 top-0">Number of Teachers</th>
+          </tr>
+          <tr class="bg-lime-400 text-gray-900">
+            <th colspan="${numTracks * 2}" class="p-1 text-center bg-lime-300 border-b border-gray-400 top-[29px]">G11</th>
+            <th colspan="${numTracks * 2}" class="p-1 text-center bg-emerald-700 text-white border-b border-gray-400 top-[29px]">G12</th>
+            <th colspan="3" rowspan="2" class="p-1 text-center bg-lime-400 border-b border-gray-400 top-[29px]">Total</th>
+          </tr>
+          <tr class="bg-lime-300 text-[10px]">
+            ${tracks.map(t => `<th colspan="2" class="p-1 border-b border-gray-400 top-[53px]">${t}</th>`).join('')}
+            ${tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-600 text-white border-b border-gray-400 top-[53px]">${t}</th>`).join('')}
+          </tr>
+        `;
 
-      for (let i = 0; i < maxMetricsLength; i++) {
-        footHTML += `<td class="p-3.5 text-center font-bold text-blue-800">${columnSums[i]}</td>`;
+        const totalMetricCols = (numTracks * 4); // G11 M/F and G12 M/F across tracks
+        const columnSums = new Array(totalMetricCols).fill(0);
+        let maleGrandTotal = 0;
+        let femaleGrandTotal = 0;
+
+        tbody.innerHTML = records.map((record, index) => {
+          const metrics = Array.isArray(record.data) ? record.data : [];
+          let rowHTML = `
+            <tr class="hover:bg-blue-50/50 transition-colors">
+              <td class="p-2 font-mono text-gray-500">${index + 1}</td>
+              <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
+          `;
+
+          let rowMaleTotal = 0;
+          let rowFemaleTotal = 0;
+
+          for (let i = 0; i < totalMetricCols; i++) {
+            const val = Number(metrics[i]) || 0;
+            columnSums[i] += val;
+
+            if (i % 2 === 0) {
+              rowMaleTotal += val;
+            } else {
+              rowFemaleTotal += val;
+            }
+
+            rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
+          }
+
+          maleGrandTotal += rowMaleTotal;
+          femaleGrandTotal += rowFemaleTotal;
+          const rowGrandTotal = rowMaleTotal + rowFemaleTotal;
+
+          rowHTML += `
+            <td class="p-2 text-blue-700 font-semibold bg-gray-50">${rowMaleTotal}</td>
+            <td class="p-2 text-pink-700 font-semibold bg-gray-50">${rowFemaleTotal}</td>
+            <td class="p-2 font-bold text-gray-900 bg-lime-100">${rowGrandTotal}</td>
+          </tr>`;
+
+          return rowHTML;
+        }).join('');
+
+        let footHTML = `
+          <tr>
+            <td colspan="2" class="p-2 text-right font-bold text-gray-800">TOTAL:</td>
+        `;
+
+        for (let i = 0; i < totalMetricCols; i++) {
+          footHTML += `<td class="p-2 font-bold">${columnSums[i]}</td>`;
+        }
+
+        footHTML += `
+          <td class="p-2 text-blue-900 font-extrabold">${maleGrandTotal}</td>
+          <td class="p-2 text-pink-900 font-extrabold">${femaleGrandTotal}</td>
+          <td class="p-2 text-gray-900 font-extrabold bg-lime-200">${maleGrandTotal + femaleGrandTotal}</td>
+        </tr>`;
+
+        tfoot.innerHTML = footHTML;
       }
-
-      footHTML += `<td class="p-3.5 text-center text-gray-900 font-extrabold bg-gray-200">${grandTotalSum}</td></tr>`;
-      tfoot.innerHTML = footHTML;
     }
 
     function showState(state) {
@@ -334,7 +436,6 @@
       document.getElementById("tableWrapper").classList.toggle("hidden", state !== 'data');
     }
 
-    // Trigger Print Action
     function triggerPrint() {
       const dataset = document.getElementById("datasetSelect").selectedOptions[0].text;
       const category = document.getElementById("categorySelect").value;
