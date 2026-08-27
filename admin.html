@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal - SDO Biñan City</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800">
+
+  <!-- Admin Header -->
+  <header class="bg-slate-900 text-white py-4 px-6 shadow-md flex justify-between items-center">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-user-shield text-blue-400 text-xl"></i>
+      <h1 class="font-bold text-lg">SDO Biñan Data Admin Control</h1>
+    </div>
+    <div id="authStatus" class="text-sm"></div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-6 space-y-6">
+
+    <!-- Auth Card (Login) -->
+    <div id="loginCard" class="bg-white p-6 rounded-xl shadow-md border border-gray-200 max-w-md mx-auto space-y-4">
+      <h2 class="text-xl font-bold text-center text-gray-900">Admin Login</h2>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Email</label>
+        <input type="email" id="loginEmail" class="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-600 mb-1">Password</label>
+        <input type="password" id="loginPassword" class="w-full border rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <button onclick="handleLogin()" class="w-full bg-blue-900 text-white py-2 rounded-lg font-semibold hover:bg-blue-800 transition">
+        Login to Dashboard
+      </button>
+      <p id="loginError" class="text-xs text-red-500 text-center hidden"></p>
+    </div>
+
+    <!-- Data Management Portal (Hidden by default until logged in) -->
+    <div id="adminPanel" class="hidden space-y-6">
+      
+      <!-- Management Card -->
+      <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+          <h2 class="text-lg font-bold text-gray-800">Update School Records</h2>
+          <button onclick="handleLogout()" class="text-xs text-red-600 font-semibold hover:underline">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Select Category</label>
+            <select id="adminCategory" onchange="loadSchoolsForAdmin()" class="w-full border rounded-lg p-2 text-sm bg-gray-50">
+              <option value="ELEM">Elementary (ELEM)</option>
+              <option value="JHS">Junior High (JHS)</option>
+              <option value="SHS">Senior High (SHS)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Select School</label>
+            <select id="adminSchoolSelect" class="w-full border rounded-lg p-2 text-sm bg-gray-50">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Inputs -->
+        <div class="grid grid-cols-2 gap-4 pt-2">
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Male Count</label>
+            <input type="number" id="inputMale" value="0" class="w-full border rounded-lg p-2 text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">Female Count</label>
+            <input type="number" id="inputFemale" value="0" class="w-full border rounded-lg p-2 text-sm">
+          </div>
+        </div>
+
+        <button onclick="saveRecord()" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-semibold hover:bg-emerald-700 transition">
+          <i class="fa-solid fa-floppy-disk mr-2"></i> Save / Update Database
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Check Active Admin Session
+    window.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        showAdminPanel(session.user.email);
+      }
+    });
+
+    async function handleLogin() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+      
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        const errEl = document.getElementById("loginError");
+        errEl.innerText = error.message;
+        errEl.classList.remove("hidden");
+      } else {
+        showAdminPanel(data.user.email);
+      }
+    }
+
+    async function handleLogout() {
+      await supabase.auth.signOut();
+      location.reload();
+    }
+
+    function showAdminPanel(email) {
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("adminPanel").classList.remove("hidden");
+      document.getElementById("authStatus").innerText = `Logged in as: ${email}`;
+      loadSchoolsForAdmin();
+    }
+
+    async function loadSchoolsForAdmin() {
+      const cat = document.getElementById("adminCategory").value;
+      const { data } = await supabase.from('schools').select('id, name').eq('category', cat);
+      
+      const select = document.getElementById("adminSchoolSelect");
+      select.innerHTML = data.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+
+    async function saveRecord() {
+      const schoolId = document.getElementById("adminSchoolSelect").value;
+      const male = parseInt(document.getElementById("inputMale").value) || 0;
+      const female = parseInt(document.getElementById("inputFemale").value) || 0;
+
+      // Upsert record into Supabase teachers table
+      const { error } = await supabase
+        .from('teachers')
+        .upsert({ school_id: schoolId, male: male, female: female, grade_level: 'TOTAL' });
+
+      if (error) {
+        alert("Error saving: " + error.message);
+      } else {
+        alert("Database successfully updated!");
+      }
+    }
+  </script>
+</body>
+</html>
