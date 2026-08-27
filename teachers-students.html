@@ -14,72 +14,36 @@
 
   <style>
     .logo-glow {
-      filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.4));
-    }
+  filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.4));
+}
 
-    /* Table border utility */
-    .table-bordered th, .table-bordered td {
-      border: 1px solid #cbd5e1;
-    }
+/* Table border utility */
+.table-bordered th, .table-bordered td {
+  border: 1px solid #cbd5e1;
+}
 
-    /* Print Styles */
-    @media print {
-      body {
-        background-color: white !important;
-        color: black !important;
-        height: auto !important;
-        overflow: visible !important;
-      }
+/* 1. STICKY TOP TABLE HEADERS */
+#tableHead th {
+  position: sticky;
+  z-index: 20;
+}
 
-      .no-print, header, footer, #loading, #emptyState {
-        display: none !important;
-      }
+/* Header Row 1 (Top Level: Elementary, JHS, SHS) */
+#tableHead tr:nth-child(1) th {
+  top: 0;
+}
 
-      main {
-        max-width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        overflow: visible !important;
-      }
+/* Header Row 2 (Grade Levels / Tracks) */
+#tableHead tr:nth-child(2) th {
+  top: 32px; /* Height of Row 1 */
+}
 
-      .print-header {
-        display: block !important;
-        margin-bottom: 1.5rem;
-        text-align: center;
-      }
+/* Header Row 3 (Male / Female) */
+#tableHead tr:nth-child(3) th {
+  top: 57px; /* Height of Row 1 + Row 2 */
+}
 
-      #tableWrapper {
-        display: block !important;
-        overflow: visible !important;
-        max-height: none !important;
-      }
-
-      table {
-        width: 100% !important;
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-        font-size: 8pt !important;
-      }
-
-      th, td {
-        border: 1px solid #64748b !important;
-        padding: 4px 6px !important;
-      }
-
-      th {
-        position: static !important;
-      }
-
-      tfoot {
-        font-weight: bold;
-      }
-    }
-
-    .print-header {
-      display: none;
-    }
-
-    /* Enable sticky positioning for left columns */
+/* 2. STICKY LEFT COLUMNS */
 .sticky-col-1 {
   position: sticky;
   left: 0;
@@ -88,14 +52,68 @@
 
 .sticky-col-2 {
   position: sticky;
-  left: 48px; /* Width of the first column (No.) */
+  left: 48px; /* Width of 'No.' column */
   z-index: 20;
 }
 
-/* Ensure sticky headers remain on top during horizontal & vertical scroll */
+/* 3. INTERSECTION Z-INDEX (Top-Left Fixed Header Cells) */
 #tableHead th.sticky-col-1,
 #tableHead th.sticky-col-2 {
-  z-index: 30;
+  z-index: 40 !important;
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .no-print, header, footer, #loading, #emptyState {
+    display: none !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .print-header {
+    display: block !important;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  #tableWrapper {
+    display: block !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    font-size: 8pt !important;
+  }
+
+  th, td {
+    border: 1px solid #64748b !important;
+    padding: 4px 6px !important;
+    position: static !important;
+  }
+
+  tfoot {
+    font-weight: bold;
+  }
+}
+
+.print-header {
+  display: none;
 }
   </style>
 </head>
