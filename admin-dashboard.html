@@ -502,7 +502,7 @@ async function processAndUploadStudentExcel() {
 
     reader.readAsArrayBuffer(file);
 }
-        document.addEventListener("DOMContentLoaded", () => {
+       document.addEventListener("DOMContentLoaded", () => {
   fetchDashboardTotals();
 });
 
@@ -511,38 +511,46 @@ async function fetchDashboardTotals() {
   const studentsCountEl = document.getElementById("totalStudentsCount");
 
   try {
-    // 1. Fetch Teachers Data & Calculate Sum
-    const { data: teachersData, error: teachersErr } = await supabaseClient
-      .from('teachers_data')
-      .select('data');
+    // Select level along with data to apply specific ranges
+    const [teachersRes, studentsRes] = await Promise.all([
+      supabaseClient.from('teachers_data').select('level, data'),
+      supabaseClient.from('students_data').select('level, data')
+    ]);
 
-    if (!teachersErr && teachersData) {
-      const totalTeachers = teachersData.reduce((acc, row) => {
-        const rowSum = Array.isArray(row.data) 
-          ? row.data.reduce((sum, val) => sum + (Number(val) || 0), 0)
-          : 0;
-        return acc + rowSum;
-      }, 0);
-      teachersCountEl.innerText = totalTeachers.toLocaleString();
-    } else {
-      teachersCountEl.innerText = "0";
-    }
+    // --- STUDENTS TOTAL ---
+    if (!studentsRes.error && studentsRes.data) {
+      const data = studentsRes.data;
 
-    // 2. Fetch Students Data & Calculate Sum
-    const { data: studentsData, error: studentsErr } = await supabaseClient
-      .from('students_data')
-      .select('data');
+      // ELEM: Rows 5 to 31 (indices 4 to 30), Cols C to U (0 to 18)
+      const elem = sumDataRange(data, 'ELEM', 4, 30, 0, 18);
 
-    if (!studentsErr && studentsData) {
-      const totalStudents = studentsData.reduce((acc, row) => {
-        const rowSum = Array.isArray(row.data) 
-          ? row.data.reduce((sum, val) => sum + (Number(val) || 0), 0)
-          : 0;
-        return acc + rowSum;
-      }, 0);
-      studentsCountEl.innerText = totalStudents.toLocaleString();
+      // JHS: Rows 5 to 15 (indices 4 to 14), Cols C to Q (0 to 14)
+      const jhs = sumDataRange(data, 'JHS', 4, 14, 0, 14);
+
+      // SHS: Rows 6 to 12 (indices 5 to 11), Cols C to R (0 to 15)
+      const shs = sumDataRange(data, 'SHS', 5, 11, 0, 15);
+
+      studentsCountEl.innerText = (elem + jhs + shs).toLocaleString();
     } else {
       studentsCountEl.innerText = "0";
+    }
+
+    // --- TEACHERS TOTAL ---
+    if (!teachersRes.error && teachersRes.data) {
+      const data = teachersRes.data;
+
+      // ELEM: Rows 4 to 30 (indices 3 to 29), Cols C to U (0 to 18)
+      const elem = sumDataRange(data, 'ELEM', 3, 29, 0, 18);
+
+      // JHS: Rows 4 to 14 (indices 3 to 13), Cols C to Q (0 to 14)
+      const jhs = sumDataRange(data, 'JHS', 3, 13, 0, 14);
+
+      // SHS: Rows 6 to 12 (indices 5 to 11), Cols C to R (0 to 15)
+      const shs = sumDataRange(data, 'SHS', 5, 11, 0, 15);
+
+      teachersCountEl.innerText = (elem + jhs + shs).toLocaleString();
+    } else {
+      teachersCountEl.innerText = "0";
     }
 
   } catch (err) {
@@ -550,6 +558,29 @@ async function fetchDashboardTotals() {
     teachersCountEl.innerText = "N/A";
     studentsCountEl.innerText = "N/A";
   }
+}
+
+/**
+ * Helper function to slice specific rows and columns for a given level
+ */
+function sumDataRange(records, level, startRowIndex, endRowIndex, startColIndex, endColIndex) {
+  // Filter by level
+  const levelRecords = records.filter(r => r.level === level);
+
+  // Slice row range
+  const targetRows = levelRecords.slice(startRowIndex, endRowIndex + 1);
+
+  let totalSum = 0;
+
+  targetRows.forEach(row => {
+    const arr = Array.isArray(row.data) ? row.data : [];
+    // Sum column range
+    for (let c = startColIndex; c <= endColIndex; c++) {
+      totalSum += Number(arr[c]) || 0;
+    }
+  });
+
+  return totalSum;
 }
     </script>
 </body>
