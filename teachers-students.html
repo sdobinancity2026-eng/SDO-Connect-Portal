@@ -5,63 +5,103 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Schools Data Dashboard</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100 min-h-screen text-gray-800 p-6">
+<body class="bg-gray-100 min-h-screen flex flex-col font-sans text-gray-800">
 
-  <div class="max-w-7xl mx-auto space-y-6">
-    <!-- Header -->
-    <div class="bg-white p-6 rounded-xl shadow-md flex justify-between items-center">
+  <!-- Top Navbar -->
+  <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-3">
+          <i class="fa-solid fa-school text-blue-400 text-xl"></i>
+          <span class="font-bold text-lg tracking-wide">Division Data Portal</span>
+        </div>
+        <div class="flex items-center space-x-6 text-sm font-medium">
+          <a href="#" class="hover:text-blue-400 transition-colors">Home</a>
+          <a href="#" class="text-blue-400 border-b-2 border-blue-400 pb-1">Analytics</a>
+          <a href="#" class="hover:text-blue-400 transition-colors">Reports</a>
+          <a href="#" class="hover:text-blue-400 transition-colors">Settings</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+    <!-- Page Header & Filter Controls -->
+    <header class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Schools Data Dashboard</h1>
-        <p class="text-sm text-gray-500">Teachers and Students Distribution Matrix</p>
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-blue-600"></i> Schools Data Dashboard
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">Real-time teacher and student distribution metrics</p>
       </div>
 
-      <!-- Controls -->
-      <div class="flex items-center space-x-4">
-        <div>
-          <label for="datasetSelect" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Data View</label>
-          <select id="datasetSelect" onchange="handleViewChange()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- Data View Selector -->
+        <div class="flex items-center space-x-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
+          <label for="datasetSelect" class="text-xs font-bold text-gray-600 uppercase pl-2">View:</label>
+          <select id="datasetSelect" onchange="handleViewChange()" class="bg-white text-sm font-medium border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="teachers">Teachers Data</option>
             <option value="students">Students Data</option>
           </select>
         </div>
 
-        <div id="categoryWrapper">
-          <label for="categorySelect" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Level Category</label>
-          <select id="categorySelect" onchange="loadDashboardData()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- Level Category Filter -->
+        <div id="categoryWrapper" class="flex items-center space-x-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
+          <label for="categorySelect" class="text-xs font-bold text-gray-600 uppercase pl-2">Category:</label>
+          <select id="categorySelect" onchange="loadDashboardData()" class="bg-white text-sm font-medium border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="ELEM">Elementary (ELEM)</option>
             <option value="JHS">Junior High (JHS)</option>
             <option value="SHS">Senior High (SHS)</option>
           </select>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Data Table Container -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-      <div id="loading" class="p-8 text-center text-gray-500">Loading data from Supabase...</div>
+    <!-- Table Section -->
+    <section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <!-- Loading State -->
+      <div id="loading" class="p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-3">
+        <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i>
+        <span class="font-medium text-sm">Fetching records from database...</span>
+      </div>
+
+      <!-- Data Table Wrapper -->
       <div id="tableWrapper" class="hidden overflow-x-auto">
         <table class="w-full text-left border-collapse text-sm">
-          <thead id="tableHead" class="bg-gray-800 text-white uppercase text-xs">
+          <thead id="tableHead" class="bg-slate-800 text-slate-100 uppercase text-xs tracking-wider">
             <!-- Dynamic Headers -->
           </thead>
-          <tbody id="tableBody" class="divide-y divide-gray-200">
+          <tbody id="tableBody" class="divide-y divide-gray-200 bg-white">
             <!-- Dynamic Rows -->
           </tbody>
-          <tfoot id="tableFoot" class="bg-gray-100 font-bold border-t-2 border-gray-300">
-            <!-- Dynamic Totals -->
+          <tfoot id="tableFoot" class="bg-slate-50 font-bold border-t-2 border-gray-300 text-gray-900">
+            <!-- Dynamic Summary Totals -->
           </tfoot>
         </table>
       </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 space-y-1">
+      <p>&copy; 2026 Department of Education Division Office. All rights reserved.</p>
+      <p class="text-gray-400">Powered by Supabase Database Integration</p>
     </div>
-  </div>
+  </footer>
 
   <script>
-    // Config: Replace with your actual Supabase URL & Key
+    // Supabase Credentials
     const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
     const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -73,7 +113,7 @@
     function handleViewChange() {
       const dataset = document.getElementById("datasetSelect").value;
       const categoryWrapper = document.getElementById("categoryWrapper");
-      categoryWrapper.style.display = (dataset === "teachers") ? "block" : "none";
+      categoryWrapper.style.display = (dataset === "teachers") ? "flex" : "none";
       loadDashboardData();
     }
 
@@ -104,6 +144,7 @@
 
       if (error) {
         console.error('Error fetching teachers:', error);
+        showLoading(false);
         return;
       }
 
@@ -133,6 +174,7 @@
 
       if (error) {
         console.error('Error fetching students:', error);
+        showLoading(false);
         return;
       }
 
@@ -164,11 +206,11 @@
 
       thead.innerHTML = `
         <tr>
-          <th class="p-3 w-12 text-center">No.</th>
-          <th class="p-3">School Name (${category})</th>
-          <th class="p-3 text-center bg-blue-900">Male Teachers</th>
-          <th class="p-3 text-center bg-pink-900">Female Teachers</th>
-          <th class="p-3 text-center bg-gray-900">Total Teachers</th>
+          <th class="p-3.5 w-12 text-center border-b border-slate-700">No.</th>
+          <th class="p-3.5 border-b border-slate-700">School Name (${category})</th>
+          <th class="p-3.5 text-center bg-blue-900 border-b border-slate-700">Male Teachers</th>
+          <th class="p-3.5 text-center bg-pink-900 border-b border-slate-700">Female Teachers</th>
+          <th class="p-3.5 text-center bg-slate-950 border-b border-slate-700">Total</th>
         </tr>
       `;
 
@@ -177,22 +219,22 @@
         totalM += r.male;
         totalF += r.female;
         return `
-          <tr class="hover:bg-gray-50 border-b">
-            <td class="p-3 text-center font-mono text-xs">${i + 1}</td>
-            <td class="p-3 font-semibold">${r.name}</td>
+          <tr class="hover:bg-blue-50/50 transition-colors border-b border-gray-100">
+            <td class="p-3 text-center font-mono text-xs text-gray-500">${i + 1}</td>
+            <td class="p-3 font-semibold text-gray-800">${r.name}</td>
             <td class="p-3 text-center text-blue-600 font-medium">${r.male}</td>
             <td class="p-3 text-center text-pink-600 font-medium">${r.female}</td>
-            <td class="p-3 text-center font-bold text-gray-900">${r.total}</td>
+            <td class="p-3 text-center font-bold text-gray-900 bg-gray-50/80">${r.total}</td>
           </tr>
         `;
       }).join('');
 
       tfoot.innerHTML = `
         <tr>
-          <td colspan="2" class="p-3 text-right">GRAND TOTAL:</td>
-          <td class="p-3 text-center text-blue-700">${totalM}</td>
-          <td class="p-3 text-center text-pink-700">${totalF}</td>
-          <td class="p-3 text-center text-gray-900">${totalM + totalF}</td>
+          <td colspan="2" class="p-3.5 text-right font-bold text-gray-700">GRAND TOTAL:</td>
+          <td class="p-3.5 text-center text-blue-700 font-bold">${totalM}</td>
+          <td class="p-3.5 text-center text-pink-700 font-bold">${totalF}</td>
+          <td class="p-3.5 text-center text-gray-900 font-extrabold bg-gray-200">${totalM + totalF}</td>
         </tr>
       `;
     }
@@ -204,19 +246,19 @@
 
       thead.innerHTML = `
         <tr>
-          <th rowspan="2" class="p-3 w-12 text-center border">No.</th>
-          <th rowspan="2" class="p-3 border">School Name</th>
-          <th colspan="3" class="p-2 text-center border bg-emerald-800">Elementary</th>
-          <th colspan="3" class="p-2 text-center border bg-indigo-800">Junior High</th>
-          <th colspan="3" class="p-2 text-center border bg-amber-800">Grade 11</th>
-          <th colspan="3" class="p-2 text-center border bg-rose-800">Grade 12</th>
-          <th rowspan="2" class="p-3 text-center border bg-gray-900">Grand Total</th>
+          <th rowspan="2" class="p-3 w-12 text-center border-r border-slate-700">No.</th>
+          <th rowspan="2" class="p-3 border-r border-slate-700">School Name</th>
+          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-emerald-800">Elementary</th>
+          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-indigo-800">Junior High</th>
+          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-amber-800">Grade 11</th>
+          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-rose-800">Grade 12</th>
+          <th rowspan="2" class="p-3 text-center bg-slate-950">Grand Total</th>
         </tr>
         <tr class="text-xs">
-          <th class="p-1 text-center bg-emerald-700">M</th><th class="p-1 text-center bg-emerald-700">F</th><th class="p-1 text-center bg-emerald-900">Total</th>
-          <th class="p-1 text-center bg-indigo-700">M</th><th class="p-1 text-center bg-indigo-700">F</th><th class="p-1 text-center bg-indigo-900">Total</th>
-          <th class="p-1 text-center bg-amber-700">M</th><th class="p-1 text-center bg-amber-700">F</th><th class="p-1 text-center bg-amber-900">Total</th>
-          <th class="p-1 text-center bg-rose-700">M</th><th class="p-1 text-center bg-rose-700">F</th><th class="p-1 text-center bg-rose-900">Total</th>
+          <th class="p-1.5 text-center bg-emerald-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-emerald-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-emerald-900 border-r border-slate-700">Total</th>
+          <th class="p-1.5 text-center bg-indigo-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-indigo-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-indigo-900 border-r border-slate-700">Total</th>
+          <th class="p-1.5 text-center bg-amber-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-amber-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-amber-900 border-r border-slate-700">Total</th>
+          <th class="p-1.5 text-center bg-rose-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-rose-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-rose-900 border-r border-slate-700">Total</th>
         </tr>
       `;
 
@@ -230,14 +272,14 @@
         sumG12M += r.g12.m;  sumG12F += r.g12.f;
 
         return `
-          <tr class="hover:bg-gray-50 border-b text-center">
-            <td class="p-2 font-mono text-xs">${i + 1}</td>
-            <td class="p-2 text-left font-semibold">${r.name}</td>
-            <td class="p-2">${r.elem.m}</td><td class="p-2">${r.elem.f}</td><td class="p-2 font-semibold bg-gray-50">${r.elem.total}</td>
-            <td class="p-2">${r.jhs.m}</td><td class="p-2">${r.jhs.f}</td><td class="p-2 font-semibold bg-gray-50">${r.jhs.total}</td>
-            <td class="p-2">${r.g11.m}</td><td class="p-2">${r.g11.f}</td><td class="p-2 font-semibold bg-gray-50">${r.g11.total}</td>
-            <td class="p-2">${r.g12.m}</td><td class="p-2">${r.g12.f}</td><td class="p-2 font-semibold bg-gray-50">${r.g12.total}</td>
-            <td class="p-2 font-bold text-blue-700 bg-gray-100">${r.grandTotal}</td>
+          <tr class="hover:bg-blue-50/50 transition-colors border-b border-gray-100 text-center text-sm">
+            <td class="p-2.5 font-mono text-xs text-gray-500 border-r">${i + 1}</td>
+            <td class="p-2.5 text-left font-semibold text-gray-800 border-r">${r.name}</td>
+            <td class="p-2.5">${r.elem.m}</td><td class="p-2.5">${r.elem.f}</td><td class="p-2.5 font-semibold bg-emerald-50/50 border-r">${r.elem.total}</td>
+            <td class="p-2.5">${r.jhs.m}</td><td class="p-2.5">${r.jhs.f}</td><td class="p-2.5 font-semibold bg-indigo-50/50 border-r">${r.jhs.total}</td>
+            <td class="p-2.5">${r.g11.m}</td><td class="p-2.5">${r.g11.f}</td><td class="p-2.5 font-semibold bg-amber-50/50 border-r">${r.g11.total}</td>
+            <td class="p-2.5">${r.g12.m}</td><td class="p-2.5">${r.g12.f}</td><td class="p-2.5 font-semibold bg-rose-50/50 border-r">${r.g12.total}</td>
+            <td class="p-2.5 font-bold text-blue-700 bg-gray-100">${r.grandTotal}</td>
           </tr>
         `;
       }).join('');
@@ -246,12 +288,12 @@
 
       tfoot.innerHTML = `
         <tr class="text-center">
-          <td colspan="2" class="p-3 text-right">TOTALS:</td>
-          <td class="p-2">${sumEleM}</td><td class="p-2">${sumEleF}</td><td class="p-2">${sumEleM + sumEleF}</td>
-          <td class="p-2">${sumJhsM}</td><td class="p-2">${sumJhsF}</td><td class="p-2">${sumJhsM + sumJhsF}</td>
-          <td class="p-2">${sumG11M}</td><td class="p-2">${sumG11F}</td><td class="p-2">${sumG11M + sumG11F}</td>
-          <td class="p-2">${sumG12M}</td><td class="p-2">${sumG12F}</td><td class="p-2">${sumG12M + sumG12F}</td>
-          <td class="p-2 text-blue-900 font-bold">${totalStudents}</td>
+          <td colspan="2" class="p-3 text-right font-bold text-gray-700">TOTALS:</td>
+          <td class="p-2">${sumEleM}</td><td class="p-2">${sumEleF}</td><td class="p-2 bg-emerald-100 text-emerald-900">${sumEleM + sumEleF}</td>
+          <td class="p-2">${sumJhsM}</td><td class="p-2">${sumJhsF}</td><td class="p-2 bg-indigo-100 text-indigo-900">${sumJhsM + sumJhsF}</td>
+          <td class="p-2">${sumG11M}</td><td class="p-2">${sumG11F}</td><td class="p-2 bg-amber-100 text-amber-900">${sumG11M + sumG11F}</td>
+          <td class="p-2">${sumG12M}</td><td class="p-2">${sumG12F}</td><td class="p-2 bg-rose-100 text-rose-900">${sumG12M + sumG12F}</td>
+          <td class="p-2 text-blue-900 font-extrabold bg-gray-200">${totalStudents}</td>
         </tr>
       `;
     }
