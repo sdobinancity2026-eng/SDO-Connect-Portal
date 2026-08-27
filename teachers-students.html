@@ -101,8 +101,14 @@
             <p class="text-sm font-medium">Syncing data from Google Sheets...</p>
         </div>
 
-        <!-- STUDENTS VIEW TABLE matching 'ES-JHS-SHS' sheet structure -->
-        <div x-show="!loading && mainView === 'students'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Empty State -->
+        <div x-show="!loading && filteredSchools.length === 0" class="bg-white border-x border-b border-gray-200 p-12 text-center text-gray-500 rounded-b-xl">
+            <i class="fa-solid fa-folder-open text-3xl text-gray-400 mb-3"></i>
+            <p class="text-sm font-medium">No school data found matching your query or active tab.</p>
+        </div>
+
+        <!-- STUDENTS VIEW TABLE -->
+        <div x-show="!loading && mainView === 'students' && filteredSchools.length > 0" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto max-h-[650px]">
                 <table class="min-w-full divide-y divide-gray-200 text-left text-xs relative">
                     <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-20 shadow-sm">
@@ -129,19 +135,15 @@
                                 <td class="px-3 py-2.5 border-r font-mono text-gray-600" x-text="school.id"></td>
                                 <td class="px-3 py-2.5 border-r font-semibold text-gray-900 whitespace-nowrap" x-text="school.name"></td>
                                 
-                                <!-- Elementary Total -->
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.elem?.m || 0"></td>
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.elem?.f || 0"></td>
                                 
-                                <!-- Junior High School -->
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.jhs?.m || 0"></td>
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.jhs?.f || 0"></td>
                                 
-                                <!-- Grade 11 Total -->
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.g11?.m || 0"></td>
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.g11?.f || 0"></td>
                                 
-                                <!-- Grade 12 Total -->
                                 <td class="px-2 py-2.5 text-center border-r" x-text="school.g12?.m || 0"></td>
                                 <td class="px-2 py-2.5 text-center" x-text="school.g12?.f || 0"></td>
                             </tr>
@@ -151,8 +153,8 @@
             </div>
         </div>
 
-       <!-- TEACHERS VIEW TABLE (ELEM TAB) -->
-        <div x-show="!loading && mainView === 'teachers'" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
+        <!-- TEACHERS VIEW TABLE -->
+        <div x-show="!loading && mainView === 'teachers' && filteredSchools.length > 0" class="bg-white rounded-b-xl shadow-sm border border-gray-200 overflow-hidden">
             <div class="overflow-x-auto max-h-[650px]">
                 <table class="min-w-full divide-y divide-gray-200 text-left text-xs relative">
                     <thead class="bg-gray-100 text-gray-700 font-semibold uppercase tracking-wider sticky top-0 z-20 shadow-sm">
@@ -203,7 +205,7 @@
 
                 init() {
                     this.fetchData();
-                    setInterval(() => { this.fetchData(true); }, 15000);
+                    setInterval(() => { this.fetchData(true); }, 30000);
                 },
 
                 switchMainView(view) {
@@ -236,14 +238,14 @@
                     
                     let targetUrl = this.baseScriptUrl;
                     if (this.mainView === 'teachers') {
-                        targetUrl += `?tab=${this.teacherTab}`;
+                        targetUrl += `?tab=${encodeURIComponent(this.teacherTab)}`;
                     } else {
                         targetUrl += `?tab=ES-JHS-SHS`;
                     }
                     
-                    fetch(targetUrl, { method: 'GET', redirect: 'follow' })
+                    fetch(targetUrl)
                         .then(response => {
-                            if (!response.ok) throw new Error('Network error');
+                            if (!response.ok) throw new Error('Network response failed');
                             return response.text();
                         })
                         .then(textData => {
@@ -251,7 +253,7 @@
                             try {
                                 data = JSON.parse(textData);
                             } catch (e) {
-                                console.error('Parsed text is not valid JSON:', textData);
+                                console.error('Failed to parse response as JSON:', textData);
                             }
                             this.schools = Array.isArray(data) ? data : [];
                             this.loading = false;
@@ -269,8 +271,8 @@
                 get filteredSchools() {
                     if (!this.searchQuery) return this.schools;
                     return this.schools.filter(s => 
-                        String(s.name).toLowerCase().includes(this.searchQuery.toLowerCase()) || 
-                        String(s.id).includes(this.searchQuery)
+                        String(s.name || '').toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                        String(s.id || '').includes(this.searchQuery)
                     );
                 },
 
