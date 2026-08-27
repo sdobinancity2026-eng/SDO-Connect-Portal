@@ -511,52 +511,47 @@ async function fetchDashboardTotals() {
   const studentsCountEl = document.getElementById("totalStudentsCount");
 
   try {
-    // Select level along with data to apply specific ranges
-    const [teachersRes, studentsRes] = await Promise.all([
-      supabaseClient.from('teachers_data').select('level, data'),
-      supabaseClient.from('students_data').select('level, data')
-    ]);
+    // 1. Fetch Students Data
+    const { data: studentsData, error: studentsErr } = await supabaseClient
+      .from('students_data')
+      .select('data');
 
-    // --- STUDENTS TOTAL ---
-    if (!studentsRes.error && studentsRes.data) {
-      const data = studentsRes.data;
+    if (!studentsErr && studentsData) {
+      let grandTotalStudents = 0;
 
-      // ELEM: Rows 5 to 31 (indices 4 to 30), Cols C to U (0 to 18)
-      const elem = sumDataRange(data, 'ELEM', 4, 30, 0, 18);
+      studentsData.forEach(record => {
+        const metrics = Array.isArray(record.data) ? record.data : [];
+        
+        // Sum all 44 student columns (Cols C to AT: ELEM, JHS, and SHS)
+        const rowTotal = metrics.reduce((sum, val) => sum + (Number(val) || 0), 0);
+        grandTotalStudents += rowTotal;
+      });
 
-      // JHS: Rows 5 to 15 (indices 4 to 14), Cols C to Q (0 to 14)
-      const jhs = sumDataRange(data, 'JHS', 4, 14, 0, 14);
-
-      // SHS: Rows 6 to 12 (indices 5 to 11), Cols C to R (0 to 15)
-      const shs = sumDataRange(data, 'SHS', 5, 11, 0, 15);
-
-      studentsCountEl.innerText = (elem + jhs + shs).toLocaleString();
+      studentsCountEl.innerText = grandTotalStudents.toLocaleString();
     } else {
       studentsCountEl.innerText = "0";
     }
 
-    // --- TEACHERS TOTAL ---
-    if (!teachersRes.error && teachersRes.data) {
-      const data = teachersRes.data;
+    // 2. Fetch Teachers Data (Keeps category logic if Teachers remain split by ELEM, JHS, SHS)
+    const { data: teachersData, error: teachersErr } = await supabaseClient
+      .from('teachers_data')
+      .select('data');
 
-      // ELEM: Rows 4 to 30 (indices 3 to 29), Cols C to U (0 to 18)
-      const elem = sumDataRange(data, 'ELEM', 3, 29, 0, 18);
+    if (!teachersErr && teachersData) {
+      const grandTotalTeachers = teachersData.reduce((acc, record) => {
+        const metrics = Array.isArray(record.data) ? record.data : [];
+        return acc + metrics.reduce((sum, val) => sum + (Number(val) || 0), 0);
+      }, 0);
 
-      // JHS: Rows 4 to 14 (indices 3 to 13), Cols C to Q (0 to 14)
-      const jhs = sumDataRange(data, 'JHS', 3, 13, 0, 14);
-
-      // SHS: Rows 6 to 12 (indices 5 to 11), Cols C to R (0 to 15)
-      const shs = sumDataRange(data, 'SHS', 5, 11, 0, 15);
-
-      teachersCountEl.innerText = (elem + jhs + shs).toLocaleString();
+      teachersCountEl.innerText = grandTotalTeachers.toLocaleString();
     } else {
       teachersCountEl.innerText = "0";
     }
 
   } catch (err) {
-    console.error("Error fetching dashboard counts:", err);
-    teachersCountEl.innerText = "N/A";
+    console.error("Error calculating totals:", err);
     studentsCountEl.innerText = "N/A";
+    teachersCountEl.innerText = "N/A";
   }
 }
 
