@@ -17,24 +17,6 @@
       filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.4));
     }
 
-    /* Fixed Sticky Table Header Rules for Multi-row headers */
-    #tableHead th {
-      position: sticky;
-      z-index: 20;
-    }
-
-    #tableHead tr:nth-child(1) th {
-      top: 0;
-    }
-
-    #tableHead tr:nth-child(2) th {
-      top: 29px; /* Height of Row 1 */
-    }
-
-    #tableHead tr:nth-child(3) th {
-      top: 53px; /* Height of Row 1 + Row 2 */
-    }
-
     /* Table border utility */
     .table-bordered th, .table-bordered td {
       border: 1px solid #cbd5e1;
@@ -156,8 +138,8 @@
           <select id="sySelect" onchange="loadDashboardData()" class="bg-white text-sm font-medium border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="2023-2024">2023-2024</option>
             <option value="2024-2025">2024-2025</option>
-            <option value="2025-2026" selected>2025-2026</option>
-            <option value="2026-2027">2026-2027</option>
+            <option value="2025-2026">2025-2026</option>
+            <option value="2026-2027" selected>2026-2027</option>
           </select>
         </div>
 
@@ -166,7 +148,7 @@
           <label for="datasetSelect" class="text-xs font-bold text-gray-600 uppercase pl-2">Data View:</label>
           <select id="datasetSelect" onchange="handleViewChange()" class="bg-white text-sm font-medium border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
             <option value="teachers">Teachers Data</option>
-            <option value="students">Students Data</option>
+            <option value="students" selected>Students Data</option>
           </select>
         </div>
 
@@ -202,14 +184,14 @@
       <div id="emptyState" class="hidden p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-2 my-auto">
         <i class="fa-solid fa-folder-open text-4xl text-gray-300"></i>
         <span class="font-medium text-base text-gray-700">No records found</span>
-        <p class="text-xs text-gray-400">There is no data available for the selected School Year and Level category.</p>
+        <p class="text-xs text-gray-400">There is no data available for the selected School Year.</p>
       </div>
 
       <!-- Scrollable Data Table Wrapper -->
       <div id="tableWrapper" class="hidden flex-1 overflow-auto">
         <table class="w-full text-left border-separate border-spacing-0 text-xs table-bordered">
-          <thead id="tableHead" class="text-gray-900 font-bold uppercase tracking-wider text-[11px]">
-            <!-- Dynamic Category Headers -->
+          <thead id="tableHead" class="text-gray-900 font-bold uppercase tracking-wider text-[11px] bg-slate-100">
+            <!-- Dynamic Headers -->
           </thead>
           <tbody id="tableBody" class="divide-y divide-gray-200 bg-white text-center">
             <!-- Dynamic Rows -->
@@ -245,7 +227,6 @@ function handleViewChange() {
   const dataset = document.getElementById("datasetSelect").value;
   const categoryWrapper = document.getElementById("categoryWrapper");
   
-  // Show Category dropdown only for Teachers; hide for Students
   if (dataset === "teachers") {
     categoryWrapper.style.display = "flex";
   } else {
@@ -286,7 +267,7 @@ async function fetchTeachersData(category, schoolYear) {
   showState('data');
 }
 
-// --- NEW STUDENT DATA FETCHING & RENDERING ---
+// --- STUDENT DATA FETCHING & RENDERING ---
 
 async function fetchStudentsData(schoolYear) {
   const { data, error } = await supabaseClient
@@ -316,7 +297,6 @@ function renderStudentsTable(records) {
 
   const totalCols = (elemGrades.length + jhsGrades.length + shsG11Tracks.length + shsG12Tracks.length) * 2;
 
-  // Build 3-tier Excel Table Header
   thead.innerHTML = `
     <tr class="text-xs uppercase tracking-wider text-center text-white">
       <th rowspan="3" class="p-2 w-12 bg-slate-700 border border-slate-500">No.</th>
@@ -340,7 +320,6 @@ function renderStudentsTable(records) {
   const columnSums = new Array(totalCols).fill(0);
   let grandTotal = 0;
 
-  // Build Body Rows
   tbody.innerHTML = records.map((record, index) => {
     const metrics = Array.isArray(record.data) ? record.data : [];
     let rowSum = 0;
@@ -363,7 +342,6 @@ function renderStudentsTable(records) {
     return rowHTML;
   }).join('');
 
-  // Build Footer Total Row
   let footHTML = `
     <tr class="text-xs font-bold text-center bg-gray-100 border-t-2 border-slate-400">
       <td colspan="2" class="p-2 text-right text-gray-800">TOTAL:</td>
