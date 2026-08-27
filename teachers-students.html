@@ -242,10 +242,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function handleViewChange() {
+  const dataset = document.getElementById("datasetSelect").value;
   const categoryWrapper = document.getElementById("categoryWrapper");
   
-  // Always display the Category selector (ELEM, JHS, SHS) for both datasets
-  categoryWrapper.style.display = "flex";
+  // Show Category dropdown only for Teachers; hide for Students
+  if (dataset === "teachers") {
+    categoryWrapper.style.display = "flex";
+  } else {
+    categoryWrapper.style.display = "none";
+  }
   
   loadDashboardData();
 }
@@ -260,8 +265,7 @@ async function loadDashboardData() {
   if (dataset === "teachers") {
     await fetchTeachersData(category, sy);
   } else {
-    // Pass category along with sy
-    await fetchStudentsData(category, sy);
+    await fetchStudentsData(sy);
   }
 }
 
@@ -284,11 +288,10 @@ async function fetchTeachersData(category, schoolYear) {
 
 // --- NEW STUDENT DATA FETCHING & RENDERING ---
 
-async function fetchStudentsData(category, schoolYear) {
+async function fetchStudentsData(schoolYear) {
   const { data, error } = await supabaseClient
     .from('students_data')
     .select('*')
-    .eq('level', category)
     .eq('school_year', schoolYear);
 
   if (error || !data || data.length === 0) {
@@ -297,173 +300,81 @@ async function fetchStudentsData(category, schoolYear) {
     return;
   }
 
-  renderStudentsTable(data, category);
+  renderStudentsTable(data);
   showState('data');
 }
 
-function renderStudentsTable(records, category) {
+function renderStudentsTable(records) {
   const thead = document.getElementById("tableHead");
   const tbody = document.getElementById("tableBody");
   const tfoot = document.getElementById("tableFoot");
 
-  if (category === 'ELEM' || category === 'JHS') {
-    const isElem = category === 'ELEM';
-    const grades = isElem 
-      ? ['K', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6']
-      : ['G7', 'G8', 'G9', 'G10'];
-    
-    const gradesColSpan = grades.length * 2;
-    const specialProgramLabel = isElem ? 'SPED' : 'SNED';
-    const totalHeaderLabel = isElem ? 'Total' : 'G.Total';
-    const headerBgColor = isElem ? 'bg-lime-200' : 'bg-emerald-800 text-white';
-    const headerMainBg = isElem ? 'bg-lime-300' : 'bg-emerald-700 text-white';
+  const elemGrades = ['KINDERGARTEN', 'GRADE 1', 'GRADE 2', 'GRADE 3', 'GRADE 4', 'GRADE 5', 'GRADE 6', 'SNED (NON-GRADED ES)'];
+  const jhsGrades = ['GRADE 7', 'GRADE 8', 'GRADE 9', 'GRADE 10', 'SNED (NON-GRADED JHS)'];
+  const shsG11Tracks = ['GRADE 11 ACADEMIC TRACK', 'GRADE 11 TVL TRACK', 'GRADE 11 SPORTS TRACK', 'GRADE 11 ARTS & DESIGN TRACK'];
+  const shsG12Tracks = ['GRADE 12 ACADEMIC TRACK', 'GRADE 12 TVL TRACK', 'GRADE 12 SPORTS TRACK', 'GRADE 12 ARTS & DESIGN TRACK'];
 
-    // Header HTML based on ELEM (image_c7bf43.png) & JHS (image_c7bffd.png)
-    thead.innerHTML = `
-      <tr>
-        <th rowspan="3" class="p-2 w-12 text-center ${headerBgColor} border-b border-gray-400">No.</th>
-        <th rowspan="3" class="p-2 ${headerBgColor} border-b border-gray-400 min-w-[200px] text-left">Name of School</th>
-        <th colspan="${gradesColSpan + 5}" class="p-1.5 text-center ${headerMainBg} border-b border-gray-400">Number of Students</th>
-        <th rowspan="3" class="p-2 text-center ${headerBgColor} border-b border-gray-400">${totalHeaderLabel}</th>
-      </tr>
-      <tr>
-        ${grades.map(g => `<th colspan="2" class="p-1 text-center ${headerBgColor} border-b border-gray-400">${g}</th>`).join('')}
-        <th rowspan="2" class="p-1 text-center ${headerMainBg} border-b border-gray-400">Total</th>
-        <th colspan="2" class="p-1 text-center bg-sky-200 text-black border-b border-gray-400">${specialProgramLabel}</th>
-        <th colspan="2" class="p-1 text-center bg-amber-200 text-black border-b border-gray-400">ALS</th>
-      </tr>
-      <tr class="text-[10px]">
-        ${grades.map(() => `<th class="p-1 ${headerBgColor} border-b border-gray-400">Male</th><th class="p-1 ${headerBgColor} border-b border-gray-400">Female</th>`).join('')}
-        <th class="p-1 bg-sky-200 text-black border-b border-gray-400">Male</th>
-        <th class="p-1 bg-sky-200 text-black border-b border-gray-400">Female</th>
-        <th class="p-1 bg-amber-200 text-black border-b border-gray-400">Male</th>
-        <th class="p-1 bg-amber-200 text-black border-b border-gray-400">Female</th>
-      </tr>
+  const totalCols = (elemGrades.length + jhsGrades.length + shsG11Tracks.length + shsG12Tracks.length) * 2;
+
+  // Build 3-tier Excel Table Header
+  thead.innerHTML = `
+    <tr class="text-xs uppercase tracking-wider text-center text-white">
+      <th rowspan="3" class="p-2 w-12 bg-slate-700 border border-slate-500">No.</th>
+      <th rowspan="3" class="p-2 bg-slate-700 border border-slate-500 min-w-[220px] text-left">Name of School</th>
+      <th colspan="${elemGrades.length * 2}" class="p-1.5 bg-sky-600 border border-slate-500">Elementary Level</th>
+      <th colspan="${jhsGrades.length * 2}" class="p-1.5 bg-amber-600 border border-slate-500">Junior High School Level</th>
+      <th colspan="${(shsG11Tracks.length + shsG12Tracks.length) * 2}" class="p-1.5 bg-emerald-700 border border-slate-500">Senior High School Level</th>
+      <th rowspan="3" class="p-2 bg-slate-800 border border-slate-500 min-w-[80px]">Total</th>
+    </tr>
+    <tr class="text-[11px] font-semibold text-center text-gray-800">
+      ${elemGrades.map(g => `<th colspan="2" class="p-1 bg-sky-100 border border-slate-400">${g}</th>`).join('')}
+      ${jhsGrades.map(g => `<th colspan="2" class="p-1 bg-amber-100 border border-slate-400">${g}</th>`).join('')}
+      ${shsG11Tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-100 border border-slate-400">${t}</th>`).join('')}
+      ${shsG12Tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-200 border border-slate-400">${t}</th>`).join('')}
+    </tr>
+    <tr class="text-[10px] text-center bg-gray-50 border border-slate-400">
+      ${Array(totalCols / 2).fill('<th class="p-1 border border-slate-300">MALE</th><th class="p-1 border border-slate-300">FEMALE</th>').join('')}
+    </tr>
+  `;
+
+  const columnSums = new Array(totalCols).fill(0);
+  let grandTotal = 0;
+
+  // Build Body Rows
+  tbody.innerHTML = records.map((record, index) => {
+    const metrics = Array.isArray(record.data) ? record.data : [];
+    let rowSum = 0;
+
+    let rowHTML = `
+      <tr class="hover:bg-blue-50/50 transition-colors text-xs text-center border-b border-gray-200">
+        <td class="p-2 font-mono text-gray-500 border-r">${index + 1}</td>
+        <td class="p-2 text-left font-semibold text-gray-800 border-r whitespace-nowrap">${record.school_name}</td>
     `;
 
-    const totalMetricCols = gradesColSpan + 5;
-    const columnSums = new Array(totalMetricCols).fill(0);
-    let grandTotal = 0;
-
-    // Body Rows
-    tbody.innerHTML = records.map((record, index) => {
-      const metrics = Array.isArray(record.data) ? record.data : [];
-      let rowHTML = `
-        <tr class="hover:bg-blue-50/50 transition-colors">
-          <td class="p-2 font-mono text-gray-500">${index + 1}</td>
-          <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
-      `;
-
-      let rowSum = 0;
-      for (let i = 0; i < totalMetricCols; i++) {
-        const val = Number(metrics[i]) || 0;
-        rowSum += val;
-        columnSums[i] += val;
-        rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
-      }
-
-      grandTotal += rowSum;
-      rowHTML += `<td class="p-2 font-bold text-gray-900 bg-lime-50">${rowSum}</td></tr>`;
-      return rowHTML;
-    }).join('');
-
-    // Footer Total Row
-    let footHTML = `
-      <tr>
-        <td colspan="2" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
-    `;
-
-    for (let i = 0; i < totalMetricCols; i++) {
-      footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
+    for (let i = 0; i < totalCols; i++) {
+      const val = Number(metrics[i]) || 0;
+      rowSum += val;
+      columnSums[i] += val;
+      rowHTML += `<td class="p-1.5 text-gray-700 border-r ${val === 0 ? 'text-gray-300' : ''}">${val}</td>`;
     }
 
-    footHTML += `<td class="p-2 text-gray-900 font-extrabold bg-lime-200">${grandTotal}</td></tr>`;
-    tfoot.innerHTML = footHTML;
+    grandTotal += rowSum;
+    rowHTML += `<td class="p-2 font-bold text-blue-900 bg-blue-50/80">${rowSum.toLocaleString()}</td></tr>`;
+    return rowHTML;
+  }).join('');
 
-  } else if (category === 'SHS') {
-    // Header HTML based on SHS (image_c7c321.png)
-    const tracks = ['Academic Track', 'Arts & Design Track', 'Sports Track', 'TVL Track'];
-    const numTracks = tracks.length;
+  // Build Footer Total Row
+  let footHTML = `
+    <tr class="text-xs font-bold text-center bg-gray-100 border-t-2 border-slate-400">
+      <td colspan="2" class="p-2 text-right text-gray-800">TOTAL:</td>
+  `;
 
-    thead.innerHTML = `
-      <tr>
-        <th rowspan="3" class="p-2 w-12 text-center bg-lime-300 border-b border-gray-400">No.</th>
-        <th rowspan="3" class="p-2 bg-lime-300 border-b border-gray-400 min-w-[200px] text-left">Name of School</th>
-        <th colspan="${(numTracks * 4) + 3}" class="p-1.5 text-center bg-lime-400 border-b border-gray-400">Number of Students</th>
-      </tr>
-      <tr>
-        <th colspan="${numTracks * 2}" class="p-1 text-center bg-lime-200 border-b border-gray-400">G11</th>
-        <th colspan="${numTracks * 2}" class="p-1 text-center bg-emerald-600 text-white border-b border-gray-400">G12</th>
-        <th colspan="3" class="p-1 text-center bg-lime-300 border-b border-gray-400">Total</th>
-      </tr>
-      <tr class="text-[10px]">
-        ${tracks.map(t => `<th class="p-1 bg-lime-200 border-b border-gray-400">${t}<br>(Male)</th><th class="p-1 bg-lime-200 border-b border-gray-400">${t}<br>(Female)</th>`).join('')}
-        ${tracks.map(t => `<th class="p-1 bg-emerald-600 text-white border-b border-gray-400">${t}<br>(Male)</th><th class="p-1 bg-emerald-600 text-white border-b border-gray-400">${t}<br>(Female)</th>`).join('')}
-        <th class="p-1 bg-lime-300 border-b border-gray-400">Male</th>
-        <th class="p-1 bg-lime-300 border-b border-gray-400">Female</th>
-        <th class="p-1 bg-lime-300 border-b border-gray-400 font-bold">Total</th>
-      </tr>
-    `;
-
-    const totalMetricCols = numTracks * 4;
-    const columnSums = new Array(totalMetricCols).fill(0);
-    let maleGrandTotal = 0;
-    let femaleGrandTotal = 0;
-
-    tbody.innerHTML = records.map((record, index) => {
-      const metrics = Array.isArray(record.data) ? record.data : [];
-      let rowHTML = `
-        <tr class="hover:bg-blue-50/50 transition-colors">
-          <td class="p-2 font-mono text-gray-500">${index + 1}</td>
-          <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
-      `;
-
-      let rowMaleTotal = 0;
-      let rowFemaleTotal = 0;
-
-      for (let i = 0; i < totalMetricCols; i++) {
-        const val = Number(metrics[i]) || 0;
-        columnSums[i] += val;
-
-        if (i % 2 === 0) {
-          rowMaleTotal += val;
-        } else {
-          rowFemaleTotal += val;
-        }
-
-        rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
-      }
-
-      maleGrandTotal += rowMaleTotal;
-      femaleGrandTotal += rowFemaleTotal;
-      const rowGrandTotal = rowMaleTotal + rowFemaleTotal;
-
-      rowHTML += `
-        <td class="p-2 text-blue-700 font-semibold bg-gray-50">${rowMaleTotal}</td>
-        <td class="p-2 text-pink-700 font-semibold bg-gray-50">${rowFemaleTotal}</td>
-        <td class="p-2 font-bold text-gray-900 bg-lime-100">${rowGrandTotal}</td>
-      </tr>`;
-
-      return rowHTML;
-    }).join('');
-
-    let footHTML = `
-      <tr>
-        <td colspan="2" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
-    `;
-
-    for (let i = 0; i < totalMetricCols; i++) {
-      footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
-    }
-
-    footHTML += `
-      <td class="p-2 text-blue-900 font-extrabold bg-gray-100">${maleGrandTotal}</td>
-      <td class="p-2 text-pink-900 font-extrabold bg-gray-100">${femaleGrandTotal}</td>
-      <td class="p-2 text-gray-900 font-extrabold bg-lime-200">${maleGrandTotal + femaleGrandTotal}</td>
-    </tr>`;
-
-    tfoot.innerHTML = footHTML;
+  for (let i = 0; i < totalCols; i++) {
+    footHTML += `<td class="p-2 border-r border-gray-300">${columnSums[i].toLocaleString()}</td>`;
   }
+
+  footHTML += `<td class="p-2 text-blue-900 text-sm font-extrabold bg-blue-200">${grandTotal.toLocaleString()}</td></tr>`;
+  tfoot.innerHTML = footHTML;
 }
 
 // --- TEACHERS TABLE RENDERER ---
