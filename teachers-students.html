@@ -260,7 +260,8 @@ async function loadDashboardData() {
   if (dataset === "teachers") {
     await fetchTeachersData(category, sy);
   } else {
-    await fetchStudentsData(sy);
+    // Pass category along with sy
+    await fetchStudentsData(category, sy);
   }
 }
 
