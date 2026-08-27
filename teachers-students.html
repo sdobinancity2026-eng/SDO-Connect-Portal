@@ -13,32 +13,84 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    /* Custom Logo Glow Effect from your header design */
     .logo-glow {
       filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.4));
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background-color: white !important;
+        color: black !important;
+      }
+
+      /* Hide non-printable UI elements */
+      .no-print, header, footer, #loading, #emptyState {
+        display: none !important;
+      }
+
+      /* Printable Container Adjustments */
+      main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .print-header {
+        display: block !important;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      #tableWrapper {
+        display: block !important;
+        overflow: visible !important;
+      }
+
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 10pt !important;
+      }
+
+      th, td {
+        border: 1px solid #cbd5e1 !important;
+        padding: 6px 8px !important;
+      }
+
+      th {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+      }
+
+      /* Ensure total columns remain visible and styled for print */
+      tfoot {
+        background-color: #f8fafc !important;
+        font-weight: bold;
+      }
+    }
+
+    .print-header {
+      display: none;
     }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col font-sans text-gray-800">
 
-  <!-- Top Header (Fixed at Top) -->
+  <!-- Top Header -->
   <header class="bg-blue-900 text-white shadow-lg py-3 px-4 shrink-0 z-20">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       
-      <!-- Combined Logos & Title Section (Side-by-Side) -->
+      <!-- Combined Logos & Title Section -->
       <div class="flex flex-wrap sm:flex-nowrap items-center justify-center md:justify-start gap-3 sm:gap-4 text-center sm:text-left">
-        
-        <!-- Logos Row -->
         <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
           <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
           <img src="Bagong_Pilipinas_Logo.svg - Copy.png" alt="Bagong Pilipinas Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
           <img src="DOB_LOGO.png" alt="SDO Biñan Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
         </div>
 
-        <!-- Divider Line for Desktop -->
         <div class="hidden sm:block h-10 w-px bg-blue-700"></div>
 
-        <!-- Title Text beside Logo -->
         <div>
           <p class="text-[11px] sm:text-xs tracking-wider text-blue-200 font-medium">Republic of the Philippines &nbsp;|&nbsp; Department of Education</p>
           <h1 class="text-sm sm:text-base md:text-lg font-bold tracking-wide uppercase">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
@@ -47,17 +99,25 @@
 
       <!-- Status Indicator Badge -->
       <div class="bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-100 shrink-0 border border-blue-700 shadow-inner">
-        <i class="fa-solid fa-circle-check text-green-400 mr-1.5"></i> System Online (2025-2026)
+        <i class="fa-solid fa-circle-check text-green-400 mr-1.5"></i> System Online
       </div>
 
     </div>
   </header>
 
+  <!-- Print Header Document Layout (Visible only during window.print()) -->
+  <div class="print-header">
+    <h2 class="text-xs font-bold tracking-wider text-gray-600 uppercase">Republic of the Philippines • Department of Education</h2>
+    <h1 class="text-base font-bold uppercase text-gray-900">Schools Division Office of Biñan City</h1>
+    <p id="printMeta" class="text-sm text-gray-700 mt-1 font-semibold"></p>
+    <hr class="mt-3 border-gray-400">
+  </div>
+
   <!-- Main Content Container -->
   <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
 
     <!-- Controls Bar -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="no-print bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
         <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
           <i class="fa-solid fa-chart-pie text-blue-600"></i> Division Data Analytics
@@ -66,6 +126,18 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
+        
+        <!-- School Year Filter -->
+        <div class="flex items-center space-x-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
+          <label for="sySelect" class="text-xs font-bold text-gray-600 uppercase pl-2">S.Y.:</label>
+          <select id="sySelect" onchange="loadDashboardData()" class="bg-white text-sm font-medium border border-gray-300 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none">
+            <option value="2023-2024">2023-2024</option>
+            <option value="2024-2025">2024-2025</option>
+            <option value="2025-2026" selected>2025-2026</option>
+            <option value="2026-2027">2026-2027</option>
+          </select>
+        </div>
+
         <!-- View Toggle (Teachers/Students) -->
         <div class="flex items-center space-x-2 bg-gray-50 p-1.5 rounded-lg border border-gray-200">
           <label for="datasetSelect" class="text-xs font-bold text-gray-600 uppercase pl-2">Data View:</label>
@@ -84,6 +156,13 @@
             <option value="SHS">Senior High (SHS)</option>
           </select>
         </div>
+
+        <!-- Print Button -->
+        <button onclick="triggerPrint()" class="flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white font-medium text-sm px-4 py-2 rounded-lg transition-colors shadow-sm">
+          <i class="fa-solid fa-print"></i>
+          <span>Print Report</span>
+        </button>
+
       </div>
     </div>
 
@@ -93,6 +172,13 @@
       <div id="loading" class="p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-3">
         <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-600"></i>
         <span class="font-medium text-sm">Fetching records from Supabase...</span>
+      </div>
+
+      <!-- Empty State Indicator -->
+      <div id="emptyState" class="hidden p-12 text-center text-gray-500 flex flex-col items-center justify-center space-y-2">
+        <i class="fa-solid fa-folder-open text-4xl text-gray-300"></i>
+        <span class="font-medium text-base text-gray-700">No records found</span>
+        <p class="text-xs text-gray-400">There is no data available for the selected School Year and Level category.</p>
       </div>
 
       <!-- Data Table -->
@@ -122,10 +208,10 @@
   </footer>
 
   <script>
-    // Supabase Configuration
-    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Supabase Credentials
+    const SUPABASE_URL = 'https://dykqemuqzthhfgostjyg.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_cWi7ZqfNlPy5Tp8IQAH1gA_DKwikowm';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     document.addEventListener("DOMContentLoaded", () => {
       handleViewChange();
@@ -141,187 +227,126 @@
     async function loadDashboardData() {
       const dataset = document.getElementById("datasetSelect").value;
       const category = document.getElementById("categorySelect").value;
+      const sy = document.getElementById("sySelect").value;
       
-      showLoading(true);
+      showState('loading');
 
       if (dataset === "teachers") {
-        await fetchTeachersData(category);
+        await fetchTeachersData(category, sy);
       } else {
-        await fetchStudentsData();
+        await fetchStudentsData(sy);
       }
-
-      showLoading(false);
     }
 
-    async function fetchTeachersData(category) {
-      const { data, error } = await supabase
-        .from('schools')
-        .select(`
-          id,
-          name,
-          teachers ( male, female )
-        `)
-        .eq('category', category);
+    async function fetchTeachersData(category, schoolYear) {
+      const { data, error } = await supabaseClient
+        .from('teachers_data')
+        .select('*')
+        .eq('level', category)
+        .eq('school_year', schoolYear);
 
       if (error) {
-        console.error('Error fetching teachers:', error);
-        showLoading(false);
+        console.error('Error fetching teachers data:', error);
+        showState('empty');
         return;
       }
 
-      const rows = data.map(school => {
-        const totalMale = school.teachers ? school.teachers.reduce((s, t) => s + (t.male || 0), 0) : 0;
-        const totalFemale = school.teachers ? school.teachers.reduce((s, t) => s + (t.female || 0), 0) : 0;
-        return {
-          id: school.id,
-          name: school.name,
-          male: totalMale,
-          female: totalFemale,
-          total: totalMale + totalFemale
-        };
-      });
-
-      renderTeachersTable(rows, category);
-    }
-
-    async function fetchStudentsData() {
-      const { data, error } = await supabase
-        .from('schools')
-        .select(`
-          id,
-          name,
-          students ( elem_male, elem_female, jhs_male, jhs_female, g11_male, g11_female, g12_male, g12_female )
-        `);
-
-      if (error) {
-        console.error('Error fetching students:', error);
-        showLoading(false);
+      if (!data || data.length === 0) {
+        showState('empty');
         return;
       }
 
-      const rows = data.map(school => {
-        const s = (school.students && school.students[0]) ? school.students[0] : {};
-        const elemM = s.elem_male || 0, elemF = s.elem_female || 0;
-        const jhsM = s.jhs_male || 0, jhsF = s.jhs_female || 0;
-        const g11M = s.g11_male || 0, g11F = s.g11_female || 0;
-        const g12M = s.g12_male || 0, g12F = s.g12_female || 0;
-
-        return {
-          id: school.id,
-          name: school.name,
-          elem: { m: elemM, f: elemF, total: elemM + elemF },
-          jhs:  { m: jhsM, f: jhsF, total: jhsM + jhsF },
-          g11:  { m: g11M, f: g11F, total: g11M + g11F },
-          g12:  { m: g12M, f: g12F, total: g12M + g12F },
-          grandTotal: (elemM + elemF + jhsM + jhsF + g11M + g11F + g12M + g12F)
-        };
-      });
-
-      renderStudentsTable(rows);
+      renderTeachersTable(data, category);
+      showState('data');
     }
 
-    function renderTeachersTable(rows, category) {
+    async function fetchStudentsData(schoolYear) {
+      showState('empty');
+    }
+
+    function renderTeachersTable(records, category) {
       const thead = document.getElementById("tableHead");
       const tbody = document.getElementById("tableBody");
       const tfoot = document.getElementById("tableFoot");
 
-      thead.innerHTML = `
+      let maxMetricsLength = 0;
+      records.forEach(r => {
+        if (Array.isArray(r.data) && r.data.length > maxMetricsLength) {
+          maxMetricsLength = r.data.length;
+        }
+      });
+
+      let headerHTML = `
         <tr>
           <th class="p-3.5 w-12 text-center border-b border-slate-700">No.</th>
-          <th class="p-3.5 border-b border-slate-700">School Name (${category})</th>
-          <th class="p-3.5 text-center bg-blue-900 border-b border-slate-700">Male Teachers</th>
-          <th class="p-3.5 text-center bg-pink-900 border-b border-slate-700">Female Teachers</th>
-          <th class="p-3.5 text-center bg-slate-950 border-b border-slate-700">Total Teachers</th>
-        </tr>
+          <th class="p-3.5 border-b border-slate-700 min-w-[200px]">School Name (${category})</th>
       `;
 
-      let totalM = 0, totalF = 0;
-      tbody.innerHTML = rows.map((r, i) => {
-        totalM += r.male;
-        totalF += r.female;
-        return `
+      for (let i = 1; i <= maxMetricsLength; i++) {
+        headerHTML += `<th class="p-3.5 text-center border-b border-slate-700">Metric ${i}</th>`;
+      }
+      headerHTML += `<th class="p-3.5 text-center bg-slate-950 border-b border-slate-700">Total Teachers</th></tr>`;
+      thead.innerHTML = headerHTML;
+
+      const columnSums = new Array(maxMetricsLength).fill(0);
+      let grandTotalSum = 0;
+
+      tbody.innerHTML = records.map((record, index) => {
+        const metrics = Array.isArray(record.data) ? record.data : [];
+        let rowSum = 0;
+
+        let rowHTML = `
           <tr class="hover:bg-blue-50/50 transition-colors border-b border-gray-100">
-            <td class="p-3 text-center font-mono text-xs text-gray-500">${i + 1}</td>
-            <td class="p-3 font-semibold text-gray-800">${r.name}</td>
-            <td class="p-3 text-center text-blue-600 font-medium">${r.male}</td>
-            <td class="p-3 text-center text-pink-600 font-medium">${r.female}</td>
-            <td class="p-3 text-center font-bold text-gray-900 bg-gray-50/80">${r.total}</td>
-          </tr>
+            <td class="p-3 text-center font-mono text-xs text-gray-500">${index + 1}</td>
+            <td class="p-3 font-semibold text-gray-800">${record.school_name}</td>
         `;
+
+        for (let i = 0; i < maxMetricsLength; i++) {
+          const val = Number(metrics[i]) || 0;
+          rowSum += val;
+          columnSums[i] += val;
+
+          rowHTML += `<td class="p-3 text-center font-medium text-gray-700">${val}</td>`;
+        }
+
+        grandTotalSum += rowSum;
+        rowHTML += `<td class="p-3 text-center font-bold text-gray-900 bg-gray-50/80">${rowSum}</td></tr>`;
+
+        return rowHTML;
       }).join('');
 
-      tfoot.innerHTML = `
+      let footHTML = `
         <tr>
           <td colspan="2" class="p-3.5 text-right font-bold text-gray-700">GRAND TOTAL:</td>
-          <td class="p-3.5 text-center text-blue-700 font-bold">${totalM}</td>
-          <td class="p-3.5 text-center text-pink-700 font-bold">${totalF}</td>
-          <td class="p-3.5 text-center text-gray-900 font-extrabold bg-gray-200">${totalM + totalF}</td>
-        </tr>
       `;
+
+      for (let i = 0; i < maxMetricsLength; i++) {
+        footHTML += `<td class="p-3.5 text-center font-bold text-blue-800">${columnSums[i]}</td>`;
+      }
+
+      footHTML += `<td class="p-3.5 text-center text-gray-900 font-extrabold bg-gray-200">${grandTotalSum}</td></tr>`;
+      tfoot.innerHTML = footHTML;
     }
 
-    function renderStudentsTable(rows) {
-      const thead = document.getElementById("tableHead");
-      const tbody = document.getElementById("tableBody");
-      const tfoot = document.getElementById("tableFoot");
-
-      thead.innerHTML = `
-        <tr>
-          <th rowspan="2" class="p-3 w-12 text-center border-r border-slate-700">No.</th>
-          <th rowspan="2" class="p-3 border-r border-slate-700">School Name</th>
-          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-emerald-800">Elementary</th>
-          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-indigo-800">Junior High</th>
-          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-amber-800">Grade 11</th>
-          <th colspan="3" class="p-2 text-center border-b border-r border-slate-700 bg-rose-800">Grade 12</th>
-          <th rowspan="2" class="p-3 text-center bg-slate-950">Grand Total</th>
-        </tr>
-        <tr class="text-xs">
-          <th class="p-1.5 text-center bg-emerald-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-emerald-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-emerald-900 border-r border-slate-700">Total</th>
-          <th class="p-1.5 text-center bg-indigo-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-indigo-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-indigo-900 border-r border-slate-700">Total</th>
-          <th class="p-1.5 text-center bg-amber-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-amber-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-amber-900 border-r border-slate-700">Total</th>
-          <th class="p-1.5 text-center bg-rose-700 border-r border-slate-700">M</th><th class="p-1.5 text-center bg-rose-700 border-r border-slate-700">F</th><th class="p-1.5 text-center bg-rose-900 border-r border-slate-700">Total</th>
-        </tr>
-      `;
-
-      let sumEleM = 0, sumEleF = 0, sumJhsM = 0, sumJhsF = 0;
-      let sumG11M = 0, sumG11F = 0, sumG12M = 0, sumG12F = 0;
-
-      tbody.innerHTML = rows.map((r, i) => {
-        sumEleM += r.elem.m; sumEleF += r.elem.f;
-        sumJhsM += r.jhs.m;  sumJhsF += r.jhs.f;
-        sumG11M += r.g11.m;  sumG11F += r.g11.f;
-        sumG12M += r.g12.m;  sumG12F += r.g12.f;
-
-        return `
-          <tr class="hover:bg-blue-50/50 transition-colors border-b border-gray-100 text-center text-sm">
-            <td class="p-2.5 font-mono text-xs text-gray-500 border-r">${i + 1}</td>
-            <td class="p-2.5 text-left font-semibold text-gray-800 border-r">${r.name}</td>
-            <td class="p-2.5">${r.elem.m}</td><td class="p-2.5">${r.elem.f}</td><td class="p-2.5 font-semibold bg-emerald-50/50 border-r">${r.elem.total}</td>
-            <td class="p-2.5">${r.jhs.m}</td><td class="p-2.5">${r.jhs.f}</td><td class="p-2.5 font-semibold bg-indigo-50/50 border-r">${r.jhs.total}</td>
-            <td class="p-2.5">${r.g11.m}</td><td class="p-2.5">${r.g11.f}</td><td class="p-2.5 font-semibold bg-amber-50/50 border-r">${r.g11.total}</td>
-            <td class="p-2.5">${r.g12.m}</td><td class="p-2.5">${r.g12.f}</td><td class="p-2.5 font-semibold bg-rose-50/50 border-r">${r.g12.total}</td>
-            <td class="p-2.5 font-bold text-blue-700 bg-gray-100">${r.grandTotal}</td>
-          </tr>
-        `;
-      }).join('');
-
-      const totalStudents = sumEleM + sumEleF + sumJhsM + sumJhsF + sumG11M + sumG11F + sumG12M + sumG12F;
-
-      tfoot.innerHTML = `
-        <tr class="text-center">
-          <td colspan="2" class="p-3 text-right font-bold text-gray-700">TOTALS:</td>
-          <td class="p-2">${sumEleM}</td><td class="p-2">${sumEleF}</td><td class="p-2 bg-emerald-100 text-emerald-900">${sumEleM + sumEleF}</td>
-          <td class="p-2">${sumJhsM}</td><td class="p-2">${sumJhsF}</td><td class="p-2 bg-indigo-100 text-indigo-900">${sumJhsM + sumJhsF}</td>
-          <td class="p-2">${sumG11M}</td><td class="p-2">${sumG11F}</td><td class="p-2 bg-amber-100 text-amber-900">${sumG11M + sumG11F}</td>
-          <td class="p-2">${sumG12M}</td><td class="p-2">${sumG12F}</td><td class="p-2 bg-rose-100 text-rose-900">${sumG12M + sumG12F}</td>
-          <td class="p-2 text-blue-900 font-extrabold bg-gray-200">${totalStudents}</td>
-        </tr>
-      `;
+    function showState(state) {
+      document.getElementById("loading").classList.toggle("hidden", state !== 'loading');
+      document.getElementById("emptyState").classList.toggle("hidden", state !== 'empty');
+      document.getElementById("tableWrapper").classList.toggle("hidden", state !== 'data');
     }
 
-    function showLoading(isLoading) {
-      document.getElementById("loading").classList.toggle("hidden", !isLoading);
-      document.getElementById("tableWrapper").classList.toggle("hidden", isLoading);
+    // Trigger Print Action
+    function triggerPrint() {
+      const dataset = document.getElementById("datasetSelect").selectedOptions[0].text;
+      const category = document.getElementById("categorySelect").value;
+      const sy = document.getElementById("sySelect").value;
+
+      let reportTitle = `${dataset} Report — S.Y. ${sy}`;
+      if (document.getElementById("datasetSelect").value === "teachers") {
+        reportTitle += ` (${category})`;
+      }
+
+      document.getElementById("printMeta").innerText = reportTitle;
+      window.print();
     }
   </script>
 </body>
