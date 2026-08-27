@@ -192,16 +192,48 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: Student Data View -->
-                <div id="view-students" class="hidden space-y-6">
-                    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 text-center py-12">
-                        <div class="w-16 h-16 bg-blue-50 text-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                            <i class="fa-solid fa-user-graduate"></i>
+              <!-- VIEW 3: Student Data Excel Upload -->
+            <div id="view-students" class="hidden space-y-6">
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6">
+                    <div class="border-b border-slate-100 pb-4 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-file-excel text-blue-600"></i>
+                                <span>Student Data Excel Import</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">Upload student summary spreadsheets (`.xlsx` or `.xls`) to store in Supabase.</p>
                         </div>
-                        <h2 class="text-xl font-bold text-slate-900">Student Data Portal</h2>
-                        <p class="text-xs text-slate-500 mt-2 max-w-sm mx-auto">This section is ready for future module integration.</p>
+                    </div>
+            
+                    <!-- Upload Form Controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                        <!-- School Year Picker -->
+                        <div>
+                            <label for="studentSchoolYear" class="block text-xs font-bold text-slate-700 mb-2">Select Target School Year <span class="text-red-500">*</span></label>
+                            <select id="studentSchoolYear" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                <option value="">-- Select School Year --</option>
+                                <option value="2023-2024">SY 2023 - 2024</option>
+                                <option value="2024-2025">SY 2024 - 2025</option>
+                                <option value="2025-2026">SY 2025 - 2026</option>
+                                <option value="2026-2027">SY 2026 - 2027</option>
+                            </select>
+                        </div>
+            
+                        <!-- Excel File Input -->
+                        <div>
+                            <label for="studentExcelFileInput" class="block text-xs font-bold text-slate-700 mb-2">Choose Excel File (`Student.xlsx`) <span class="text-red-500">*</span></label>
+                            <input type="file" id="studentExcelFileInput" accept=".xlsx, .xls" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer bg-white border border-slate-300 rounded-xl p-1">
+                        </div>
+                    </div>
+            
+                    <div class="mt-6 flex justify-end">
+                        <button onclick="processAndUploadStudentExcel()" id="studentUploadBtn" class="bg-blue-800 hover:bg-blue-900 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                            <span>Upload to Supabase</span>
+                        </button>
                     </div>
                 </div>
+            </div>
 
             </div>
 
@@ -378,6 +410,89 @@ async function processAndUploadExcel() {
             sessionStorage.removeItem('adminUser');
             window.location.href = 'admin.html';
         }
+
+        // Student Excel Parser & Supabase Uploader
+async function processAndUploadStudentExcel() {
+    const schoolYear = document.getElementById('studentSchoolYear').value;
+    const fileInput = document.getElementById('studentExcelFileInput');
+    const file = fileInput.files[0];
+
+    if (!schoolYear) {
+        showAlert('error', 'Please select a School Year before uploading.');
+        return;
+    }
+
+    if (!file) {
+        showAlert('error', 'Please select an Excel file for student data.');
+        return;
+    }
+
+    showAlert('loading', 'Reading Excel workbook...');
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            const uploadRows = [];
+
+            // Iterate through sheets
+            workbook.SheetNames.forEach(sheetName => {
+                const cleanSheetName = sheetName.trim();
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonSheet = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                // Process rows
+                jsonSheet.forEach((row) => {
+                    if (!row || row.length < 2) return;
+
+                    const firstCol = String(row[0] || '').trim();
+                    const secondCol = String(row[1] || '').trim();
+
+                    // Filter out non-data rows
+                    if (
+                        secondCol && 
+                        secondCol.toUpperCase() !== 'NAME OF SCHOOL' && 
+                        secondCol.toUpperCase() !== 'NAME OF SCHOOLS' && 
+                        secondCol.toUpperCase() !== 'TOTAL' && 
+                        !firstCol.toUpperCase().includes('NUMBER OF') &&
+                        !firstCol.toUpperCase().includes('SCHOOL ID')
+                    ) {
+                        uploadRows.push({
+                            school_year: schoolYear,
+                            level: cleanSheetName,
+                            school_name: secondCol,
+                            data: row.slice(2)
+                        });
+                    }
+                });
+            });
+
+            if (uploadRows.length === 0) {
+                showAlert('error', 'No valid student records were detected in the uploaded file.');
+                return;
+            }
+
+            showAlert('loading', `Uploading ${uploadRows.length} student records to Supabase...`);
+
+            // Batch Insert into Supabase table "students_data"
+            const { data: insertResult, error } = await supabaseClient
+                .from('students_data')
+                .insert(uploadRows);
+
+            if (error) throw error;
+
+            showAlert('success', `Successfully saved ${uploadRows.length} student records for ${schoolYear}!`);
+            fileInput.value = '';
+
+        } catch (err) {
+            showAlert('error', `Upload Failed: ${err.message || 'Error processing student spreadsheet.'}`);
+        }
+    };
+
+    reader.readAsArrayBuffer(file);
+}
     </script>
 </body>
 </html>
