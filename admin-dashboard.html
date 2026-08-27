@@ -511,45 +511,78 @@ async function fetchDashboardTotals() {
   const studentsCountEl = document.getElementById("totalStudentsCount");
 
   try {
-    // 1. Fetch Teachers Data & Calculate Sum
-    const { data: teachersData, error: teachersErr } = await supabaseClient
-      .from('teachers_data')
-      .select('data');
+    // 1. Fetch all records for Teachers and Students
+    const [teachersRes, studentsRes] = await Promise.all([
+      supabaseClient.from('teachers_data').select('*'),
+      supabaseClient.from('students_data').select('*')
+    ]);
 
-    if (!teachersErr && teachersData) {
-      const totalTeachers = teachersData.reduce((acc, row) => {
-        const rowSum = Array.isArray(row.data) 
-          ? row.data.reduce((sum, val) => sum + (Number(val) || 0), 0)
-          : 0;
-        return acc + rowSum;
-      }, 0);
-      teachersCountEl.innerText = totalTeachers.toLocaleString();
-    } else {
-      teachersCountEl.innerText = "0";
-    }
+    // --- CALCULATE STUDENTS TOTAL ---
+    if (!studentsRes.error && studentsRes.data) {
+      const studentsData = studentsRes.data;
 
-    // 2. Fetch Students Data & Calculate Sum
-    const { data: studentsData, error: studentsErr } = await supabaseClient
-      .from('students_data')
-      .select('data');
+      // ELEM: Rows 5 to 31 (indices 4 to 30), Columns C to U (indices 0 to 18 -> 19 columns)
+      const elemTotal = sumDataRange(studentsData, 'ELEM', 4, 30, 0, 18);
 
-    if (!studentsErr && studentsData) {
-      const totalStudents = studentsData.reduce((acc, row) => {
-        const rowSum = Array.isArray(row.data) 
-          ? row.data.reduce((sum, val) => sum + (Number(val) || 0), 0)
-          : 0;
-        return acc + rowSum;
-      }, 0);
-      studentsCountEl.innerText = totalStudents.toLocaleString();
+      // JHS: Rows 5 to 15 (indices 4 to 14), Columns C to Q (indices 0 to 14 -> 15 columns)
+      const jhsTotal = sumDataRange(studentsData, 'JHS', 4, 14, 0, 14);
+
+      // SHS: Rows 6 to 12 (indices 5 to 11), Columns C to R (indices 0 to 15 -> 16 columns)
+      const shsTotal = sumDataRange(studentsData, 'SHS', 5, 11, 0, 15);
+
+      const grandTotalStudents = elemTotal + jhsTotal + shsTotal;
+      studentsCountEl.innerText = grandTotalStudents.toLocaleString();
     } else {
       studentsCountEl.innerText = "0";
     }
 
+    // --- CALCULATE TEACHERS TOTAL ---
+    if (!teachersRes.error && teachersRes.data) {
+      const teachersData = teachersRes.data;
+
+      // ELEM: Rows 4 to 30 (indices 3 to 29), Columns C to U (indices 0 to 18 -> 19 columns)
+      const elemTotal = sumDataRange(teachersData, 'ELEM', 3, 29, 0, 18);
+
+      // JHS: Rows 4 to 14 (indices 3 to 13), Columns C to Q (indices 0 to 14 -> 15 columns)
+      const jhsTotal = sumDataRange(teachersData, 'JHS', 3, 13, 0, 14);
+
+      // SHS: Rows 6 to 12 (indices 5 to 11), Columns C to R (indices 0 to 15 -> 16 columns)
+      const shsTotal = sumDataRange(teachersData, 'SHS', 5, 11, 0, 15);
+
+      const grandTotalTeachers = elemTotal + jhsTotal + shsTotal;
+      teachersCountEl.innerText = grandTotalTeachers.toLocaleString();
+    } else {
+      teachersCountEl.innerText = "0";
+    }
+
   } catch (err) {
-    console.error("Error fetching dashboard counts:", err);
+    console.error("Error calculating exact totals:", err);
     teachersCountEl.innerText = "N/A";
     studentsCountEl.innerText = "N/A";
   }
+}
+
+/**
+ * Helper function to slice specific rows and columns for a given level
+ */
+function sumDataRange(records, level, startRowIndex, endRowIndex, startColIndex, endColIndex) {
+  // Filter by level (e.g., ELEM, JHS, SHS)
+  const filteredRecords = records.filter(r => r.level === level);
+  
+  // Slice to the requested row range
+  const rowSlice = filteredRecords.slice(startRowIndex, endRowIndex + 1);
+
+  let totalSum = 0;
+
+  rowSlice.forEach(record => {
+    const dataArray = Array.isArray(record.data) ? record.data : [];
+    // Slice to requested column range and calculate row sum
+    for (let c = startColIndex; c <= endColIndex; c++) {
+      totalSum += Number(dataArray[c]) || 0;
+    }
+  });
+
+  return totalSum;
 }
     </script>
 </body>
