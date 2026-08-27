@@ -232,233 +232,324 @@
   </footer>
 
   <script>
-    // Supabase Credentials
-    const SUPABASE_URL = 'https://dykqemuqzthhfgostjyg.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_cWi7ZqfNlPy5Tp8IQAH1gA_DKwikowm';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabase Credentials
+const SUPABASE_URL = 'https://dykqemuqzthhfgostjyg.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_cWi7ZqfNlPy5Tp8IQAH1gA_DKwikowm';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.addEventListener("DOMContentLoaded", () => {
-      handleViewChange();
-    });
+document.addEventListener("DOMContentLoaded", () => {
+  handleViewChange();
+});
 
-    function handleViewChange() {
-      const dataset = document.getElementById("datasetSelect").value;
-      const categoryWrapper = document.getElementById("categoryWrapper");
-      categoryWrapper.style.display = (dataset === "teachers") ? "flex" : "none";
-      loadDashboardData();
+function handleViewChange() {
+  const dataset = document.getElementById("datasetSelect").value;
+  const categoryWrapper = document.getElementById("categoryWrapper");
+  
+  // Show level selector for Teachers; for Students, show if level filtering is desired or hide
+  categoryWrapper.style.display = (dataset === "teachers") ? "flex" : "none";
+  loadDashboardData();
+}
+
+async function loadDashboardData() {
+  const dataset = document.getElementById("datasetSelect").value;
+  const category = document.getElementById("categorySelect").value;
+  const sy = document.getElementById("sySelect").value;
+  
+  showState('loading');
+
+  if (dataset === "teachers") {
+    await fetchTeachersData(category, sy);
+  } else {
+    await fetchStudentsData(sy);
+  }
+}
+
+async function fetchTeachersData(category, schoolYear) {
+  const { data, error } = await supabaseClient
+    .from('teachers_data')
+    .select('*')
+    .eq('level', category)
+    .eq('school_year', schoolYear);
+
+  if (error || !data || data.length === 0) {
+    if (error) console.error('Error fetching teachers data:', error);
+    showState('empty');
+    return;
+  }
+
+  renderTeachersTable(data, category);
+  showState('data');
+}
+
+// --- NEW STUDENT DATA FETCHING & RENDERING ---
+
+async function fetchStudentsData(schoolYear) {
+  const { data, error } = await supabaseClient
+    .from('students_data')
+    .select('*')
+    .eq('school_year', schoolYear);
+
+  if (error || !data || data.length === 0) {
+    if (error) console.error('Error fetching students data:', error);
+    showState('empty');
+    return;
+  }
+
+  renderStudentsTable(data);
+  showState('data');
+}
+
+function renderStudentsTable(records) {
+  const thead = document.getElementById("tableHead");
+  const tbody = document.getElementById("tableBody");
+  const tfoot = document.getElementById("tableFoot");
+
+  // Determine the maximum number of data columns across student rows
+  let maxCols = 0;
+  records.forEach(r => {
+    if (Array.isArray(r.data) && r.data.length > maxCols) {
+      maxCols = r.data.length;
+    }
+  });
+
+  if (maxCols === 0) {
+    showState('empty');
+    return;
+  }
+
+  // Header configuration
+  let headerColsHTML = '';
+  for (let c = 1; c <= maxCols; c++) {
+    headerColsHTML += `<th class="p-2 text-center bg-blue-200 border-b border-gray-400">Col ${c}</th>`;
+  }
+
+  thead.innerHTML = `
+    <tr>
+      <th rowspan="2" class="p-2 w-12 text-center bg-blue-300 border-b border-gray-400">No.</th>
+      <th rowspan="2" class="p-2 bg-blue-300 border-b border-gray-400 min-w-[180px] text-left">Level / Sheet</th>
+      <th rowspan="2" class="p-2 bg-blue-300 border-b border-gray-400 min-w-[220px] text-left">Name of School</th>
+      <th colspan="${maxCols}" class="p-1.5 text-center bg-blue-400 border-b border-gray-400 text-white">Student Enrollment Metrics</th>
+      <th rowspan="2" class="p-2 text-center bg-blue-300 border-b border-gray-400">Total</th>
+    </tr>
+    <tr class="text-[10px]">
+      ${headerColsHTML}
+    </tr>
+  `;
+
+  const columnSums = new Array(maxCols).fill(0);
+  let grandTotal = 0;
+
+  // Build Body Rows
+  tbody.innerHTML = records.map((record, index) => {
+    const metrics = Array.isArray(record.data) ? record.data : [];
+    let rowSum = 0;
+
+    let rowHTML = `
+      <tr class="hover:bg-blue-50/50 transition-colors">
+        <td class="p-2 font-mono text-gray-500">${index + 1}</td>
+        <td class="p-2 text-left text-xs font-semibold text-blue-900 bg-slate-50">${record.level || 'N/A'}</td>
+        <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
+    `;
+
+    for (let i = 0; i < maxCols; i++) {
+      const val = Number(metrics[i]) || 0;
+      rowSum += val;
+      columnSums[i] += val;
+      rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
     }
 
-    async function loadDashboardData() {
-      const dataset = document.getElementById("datasetSelect").value;
-      const category = document.getElementById("categorySelect").value;
-      const sy = document.getElementById("sySelect").value;
-      
-      showState('loading');
+    grandTotal += rowSum;
+    rowHTML += `<td class="p-2 font-bold text-blue-900 bg-blue-50">${rowSum}</td></tr>`;
+    return rowHTML;
+  }).join('');
 
-      if (dataset === "teachers") {
-        await fetchTeachersData(category, sy);
-      } else {
-        await fetchStudentsData(sy);
+  // Build Footer Total Row
+  let footHTML = `
+    <tr>
+      <td colspan="3" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
+  `;
+
+  for (let i = 0; i < maxCols; i++) {
+    footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
+  }
+
+  footHTML += `<td class="p-2 text-blue-900 font-extrabold bg-blue-200">${grandTotal}</td></tr>`;
+  tfoot.innerHTML = footHTML;
+}
+
+// --- TEACHERS TABLE RENDERER ---
+
+function renderTeachersTable(records, category) {
+  const thead = document.getElementById("tableHead");
+  const tbody = document.getElementById("tableBody");
+  const tfoot = document.getElementById("tableFoot");
+
+  if (category === 'ELEM' || category === 'JHS') {
+    const grades = category === 'ELEM' 
+      ? ['K', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6']
+      : ['G7', 'G8', 'G9', 'G10'];
+    
+    const gradesColSpan = grades.length * 2;
+
+    thead.innerHTML = `
+      <tr>
+        <th rowspan="3" class="p-2 w-12 text-center bg-lime-200 border-b border-gray-400">No.</th>
+        <th rowspan="3" class="p-2 bg-lime-200 border-b border-gray-400 min-w-[200px] text-left">Name of School</th>
+        <th colspan="${gradesColSpan + 5}" class="p-1.5 text-center bg-lime-300 border-b border-gray-400">Number of Teachers</th>
+        <th rowspan="3" class="p-2 text-center bg-lime-100 border-b border-gray-400">Total</th>
+      </tr>
+      <tr>
+        ${grades.map(g => `<th colspan="2" class="p-1 text-center bg-lime-200 border-b border-gray-400">${g}</th>`).join('')}
+        <th rowspan="2" class="p-1 text-center bg-lime-300 border-b border-gray-400">Total</th>
+        <th colspan="2" class="p-1 text-center bg-amber-500 text-black border-b border-gray-400">SPED</th>
+        <th colspan="2" class="p-1 text-center bg-amber-600 text-black border-b border-gray-400">ALS</th>
+      </tr>
+      <tr class="text-[10px]">
+        ${grades.map(() => `<th class="p-1 bg-lime-200 border-b border-gray-400">Male</th><th class="p-1 bg-lime-200 border-b border-gray-400">Female</th>`).join('')}
+        <th class="p-1 bg-amber-500 border-b border-gray-400">Male</th>
+        <th class="p-1 bg-amber-500 border-b border-gray-400">Female</th>
+        <th class="p-1 bg-amber-600 border-b border-gray-400">Male</th>
+        <th class="p-1 bg-amber-600 border-b border-gray-400">Female</th>
+      </tr>
+    `;
+
+    const columnSums = new Array(gradesColSpan + 5).fill(0);
+    let grandTotal = 0;
+
+    tbody.innerHTML = records.map((record, index) => {
+      const metrics = Array.isArray(record.data) ? record.data : [];
+      let rowHTML = `
+        <tr class="hover:bg-blue-50/50 transition-colors">
+          <td class="p-2 font-mono text-gray-500">${index + 1}</td>
+          <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
+      `;
+
+      let rowSum = 0;
+      for (let i = 0; i < columnSums.length; i++) {
+        const val = Number(metrics[i]) || 0;
+        rowSum += val;
+        columnSums[i] += val;
+        rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
       }
+
+      grandTotal += rowSum;
+      rowHTML += `<td class="p-2 font-bold text-gray-900 bg-lime-50">${rowSum}</td></tr>`;
+      return rowHTML;
+    }).join('');
+
+    let footHTML = `
+      <tr>
+        <td colspan="2" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
+    `;
+
+    for (let i = 0; i < columnSums.length; i++) {
+      footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
     }
 
-    async function fetchTeachersData(category, schoolYear) {
-      const { data, error } = await supabaseClient
-        .from('teachers_data')
-        .select('*')
-        .eq('level', category)
-        .eq('school_year', schoolYear);
+    footHTML += `<td class="p-2 text-gray-900 font-extrabold bg-lime-200">${grandTotal}</td></tr>`;
+    tfoot.innerHTML = footHTML;
 
-      if (error) {
-        console.error('Error fetching teachers data:', error);
-        showState('empty');
-        return;
-      }
+  } else if (category === 'SHS') {
+    const tracks = ['Academic Track', 'Arts & Design Track', 'Sports Track', 'TVL Track'];
+    const numTracks = tracks.length;
 
-      if (!data || data.length === 0) {
-        showState('empty');
-        return;
-      }
+    thead.innerHTML = `
+      <tr>
+        <th rowspan="3" class="p-2 w-12 text-center bg-lime-400 border-b border-gray-400">No.</th>
+        <th rowspan="3" class="p-2 bg-lime-400 border-b border-gray-400 min-w-[200px] text-left">Name of School</th>
+        <th colspan="${(numTracks * 4) + 3}" class="p-1.5 text-center bg-lime-500 border-b border-gray-400">Number of Teachers</th>
+      </tr>
+      <tr>
+        <th colspan="${numTracks * 2}" class="p-1 text-center bg-lime-300 border-b border-gray-400">G11</th>
+        <th colspan="${numTracks * 2}" class="p-1 text-center bg-emerald-700 text-white border-b border-gray-400">G12</th>
+        <th colspan="3" rowspan="2" class="p-1 text-center bg-lime-400 border-b border-gray-400">Total</th>
+      </tr>
+      <tr class="text-[10px]">
+        ${tracks.map(t => `<th colspan="2" class="p-1 bg-lime-300 border-b border-gray-400">${t}</th>`).join('')}
+        ${tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-600 text-white border-b border-gray-400">${t}</th>`).join('')}
+      </tr>
+    `;
 
-      renderTeachersTable(data, category);
-      showState('data');
-    }
+    const totalMetricCols = (numTracks * 4);
+    const columnSums = new Array(totalMetricCols).fill(0);
+    let maleGrandTotal = 0;
+    let femaleGrandTotal = 0;
 
-    async function fetchStudentsData(schoolYear) {
-      showState('empty');
-    }
+    tbody.innerHTML = records.map((record, index) => {
+      const metrics = Array.isArray(record.data) ? record.data : [];
+      let rowHTML = `
+        <tr class="hover:bg-blue-50/50 transition-colors">
+          <td class="p-2 font-mono text-gray-500">${index + 1}</td>
+          <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
+      `;
 
-    function renderTeachersTable(records, category) {
-      const thead = document.getElementById("tableHead");
-      const tbody = document.getElementById("tableBody");
-      const tfoot = document.getElementById("tableFoot");
+      let rowMaleTotal = 0;
+      let rowFemaleTotal = 0;
 
-      if (category === 'ELEM' || category === 'JHS') {
-        const grades = category === 'ELEM' 
-          ? ['K', 'G1', 'G2', 'G3', 'G4', 'G5', 'G6']
-          : ['G7', 'G8', 'G9', 'G10'];
-        
-        const gradesColSpan = grades.length * 2;
+      for (let i = 0; i < totalMetricCols; i++) {
+        const val = Number(metrics[i]) || 0;
+        columnSums[i] += val;
 
-        thead.innerHTML = `
-          <tr>
-            <th rowspan="3" class="p-2 w-12 text-center bg-lime-200 border-b border-gray-400">No.</th>
-            <th rowspan="3" class="p-2 bg-lime-200 border-b border-gray-400 min-w-[200px] text-left">Name of School</th>
-            <th colspan="${gradesColSpan + 5}" class="p-1.5 text-center bg-lime-300 border-b border-gray-400">Number of Teachers</th>
-            <th rowspan="3" class="p-2 text-center bg-lime-100 border-b border-gray-400">Total</th>
-          </tr>
-          <tr>
-            ${grades.map(g => `<th colspan="2" class="p-1 text-center bg-lime-200 border-b border-gray-400">${g}</th>`).join('')}
-            <th rowspan="2" class="p-1 text-center bg-lime-300 border-b border-gray-400">Total</th>
-            <th colspan="2" class="p-1 text-center bg-amber-500 text-black border-b border-gray-400">SPED</th>
-            <th colspan="2" class="p-1 text-center bg-amber-600 text-black border-b border-gray-400">ALS</th>
-          </tr>
-          <tr class="text-[10px]">
-            ${grades.map(() => `<th class="p-1 bg-lime-200 border-b border-gray-400">Male</th><th class="p-1 bg-lime-200 border-b border-gray-400">Female</th>`).join('')}
-            <th class="p-1 bg-amber-500 border-b border-gray-400">Male</th>
-            <th class="p-1 bg-amber-500 border-b border-gray-400">Female</th>
-            <th class="p-1 bg-amber-600 border-b border-gray-400">Male</th>
-            <th class="p-1 bg-amber-600 border-b border-gray-400">Female</th>
-          </tr>
-        `;
-
-        const columnSums = new Array(gradesColSpan + 5).fill(0);
-        let grandTotal = 0;
-
-        tbody.innerHTML = records.map((record, index) => {
-          const metrics = Array.isArray(record.data) ? record.data : [];
-          let rowHTML = `
-            <tr class="hover:bg-blue-50/50 transition-colors">
-              <td class="p-2 font-mono text-gray-500">${index + 1}</td>
-              <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
-          `;
-
-          let rowSum = 0;
-          for (let i = 0; i < columnSums.length; i++) {
-            const val = Number(metrics[i]) || 0;
-            rowSum += val;
-            columnSums[i] += val;
-            rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
-          }
-
-          grandTotal += rowSum;
-          rowHTML += `<td class="p-2 font-bold text-gray-900 bg-lime-50">${rowSum}</td></tr>`;
-          return rowHTML;
-        }).join('');
-
-        let footHTML = `
-          <tr>
-            <td colspan="2" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
-        `;
-
-        for (let i = 0; i < columnSums.length; i++) {
-          footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
+        if (i % 2 === 0) {
+          rowMaleTotal += val;
+        } else {
+          rowFemaleTotal += val;
         }
 
-        footHTML += `<td class="p-2 text-gray-900 font-extrabold bg-lime-200">${grandTotal}</td></tr>`;
-        tfoot.innerHTML = footHTML;
-
-      } else if (category === 'SHS') {
-        const tracks = ['Academic Track', 'Arts & Design Track', 'Sports Track', 'TVL Track'];
-        const numTracks = tracks.length;
-
-        thead.innerHTML = `
-          <tr>
-            <th rowspan="3" class="p-2 w-12 text-center bg-lime-400 border-b border-gray-400">No.</th>
-            <th rowspan="3" class="p-2 bg-lime-400 border-b border-gray-400 min-w-[200px] text-left">Name of School</th>
-            <th colspan="${(numTracks * 4) + 3}" class="p-1.5 text-center bg-lime-500 border-b border-gray-400">Number of Teachers</th>
-          </tr>
-          <tr>
-            <th colspan="${numTracks * 2}" class="p-1 text-center bg-lime-300 border-b border-gray-400">G11</th>
-            <th colspan="${numTracks * 2}" class="p-1 text-center bg-emerald-700 text-white border-b border-gray-400">G12</th>
-            <th colspan="3" rowspan="2" class="p-1 text-center bg-lime-400 border-b border-gray-400">Total</th>
-          </tr>
-          <tr class="text-[10px]">
-            ${tracks.map(t => `<th colspan="2" class="p-1 bg-lime-300 border-b border-gray-400">${t}</th>`).join('')}
-            ${tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-600 text-white border-b border-gray-400">${t}</th>`).join('')}
-          </tr>
-        `;
-
-        const totalMetricCols = (numTracks * 4);
-        const columnSums = new Array(totalMetricCols).fill(0);
-        let maleGrandTotal = 0;
-        let femaleGrandTotal = 0;
-
-        tbody.innerHTML = records.map((record, index) => {
-          const metrics = Array.isArray(record.data) ? record.data : [];
-          let rowHTML = `
-            <tr class="hover:bg-blue-50/50 transition-colors">
-              <td class="p-2 font-mono text-gray-500">${index + 1}</td>
-              <td class="p-2 text-left font-semibold text-gray-800">${record.school_name}</td>
-          `;
-
-          let rowMaleTotal = 0;
-          let rowFemaleTotal = 0;
-
-          for (let i = 0; i < totalMetricCols; i++) {
-            const val = Number(metrics[i]) || 0;
-            columnSums[i] += val;
-
-            if (i % 2 === 0) {
-              rowMaleTotal += val;
-            } else {
-              rowFemaleTotal += val;
-            }
-
-            rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
-          }
-
-          maleGrandTotal += rowMaleTotal;
-          femaleGrandTotal += rowFemaleTotal;
-          const rowGrandTotal = rowMaleTotal + rowFemaleTotal;
-
-          rowHTML += `
-            <td class="p-2 text-blue-700 font-semibold bg-gray-50">${rowMaleTotal}</td>
-            <td class="p-2 text-pink-700 font-semibold bg-gray-50">${rowFemaleTotal}</td>
-            <td class="p-2 font-bold text-gray-900 bg-lime-100">${rowGrandTotal}</td>
-          </tr>`;
-
-          return rowHTML;
-        }).join('');
-
-        let footHTML = `
-          <tr>
-            <td colspan="2" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
-        `;
-
-        for (let i = 0; i < totalMetricCols; i++) {
-          footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
-        }
-
-        footHTML += `
-          <td class="p-2 text-blue-900 font-extrabold bg-gray-100">${maleGrandTotal}</td>
-          <td class="p-2 text-pink-900 font-extrabold bg-gray-100">${femaleGrandTotal}</td>
-          <td class="p-2 text-gray-900 font-extrabold bg-lime-200">${maleGrandTotal + femaleGrandTotal}</td>
-        </tr>`;
-
-        tfoot.innerHTML = footHTML;
-      }
-    }
-
-    function showState(state) {
-      document.getElementById("loading").classList.toggle("hidden", state !== 'loading');
-      document.getElementById("emptyState").classList.toggle("hidden", state !== 'empty');
-      document.getElementById("tableWrapper").classList.toggle("hidden", state !== 'data');
-    }
-
-    function triggerPrint() {
-      const dataset = document.getElementById("datasetSelect").selectedOptions[0].text;
-      const category = document.getElementById("categorySelect").value;
-      const sy = document.getElementById("sySelect").value;
-
-      let reportTitle = `${dataset} Report — S.Y. ${sy}`;
-      if (document.getElementById("datasetSelect").value === "teachers") {
-        reportTitle += ` (${category})`;
+        rowHTML += `<td class="p-2 text-gray-700">${val}</td>`;
       }
 
-      document.getElementById("printMeta").innerText = reportTitle;
-      window.print();
+      maleGrandTotal += rowMaleTotal;
+      femaleGrandTotal += rowFemaleTotal;
+      const rowGrandTotal = rowMaleTotal + rowFemaleTotal;
+
+      rowHTML += `
+        <td class="p-2 text-blue-700 font-semibold bg-gray-50">${rowMaleTotal}</td>
+        <td class="p-2 text-pink-700 font-semibold bg-gray-50">${rowFemaleTotal}</td>
+        <td class="p-2 font-bold text-gray-900 bg-lime-100">${rowGrandTotal}</td>
+      </tr>`;
+
+      return rowHTML;
+    }).join('');
+
+    let footHTML = `
+      <tr>
+        <td colspan="2" class="p-2 text-right font-bold text-gray-800 bg-gray-100">TOTAL:</td>
+    `;
+
+    for (let i = 0; i < totalMetricCols; i++) {
+      footHTML += `<td class="p-2 font-bold bg-gray-100">${columnSums[i]}</td>`;
     }
+
+    footHTML += `
+      <td class="p-2 text-blue-900 font-extrabold bg-gray-100">${maleGrandTotal}</td>
+      <td class="p-2 text-pink-900 font-extrabold bg-gray-100">${femaleGrandTotal}</td>
+      <td class="p-2 text-gray-900 font-extrabold bg-lime-200">${maleGrandTotal + femaleGrandTotal}</td>
+    </tr>`;
+
+    tfoot.innerHTML = footHTML;
+  }
+}
+
+function showState(state) {
+  document.getElementById("loading").classList.toggle("hidden", state !== 'loading');
+  document.getElementById("emptyState").classList.toggle("hidden", state !== 'empty');
+  document.getElementById("tableWrapper").classList.toggle("hidden", state !== 'data');
+}
+
+function triggerPrint() {
+  const dataset = document.getElementById("datasetSelect").selectedOptions[0].text;
+  const category = document.getElementById("categorySelect").value;
+  const sy = document.getElementById("sySelect").value;
+
+  let reportTitle = `${dataset} Report — S.Y. ${sy}`;
+  if (document.getElementById("datasetSelect").value === "teachers") {
+    reportTitle += ` (${category})`;
+  }
+
+  document.getElementById("printMeta").innerText = reportTitle;
+  window.print();
+}
   </script>
 </body>
 </html>
