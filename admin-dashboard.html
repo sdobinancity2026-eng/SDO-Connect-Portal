@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SDO Biñan City</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .logo-glow {
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Top Header -->
+    <header class="bg-blue-900 text-white shadow-lg py-3 px-4 shrink-0 z-20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Combined Logos & Title Section -->
+            <div class="flex flex-wrap sm:flex-nowrap items-center justify-center md:justify-start gap-3 sm:gap-4 text-center sm:text-left">
+                <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                    <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
+                    <img src="Bagong_Pilipinas_Logo.svg - Copy.png" alt="Bagong Pilipinas Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
+                    <img src="DOB_LOGO.png" alt="SDO Biñan Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
+                </div>
+
+                <div class="hidden sm:block h-10 w-px bg-blue-700"></div>
+
+                <div>
+                    <p class="text-[11px] sm:text-xs tracking-wider text-blue-200 font-medium">Republic of the Philippines &nbsp;|&nbsp; Department of Education</p>
+                    <h1 class="text-sm sm:text-base md:text-lg font-bold tracking-wide uppercase">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
+                </div>
+            </div>
+
+            <!-- User Info & Logout Button -->
+            <div class="flex items-center gap-4 shrink-0">
+                <div class="text-right hidden sm:block">
+                    <p id="displayName" class="text-xs font-bold text-white">Loading...</p>
+                    <p id="displayRole" class="text-[10px] text-blue-200 uppercase tracking-wider">Admin</p>
+                </div>
+                <button onclick="handleLogout()" class="bg-red-700 hover:bg-red-800 text-white font-semibold px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <div class="flex-1 overflow-y-auto flex flex-col justify-between p-6">
+        <div class="max-w-7xl mx-auto w-full">
+            
+            <!-- Welcome Banner -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Welcome to Administrative Control</h2>
+                    <p class="text-sm text-slate-500 mt-1">Manage system configurations, user access, and data records.</p>
+                </div>
+                <span id="roleBadge" class="bg-blue-100 text-blue-900 font-bold px-3 py-1 rounded-full text-xs">
+                    Role Verification Active
+                </span>
+            </div>
+
+            <!-- Quick Stats / Actions Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-900 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-500">User Management</h3>
+                        <p class="text-xl font-bold text-slate-800">Active Access</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-500">Supabase Connection</h3>
+                        <p class="text-xl font-bold text-emerald-600">Connected</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-900 flex items-center justify-center text-xl shrink-0">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-500">Security Layer</h3>
+                        <p class="text-xl font-bold text-indigo-900">Session Guard</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 text-center py-6 text-xs text-slate-500 shrink-0 mt-8">
+            <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
+            <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
+        </footer>
+    </div>
+
+    <script>
+        // Check Session Authorization
+        document.addEventListener("DOMContentLoaded", () => {
+            const rawSession = sessionStorage.getItem('adminUser');
+            
+            // Redirect to login if user is not authenticated
+            if (!rawSession) {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            const session = JSON.parse(rawSession);
+            document.getElementById('displayName').textContent = session.username;
+            document.getElementById('displayRole').textContent = session.role;
+            document.getElementById('roleBadge').textContent = `Authenticated as ${session.role}`;
+        });
+
+        // Handle Logout
+        function handleLogout() {
+            sessionStorage.removeItem('adminUser');
+            window.location.href = 'admin.html';
+        }
+    </script>
+</body>
+</html>
