@@ -22,7 +22,7 @@
 }
 
 /* =========================================================
-   1. DYNAMIC STICKY HEADERS (Scoped per Table Type)
+   1. FIXED HEIGHT STICKY HEADERS
    ========================================================= */
 
 #tableHead th {
@@ -30,26 +30,22 @@
   z-index: 20;
 }
 
-/* --- STUDENTS TABLE HEADERS --- */
-.students-view #tableHead tr:nth-child(1) th {
+/* Tier 1 Row (Top level: Elementary / JHS / SHS) */
+#tableHead tr:nth-child(1) th {
   top: 0;
-}
-.students-view #tableHead tr:nth-child(2) th {
-  top: 28px; /* Tier 1 Height */
-}
-.students-view #tableHead tr:nth-child(3) th {
-  top: 52px; /* Tier 1 + Tier 2 Height */
+  height: 32px;
 }
 
-/* --- TEACHERS TABLE HEADERS --- */
-.teachers-view #tableHead tr:nth-child(1) th {
-  top: 0;
+/* Tier 2 Row (Grade Levels / Tracks) */
+#tableHead tr:nth-child(2) th {
+  top: 32px; /* Starts exactly below Row 1 */
+  height: 48px; /* Fixed height accommodating multi-line text */
 }
-.teachers-view #tableHead tr:nth-child(2) th {
-  top: 32px;
-}
-.teachers-view #tableHead tr:nth-child(3) th {
-  top: 57px;
+
+/* Tier 3 Row (Male / Female) */
+#tableHead tr:nth-child(3) th {
+  top: 80px; /* Starts exactly below Row 1 (32px) + Row 2 (48px) */
+  height: 24px;
 }
 
 /* =========================================================
@@ -68,12 +64,11 @@
   z-index: 20;
 }
 
-/* INTERSECTION Z-INDEX (Pinned Top-Left Cells) */
+/* INTERSECTION Z-INDEX (Fixed Top-Left Header Cells) */
 #tableHead th.sticky-col-1,
 #tableHead th.sticky-col-2 {
   z-index: 40 !important;
 }
-
 /* =========================================================
    3. PRINT STYLES
    ========================================================= */
