@@ -22,7 +22,7 @@
 }
 
 /* =========================================================
-   1. FIXED HEIGHT STICKY HEADERS
+   FIXED STICKY HEADER TIERS
    ========================================================= */
 
 #tableHead th {
@@ -30,31 +30,31 @@
   z-index: 20;
 }
 
-/* Tier 1 Row (Top level: Elementary / JHS / SHS) */
+/* Tier 1 Header Row (Elementary / JHS / SHS) */
 #tableHead tr:nth-child(1) th {
-  top: 0;
-  height: 32px;
+  top: 0px !important;
+  height: 32px !important;
 }
 
-/* Tier 2 Row (Grade Levels / Tracks) */
+/* Tier 2 Header Row (Grade Levels / Tracks) */
 #tableHead tr:nth-child(2) th {
-  top: 32px; /* Starts exactly below Row 1 */
-  height: 48px; /* Fixed height accommodating multi-line text */
+  top: 32px !important; /* Fixed Row 1 Height */
+  height: 48px !important; /* Height for wrapped multi-line labels */
 }
 
-/* Tier 3 Row (Male / Female) */
+/* Tier 3 Header Row (Male / Female) */
 #tableHead tr:nth-child(3) th {
-  top: 80px; /* Starts exactly below Row 1 (32px) + Row 2 (48px) */
-  height: 24px;
+  top: 80px !important; /* Row 1 (32px) + Row 2 (48px) */
+  height: 24px !important;
 }
 
 /* =========================================================
-   2. STICKY LEFT COLUMNS
+   STICKY LEFT COLUMNS & INTERSECTION Z-INDEX
    ========================================================= */
 
 .sticky-col-1 {
   position: sticky;
-  left: 0;
+  left: 0px;
   z-index: 20;
 }
 
@@ -64,10 +64,10 @@
   z-index: 20;
 }
 
-/* INTERSECTION Z-INDEX (Fixed Top-Left Header Cells) */
+/* Ensure top-left fixed cells stay above all scrolling content */
 #tableHead th.sticky-col-1,
 #tableHead th.sticky-col-2 {
-  z-index: 40 !important;
+  z-index: 50 !important;
 }
 /* =========================================================
    3. PRINT STYLES
@@ -338,7 +338,7 @@ async function fetchStudentsData(schoolYear) {
   renderStudentsTable(data);
   showState('data');
 }
-
+    
 function renderStudentsTable(records) {
   const thead = document.getElementById("tableHead");
   const tbody = document.getElementById("tableBody");
@@ -351,27 +351,25 @@ function renderStudentsTable(records) {
 
   const totalCols = (elemGrades.length + jhsGrades.length + shsG11Tracks.length + shsG12Tracks.length) * 2;
 
-  // Header with sticky left columns
   thead.innerHTML = `
-    <tr class="text-xs uppercase tracking-wider text-center text-white">
-      <th rowspan="3" class="p-2 w-12 bg-slate-700 border border-slate-500 sticky-col-1">No.</th>
-      <th rowspan="3" class="p-2 bg-slate-700 border border-slate-500 min-w-[220px] text-left sticky-col-2">Name of School</th>
-      <th colspan="${elemGrades.length * 2}" class="p-1.5 bg-sky-600 border border-slate-500">Elementary Level</th>
-      <th colspan="${jhsGrades.length * 2}" class="p-1.5 bg-amber-600 border border-slate-500">Junior High School Level</th>
-      <th colspan="${(shsG11Tracks.length + shsG12Tracks.length) * 2}" class="p-1.5 bg-emerald-700 border border-slate-500">Senior High School Level</th>
-      <th rowspan="3" class="p-2 bg-slate-800 border border-slate-500 min-w-[80px]">Total</th>
+    <tr class="text-xs uppercase tracking-wider text-center text-white h-[32px]">
+      <th rowspan="3" class="p-2 w-12 bg-slate-700 border border-slate-500 sticky-col-1 align-middle">No.</th>
+      <th rowspan="3" class="p-2 bg-slate-700 border border-slate-500 min-w-[220px] text-left sticky-col-2 align-middle">Name of School</th>
+      <th colspan="${elemGrades.length * 2}" class="p-1 bg-sky-600 border border-slate-500 align-middle">Elementary Level</th>
+      <th colspan="${jhsGrades.length * 2}" class="p-1 bg-amber-600 border border-slate-500 align-middle">Junior High School Level</th>
+      <th colspan="${(shsG11Tracks.length + shsG12Tracks.length) * 2}" class="p-1 bg-emerald-700 border border-slate-500 align-middle">Senior High School Level</th>
+      <th rowspan="3" class="p-2 bg-slate-800 border border-slate-500 min-w-[80px] align-middle">Total</th>
     </tr>
-    <tr class="text-[11px] font-semibold text-center text-gray-800">
-      ${elemGrades.map(g => `<th colspan="2" class="p-1 bg-sky-100 border border-slate-400">${g}</th>`).join('')}
-      ${jhsGrades.map(g => `<th colspan="2" class="p-1 bg-amber-100 border border-slate-400">${g}</th>`).join('')}
-      ${shsG11Tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-100 border border-slate-400">${t}</th>`).join('')}
-      ${shsG12Tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-200 border border-slate-400">${t}</th>`).join('')}
+    <tr class="text-[10px] font-semibold text-center text-gray-800 h-[48px]">
+      ${elemGrades.map(g => `<th colspan="2" class="p-1 bg-sky-100 border border-slate-400 align-middle leading-tight">${g}</th>`).join('')}
+      ${jhsGrades.map(g => `<th colspan="2" class="p-1 bg-amber-100 border border-slate-400 align-middle leading-tight">${g}</th>`).join('')}
+      ${shsG11Tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-100 border border-slate-400 align-middle leading-tight">${t}</th>`).join('')}
+      ${shsG12Tracks.map(t => `<th colspan="2" class="p-1 bg-emerald-200 border border-slate-400 align-middle leading-tight">${t}</th>`).join('')}
     </tr>
-    <tr class="text-[10px] text-center bg-gray-50 border border-slate-400">
-      ${Array(totalCols / 2).fill('<th class="p-1 border border-slate-300">MALE</th><th class="p-1 border border-slate-300">FEMALE</th>').join('')}
+    <tr class="text-[9px] text-center h-[24px]">
+      ${Array(totalCols / 2).fill('<th class="p-0.5 border border-slate-300 bg-slate-200 text-gray-700 align-middle">MALE</th><th class="p-0.5 border border-slate-300 bg-slate-200 text-gray-700 align-middle">FEMALE</th>').join('')}
     </tr>
   `;
-
   const columnSums = new Array(totalCols).fill(0);
   let grandTotal = 0;
 
