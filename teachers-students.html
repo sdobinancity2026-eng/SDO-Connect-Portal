@@ -11,9 +11,8 @@
   
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    .logo-glow {
+<style>
+ .logo-glow {
   filter: drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.4));
 }
 
@@ -22,28 +21,41 @@
   border: 1px solid #cbd5e1;
 }
 
-/* 1. STICKY TOP TABLE HEADERS */
+/* =========================================================
+   1. DYNAMIC STICKY HEADERS (Scoped per Table Type)
+   ========================================================= */
+
 #tableHead th {
   position: sticky;
   z-index: 20;
 }
 
-/* Header Row 1 (Top Level: Elementary, JHS, SHS) */
-#tableHead tr:nth-child(1) th {
+/* --- STUDENTS TABLE HEADERS --- */
+.students-view #tableHead tr:nth-child(1) th {
   top: 0;
 }
-
-/* Header Row 2 (Grade Levels / Tracks) */
-#tableHead tr:nth-child(2) th {
-  top: 32px; /* Height of Row 1 */
+.students-view #tableHead tr:nth-child(2) th {
+  top: 28px; /* Tier 1 Height */
+}
+.students-view #tableHead tr:nth-child(3) th {
+  top: 52px; /* Tier 1 + Tier 2 Height */
 }
 
-/* Header Row 3 (Male / Female) */
-#tableHead tr:nth-child(3) th {
-  top: 57px; /* Height of Row 1 + Row 2 */
+/* --- TEACHERS TABLE HEADERS --- */
+.teachers-view #tableHead tr:nth-child(1) th {
+  top: 0;
+}
+.teachers-view #tableHead tr:nth-child(2) th {
+  top: 32px;
+}
+.teachers-view #tableHead tr:nth-child(3) th {
+  top: 57px;
 }
 
-/* 2. STICKY LEFT COLUMNS */
+/* =========================================================
+   2. STICKY LEFT COLUMNS
+   ========================================================= */
+
 .sticky-col-1 {
   position: sticky;
   left: 0;
@@ -56,13 +68,16 @@
   z-index: 20;
 }
 
-/* 3. INTERSECTION Z-INDEX (Top-Left Fixed Header Cells) */
+/* INTERSECTION Z-INDEX (Pinned Top-Left Cells) */
 #tableHead th.sticky-col-1,
 #tableHead th.sticky-col-2 {
   z-index: 40 !important;
 }
 
-/* Print Styles */
+/* =========================================================
+   3. PRINT STYLES
+   ========================================================= */
+
 @media print {
   body {
     background-color: white !important;
@@ -263,11 +278,18 @@ document.addEventListener("DOMContentLoaded", () => {
 function handleViewChange() {
   const dataset = document.getElementById("datasetSelect").value;
   const categoryWrapper = document.getElementById("categoryWrapper");
+  const tableWrapper = document.getElementById("tableWrapper");
   
   if (dataset === "teachers") {
     categoryWrapper.style.display = "flex";
+    // Apply teacher sticky header CSS offsets
+    tableWrapper.classList.remove("students-view");
+    tableWrapper.classList.add("teachers-view");
   } else {
     categoryWrapper.style.display = "none";
+    // Apply student sticky header CSS offsets
+    tableWrapper.classList.remove("teachers-view");
+    tableWrapper.classList.add("students-view");
   }
   
   loadDashboardData();
