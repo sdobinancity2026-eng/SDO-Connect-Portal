@@ -66,7 +66,7 @@
                     <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">One-Stop Shop Educational Hub</h2>
                     <p class="text-sm text-blue-200 mb-6">Centralized portal for division assessments, analytics, and automated reporting systems.</p>
                     <div class="relative">
-                        <input type="text" id="searchBox" onkeyup="filterApps()" placeholder="Search programs or projects (e.g., MPS, Summary, Transportation)..." class="w-full py-3 px-4 pl-10 rounded-xl text-slate-800 text-sm focus:outline-none shadow-md">
+                        <input type="text" id="searchBox" onkeyup="filterApps()" placeholder="Search programs or projects (e.g., MPS, Summary, Attendance)..." class="w-full py-3 px-4 pl-10 rounded-xl text-slate-800 text-sm focus:outline-none shadow-md">
                         <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
                     </div>
                 </div>
@@ -148,26 +148,35 @@
                         </button>
                     </div>
 
-                    <!-- Teachers & Students Data Card -->
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow flex flex-col justify-between">
+                    <!-- Card 6: Teachers & Students Data -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="teachers students data enrollment statistics analytics">
                         <div>
-                            <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                </svg>
+                            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-4">
+                                <i class="fa-solid fa-users-rectangle"></i>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Teachers & Students Data</h3>
-                            <p class="text-sm text-gray-600 mb-4">Comprehensive enrollment statistics, grade-level breakdowns (Kindergarten to Grade 12), and institutional data across SDO Biñan City.</p>
+                            <h4 class="font-bold text-base text-slate-900 mb-1">Teachers & Students Data</h4>
+                            <p class="text-xs text-slate-500 mb-4">Comprehensive enrollment statistics, grade-level breakdowns (Kindergarten to Grade 12), and institutional data across SDO Biñan City.</p>
                         </div>
-                        <a href="teachers-students.html" class="inline-flex items-center justify-center w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors">
-                            Launch Module
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
+                        <a href="teachers-students.html" id="btn-teachers" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
                         </a>
                     </div>
 
-                    <!-- Card: GABAY Leadership & Performance -->
+                    <!-- Card 7: School Heads Attendance Monitoring -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="school heads attendance monitoring portal location verification checkin">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl mb-4">
+                                <i class="fa-solid fa-clipboard-user"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-slate-900 mb-1">School Heads Attendance</h4>
+                            <p class="text-xs text-slate-500 mb-4">Real-time location-verified attendance tracking and daily log submissions for SDO Biñan school heads and administrators.</p>
+                        </div>
+                        <a href="attendance.html" id="btn-attendance" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+
+                    <!-- Card 8: GABAY Leadership & Performance -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="gabay leadership performance tracking management leaders">
                         <div>
                             <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-xl mb-4">
@@ -196,7 +205,7 @@
     <script>
     // Reset all buttons when returning via browser back button
     window.addEventListener('pageshow', function(event) {
-        const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'gabay'];
+        const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'teachers', 'attendance', 'gabay'];
         apps.forEach(appId => {
             const btn = document.getElementById(`btn-${appId}`);
             if (btn) {
@@ -206,6 +215,8 @@
                 if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
                 if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
                 if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
+                if(appId === 'teachers') originalColor = "bg-purple-600 hover:bg-purple-700";
+                if(appId === 'attendance') originalColor = "bg-cyan-600 hover:bg-cyan-700";
                 if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
 
                 btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
