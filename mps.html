@@ -73,12 +73,46 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Select School:</label>
                         <select id="schoolSelect" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
-                            <option>Biñan Elementary School (BES)</option>
-                            <option>Biñan National High School (BINHS)</option>
-                            <option>Zapote Elementary School</option>
-                            <option>Timbao Elementary School</option>
-                            <option>Platero Elementary School</option>
-                            <option>De La Paz Elementary School</option>
+                            <option>BIÑAN ELEMENTARY SCHOOL</option>
+                            <option>CANLALAY ELEMENTARY SCHOOL</option>
+                            <option>PLATERO ELEMENTARY SCHOOL</option>
+                            <option>BIÑAN INTEGRATED NATIONAL HIGH SCHOOL</option>
+                            <option>DR. MARCELINO Z. BATISTA MEMORIAL ELEMENTARY SCHOOL</option>
+                            <option>DELA PAZ MAIN ELEMENTARY SCHOOL</option>
+                            <option>DELA PAZ WEST ELEMENTARY SCHOOL</option>
+                            <option>DELA PAZ NATIONAL HIGH SCHOOL</option>
+                            <option>MALABAN ELEMENTARY SCHOOL</option>
+                            <option>MALABAN EAST ELEMENTARY SCHOOL</option>
+                            <option>NEREO JOAQUIN NATIONAL HIGH SCHOOL</option>
+                            <option>PAGKAKAISA ELEMENTARY SCHOOL</option>
+                            <option>PEDRO H. ESCUETA MEMORIAL ELEMENTARY SCHOOL</option>
+                            <option>ST. ANTHONY INTEGRATED SCHOOL</option>
+                            <option>JACOBO Z. GONZALES MEMORIAL NATIONAL HIGH SCHOOL</option>
+                            <option>BIÑAN CITY SHS ( San Antonio Campus )</option>
+                            <option>SAN VICENTE ELEMENTARY SCHOOL</option>
+                            <option>DR. JOSE G. TAMAYO MEMORIAL ELEMENTARY SCHOOL</option>
+                            <option>TUBIGAN ELEMENTARY SCHOOL</option>
+                            <option>SAN FRANCISCO ELEMENTARY SCHOOL</option>
+                            <option>SORO - SORO ELEMENTARY SCHOOL</option>
+                            <option>ST. FRANCIS INTEGRATED NATIONAL HIGH SCHOOL</option>
+                            <option>BIÑAN CITY SCIENCE AND TECHNOLOGY HIGH SCHOOL</option>
+                            <option>TOMAS A. TURALBA MEMORIAL ELEMENTARY SCHOOL</option>
+                            <option>STO. TOMAS ELEMENTARY SCHOOL</option>
+                            <option>BIÑAN SECONDARY SCHOOL OF APPLIED ACADEMIC</option>
+                            <option>BIÑAN CITY SHS ( STO. TOMAS CAMPUS )</option>
+                            <option>SOUTHVILLE 5A-LANGKIWA ELEM SCHOOL</option>
+                            <option>LANGKIWA ELEMENTARY SCHOOL</option>
+                            <option>SOUTHVILLE 5A INTEGRATED NATIONAL HIGH SCHOOL</option>
+                            <option>BIÑAN CITY SHS ( WEST CAMPUS )</option>
+                            <option>BIÑAN CITY SHS ( TIMBAO CAMPUS )</option>
+                            <option>LOMA ELEMENTARY SCHOOL</option>
+                            <option>OUR LADY OF LOURDES ELEMENTARY SCHOOL</option>
+                            <option>SOUTHVILLE 5-TIMBAO ELEMENTARY SCHOOL</option>
+                            <option>TIMBAO ELEMENTARY SCHOOL</option>
+                            <option>MAMPLASAN ELEMENTARY SCHOOL</option>
+                            <option>GANADO ELEMENTARY SCHOOL</option>
+                            <option>ZAPOTE ELEMENTARY SCHOOL</option>
+                            <option>MAMPLASAN NATIONAL HIGH SCHOOL</option>
                         </select>
                     </div>
 
@@ -91,6 +125,12 @@
                             <option value="4">Grade 4</option>
                             <option value="5">Grade 5</option>
                             <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                            <option value="11">Grade 11</option>
+                            <option value="12">Grade 12</option>
                         </select>
                     </div>
 
@@ -217,7 +257,13 @@
             "3": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "MAPEH", "ESP", "MTB"],
             "4": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "GMRC", "Makabansa"],
             "5": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP", "MTB"],
-            "6": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP", "MTB"]
+            "6": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP", "MTB"],
+            "7": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "GMRC"],
+            "8": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP"],
+            "9": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP"],
+            "10": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP"],
+            "11": [], // Senior High School set to N/A
+            "12": []  // Senior High School set to N/A
         };
 
         let db;
@@ -257,7 +303,19 @@
             const container = document.getElementById('subjectGrid');
             container.innerHTML = '';
 
-            subjects.forEach((subj, idx) => {
+            if (grade === "11" || grade === "12" || subjects.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-slate-100 border border-slate-200 rounded-xl p-8 text-center">
+                        <i class="fa-solid fa-ban text-2xl text-slate-400 mb-2 block"></i>
+                        <h4 class="font-bold text-slate-700 text-sm">SHS Subjects - N/A</h4>
+                        <p class="text-xs text-slate-500 mt-1">Mean Percentage Score tracking is not applicable for Grade ${grade} SHS track/strand subjects.</p>
+                    </div>
+                `;
+                calculateMetrics();
+                return;
+            }
+
+            subjects.forEach((subj) => {
                 const card = document.createElement('div');
                 card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm";
                 card.innerHTML = `
@@ -311,10 +369,12 @@
 
             document.getElementById('mpsValue').textContent = `${mps.toFixed(2)}%`;
             const masteryEl = document.getElementById('masteryValue');
-            masteryEl.textContent = mastery.label;
-            masteryEl.className = `text-lg font-bold ${mastery.color}`;
+            masteryEl.textContent = count > 0 ? mastery.label : "N/A";
+            masteryEl.className = count > 0 ? `text-lg font-bold ${mastery.color}` : "text-lg font-bold text-slate-600";
             
-            document.getElementById('resultStatus').textContent = `Computed successfully for Grade ${document.getElementById('gradeSelect').value} (${selectedQtr}).`;
+            document.getElementById('resultStatus').textContent = count > 0 
+                ? `Computed successfully for Grade ${document.getElementById('gradeSelect').value} (${selectedQtr}).`
+                : `No score inputs available for Grade ${document.getElementById('gradeSelect').value}.`;
         }
 
         // Parse uploaded Excel workbook directly using SheetJS
@@ -332,12 +392,10 @@
                     const data = new Uint8Array(evt.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
                     
-                    // Attempt to grab active sheet or first sheet
                     const sheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[sheetName];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                    // Auto-fill values if subjects match text
                     const inputs = document.querySelectorAll('.score-input');
                     inputs.forEach(input => {
                         const subj = input.getAttribute('data-subj').toLowerCase();
