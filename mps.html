@@ -6,6 +6,8 @@
     <title>Automatic MPS Generator - SDO Biñan City</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS for parsing real Excel files -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         .logo-glow {
             filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
@@ -14,69 +16,60 @@
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 h-screen flex flex-col overflow-hidden">
 
-    <!-- Top Header (Fixed at Top) -->
+    <!-- Top Header -->
     <header class="bg-blue-900 text-white shadow-lg py-3 px-4 shrink-0 z-20">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            
-            <!-- Combined Logos & Title Section (Side-by-Side) -->
             <div class="flex flex-wrap sm:flex-nowrap items-center justify-center md:justify-start gap-3 sm:gap-4 text-center sm:text-left">
-                
-                <!-- Logos Row -->
                 <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
                     <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
                     <img src="Bagong_Pilipinas_Logo.svg - Copy.png" alt="Bagong Pilipinas Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
                     <img src="DOB_LOGO.png" alt="SDO Biñan Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
                 </div>
-
-                <!-- Divider Line for Desktop -->
                 <div class="hidden sm:block h-10 w-px bg-blue-700"></div>
-
-                <!-- Title Text beside Logo -->
                 <div>
                     <p class="text-[11px] sm:text-xs tracking-wider text-blue-200 font-medium">Republic of the Philippines &nbsp;|&nbsp; Department of Education</p>
                     <h1 class="text-sm sm:text-base md:text-lg font-bold tracking-wide uppercase">SCHOOLS DIVISION OFFICE OF BIÑAN CITY</h1>
                 </div>
             </div>
-
-            <!-- Status Indicator Badge -->
             <div class="bg-blue-800 px-3 py-1 rounded-full text-xs font-semibold text-blue-100 shrink-0 border border-blue-700 shadow-inner">
                 <i class="fa-solid fa-circle-check text-green-400 mr-1.5"></i> System Online (2025-2026)
             </div>
-
         </div>
     </header>
 
     <!-- Scrollable Content Area -->
     <div class="flex-1 overflow-y-auto flex flex-col justify-between">
-
-        <div class="max-w-7xl mx-auto px-4 py-6 w-full">
+        <div class="max-w-7xl mx-auto px-4 py-6 w-full space-y-6">
             
-            <!-- Navigation Header / Back Button -->
-            <div class="mb-6 flex items-center justify-between">
+            <!-- Navigation Header -->
+            <div class="flex items-center justify-between">
                 <button onclick="window.location.href='index.html'" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2">
                     <i class="fa-solid fa-arrow-left"></i> Back to Main Hub
                 </button>
-                <span class="text-xs bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                    <i class="fa-solid fa-calculator mr-1"></i> Module: Automatic MPS Generator
-                </span>
+                <div class="flex gap-2">
+                    <button onclick="toggleAdminPanel()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2">
+                        <i class="fa-solid fa-database"></i> <span id="adminBtnText">Admin Database</span>
+                    </button>
+                    <span class="text-xs bg-blue-100 text-blue-800 font-bold px-3 py-1.5 rounded-xl uppercase tracking-wider flex items-center">
+                        <i class="fa-solid fa-calculator mr-1.5"></i> MPS Engine
+                    </span>
+                </div>
             </div>
 
-            <!-- Main Workspace Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-                
+            <!-- Main Input Form Workspace -->
+            <div id="calculatorWorkspace" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
                 <div class="border-b pb-4 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h2 class="text-xl font-bold text-slate-900">Mean Percentage Score (MPS) Computation Engine</h2>
-                        <p class="text-xs text-slate-500 mt-1">Upload school/grade-level datasets using the standardized SDO Biñan template.</p>
+                        <p class="text-xs text-slate-500 mt-1">Upload school datasets or manually enter quarterly subject scores.</p>
                     </div>
-                    <!-- Download Template Button -->
                     <button onclick="alert('Downloading official SDO Biñan MPS Template (.xlsx)...')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition flex items-center gap-2 shrink-0">
                         <i class="fa-solid fa-download"></i> Download Standard Template
                     </button>
                 </div>
 
-                <!-- Form Controls Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                <!-- Form Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Select School:</label>
                         <select id="schoolSelect" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
@@ -91,113 +84,389 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Grade Level:</label>
-                        <select class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
-                            <option>Grade 1</option>
-                            <option>Grade 2</option>
-                            <option>Grade 3</option>
-                            <option>Grade 4</option>
-                            <option>Grade 5</option>
-                            <option>Grade 6</option>
-                            <option>Grade 7</option>
-                            <option>Grade 8</option>
-                            <option>Grade 9</option>
-                            <option>Grade 10</option>
-                            <option>Grade 11</option>
-                            <option>Grade 12</option>
+                        <select id="gradeSelect" onchange="renderSubjectInputs()" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Learning Area:</label>
-                        <select class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
-                            <option>Mathematics</option>
-                            <option>Science</option>
-                            <option>English</option>
-                            <option>Filipino</option>
-                            <option>Araling Panlipunan</option>
-                            <option>ESP</option>
-                            <option>MAPEH</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Quarter:</label>
-                        <select class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
-                            <option>First Quarter</option>
-                            <option>Second Quarter</option>
-                            <option>Third Quarter</option>
-                            <option>Fourth Quarter</option>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Quarter View:</label>
+                        <select id="quarterSelect" onchange="calculateMetrics()" class="w-full border rounded-xl p-2.5 text-sm bg-slate-50 focus:outline-none focus:border-blue-500">
+                            <option value="Q1">First Quarter (Q1)</option>
+                            <option value="Q2">Second Quarter (Q2)</option>
+                            <option value="Q3">Third Quarter (Q3)</option>
+                            <option value="Q4">Fourth Quarter (Q4)</option>
+                            <option value="ALL">Full Year Mean (Q1 - Q4)</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Action / Upload Section -->
-                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-slate-50 hover:bg-slate-100/50 transition cursor-pointer mb-6 relative">
-                    <input type="file" id="fileInput" onchange="simulateUpload()" class="absolute inset-0 opacity-0 cursor-pointer" accept=".xlsx, .xls">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl mx-auto mb-3">
+                <!-- Upload Drag Zone -->
+                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center bg-slate-50 hover:bg-slate-100/50 transition cursor-pointer mb-6 relative">
+                    <input type="file" id="fileInput" onchange="handleFileUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer" accept=".xlsx, .xls">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-lg mx-auto mb-2">
                         <i class="fa-solid fa-file-excel" id="uploadIcon"></i>
                     </div>
                     <h4 class="font-bold text-sm text-slate-800 mb-1" id="uploadTitle">Click or drag filled Excel template here</h4>
-                    <p class="text-xs text-slate-500" id="uploadSub">Automatic computation will trigger upon file selection</p>
+                    <p class="text-xs text-slate-500" id="uploadSub">Automatic score parsing & computation will trigger upon selection</p>
                 </div>
 
-                <!-- Results Summary Box -->
-                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <!-- Dynamic Subject MPS Input Grid -->
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-6">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center justify-between">
+                        <span><i class="fa-solid fa-list-check text-blue-600 mr-1"></i> Required Subjects Breakdown</span>
+                        <span class="text-[11px] font-normal text-slate-500">Enter scores (%) for each quarter</span>
+                    </h3>
+                    <div id="subjectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+                </div>
+
+                <!-- Computed Metrics Result Box -->
+                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
                         <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">Computed Metrics Result</h4>
-                        <p id="resultStatus" class="text-xs text-blue-700 mt-0.5">Awaiting dataset file upload...</p>
+                        <p id="resultStatus" class="text-xs text-blue-700 mt-0.5">Ready for processing...</p>
                     </div>
-                    <div class="flex items-center gap-4 text-center">
-                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-blue-200">
-                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Total MPS</span>
-                            <span id="mpsValue" class="text-base font-bold text-blue-600">0.00%</span>
+                    <div class="flex flex-wrap items-center gap-3 text-center w-full md:w-auto">
+                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-blue-200 flex-1 md:flex-none">
+                            <span class="block text-[10px] text-slate-400 font-semibold uppercase">Total Average MPS</span>
+                            <span id="mpsValue" class="text-lg font-bold text-blue-600">0.00%</span>
                         </div>
-                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-blue-200">
+                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm border border-blue-200 flex-1 md:flex-none">
                             <span class="block text-[10px] text-slate-400 font-semibold uppercase">Mastery Level</span>
-                            <span id="masteryValue" class="text-base font-bold text-slate-600">N/A</span>
+                            <span id="masteryValue" class="text-lg font-bold text-slate-600">N/A</span>
                         </div>
+                        <button onclick="saveRecordToDB()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-3 rounded-lg transition flex items-center gap-2 shadow-sm shrink-0">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Database Records Panel (Hidden by default) -->
+            <div id="adminPanel" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <div class="border-b pb-4 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Admin Saved Database Records</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Stored historical MPS records across all grade levels and schools.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="exportDBToJSON()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-xl transition">
+                            <i class="fa-solid fa-file-export mr-1"></i> Export Data
+                        </button>
+                        <button onclick="clearDatabase()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold px-3 py-2 rounded-xl transition">
+                            <i class="fa-solid fa-trash mr-1"></i> Clear DB
+                        </button>
                     </div>
                 </div>
 
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                <th class="p-3">ID</th>
+                                <th class="p-3">School</th>
+                                <th class="p-3">Grade</th>
+                                <th class="p-3">Quarter</th>
+                                <th class="p-3">Overall MPS</th>
+                                <th class="p-3">Mastery Level</th>
+                                <th class="p-3">Date Saved</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dbTableBody" class="divide-y divide-slate-100 text-slate-600">
+                            <!-- Dynamic DB Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- General Instructions Reference Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-sm font-bold text-blue-900 uppercase tracking-wide mb-2">General Instructions & Scale Reference</h3>
+                <p class="text-xs text-slate-600 mb-4">The assessment results are conveyed in terms of Mean Percentage Scores (MPS). Descriptive equivalents are assigned automatically as defined below:</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-center text-xs">
+                    <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200"><strong class="block text-emerald-800">96 - 100%</strong><span class="text-[11px] text-emerald-600 font-medium">Mastered</span></div>
+                    <div class="p-2.5 rounded-xl bg-teal-50 border border-teal-200"><strong class="block text-teal-800">86 - 95%</strong><span class="text-[11px] text-teal-600 font-medium">Closely Approximating Mastery</span></div>
+                    <div class="p-2.5 rounded-xl bg-blue-50 border border-blue-200"><strong class="block text-blue-800">66 - 85%</strong><span class="text-[11px] text-blue-600 font-medium">Moving Towards Mastery</span></div>
+                    <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200"><strong class="block text-amber-800">35 - 65%</strong><span class="text-[11px] text-amber-600 font-medium">Average Mastery</span></div>
+                    <div class="p-2.5 rounded-xl bg-orange-50 border border-orange-200"><strong class="block text-orange-800">15 - 34%</strong><span class="text-[11px] text-orange-600 font-medium">Low Mastery</span></div>
+                    <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200"><strong class="block text-rose-800">5 - 14%</strong><span class="text-[11px] text-rose-600 font-medium">Very Low Mastery</span></div>
+                    <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-300"><strong class="block text-slate-800">0 - 4%</strong><span class="text-[11px] text-slate-600 font-medium">Absolute No Mastery</span></div>
+                </div>
             </div>
 
         </div>
 
-        <!-- Footer (Pinned at the bottom of the screen) -->
+        <!-- Footer -->
         <footer class="bg-white border-t border-slate-200 text-center py-6 text-xs text-slate-500 shrink-0">
             <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
             <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
         </footer>
-
     </div>
 
     <script>
-        // Simulate automated excel reading & computation
-        function simulateUpload() {
-            const fileInput = document.getElementById('fileInput');
-            const uploadTitle = document.getElementById('uploadTitle');
-            const uploadSub = document.getElementById('uploadSub');
-            const resultStatus = document.getElementById('resultStatus');
-            const mpsValue = document.getElementById('mpsValue');
-            const masteryValue = document.getElementById('masteryValue');
-            const uploadIcon = document.getElementById('uploadIcon');
+        // Subject Mapping matrix derived from official DepEd template sheets
+        const gradeSubjects = {
+            "1": ["Reading", "Language", "Mathematics", "GMRC", "Makabansa"],
+            "2": ["Filipino", "English", "Mathematics", "Araling Panlipunan", "MAPEH", "ESP", "MTB"],
+            "3": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "MAPEH", "ESP", "MTB"],
+            "4": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "GMRC", "Makabansa"],
+            "5": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP", "MTB"],
+            "6": ["Filipino", "English", "Mathematics", "Science", "Araling Panlipunan", "TLE", "MAPEH", "ESP", "MTB"]
+        };
 
-            if (fileInput.files.length > 0) {
-                let fileName = fileInput.files[0].name;
-                uploadTitle.textContent = `File Uploaded: ${fileName}`;
-                uploadSub.textContent = "Processing scores and computing items...";
-                uploadIcon.className = "fa-solid fa-spinner fa-spin text-blue-600";
+        let db;
+        let currentCalculatedScore = 0;
+        let currentMasteryText = "N/A";
 
-                setTimeout(() => {
-                    uploadIcon.className = "fa-solid fa-circle-check text-green-600";
-                    uploadSub.textContent = "Dataset successfully parsed!";
-                    resultStatus.textContent = "Computed successfully from uploaded class record.";
-                    mpsValue.textContent = "86.42%";
-                    masteryValue.textContent = "Mastered (High)";
-                    masteryValue.className = "text-base font-bold text-green-600";
-                }, 1200);
+        // Initialize IndexedDB local database
+        function initDB() {
+            const request = indexedDB.open("SDOBinanMPSDB", 1);
+            request.onupgradeneeded = (e) => {
+                db = e.target.result;
+                if (!db.objectStoreNames.contains("mps_records")) {
+                    db.createObjectStore("mps_records", { keyPath: "id", autoIncrement: true });
+                }
+            };
+            request.onsuccess = (e) => {
+                db = e.target.result;
+                loadAdminRecords();
+            };
+        }
+
+        // Evaluate DepEd General Instructions Mastery Grade Table
+        function getMasteryLevel(mps) {
+            if (mps >= 96) return { label: "Mastered", color: "text-emerald-600" };
+            if (mps >= 86) return { label: "Closely Approximating Mastery", color: "text-teal-600" };
+            if (mps >= 66) return { label: "Moving Towards Mastery", color: "text-blue-600" };
+            if (mps >= 35) return { label: "Average Mastery", color: "text-amber-600" };
+            if (mps >= 15) return { label: "Low Mastery", color: "text-orange-600" };
+            if (mps >= 5)  return { label: "Very Low Mastery", color: "text-rose-600" };
+            return { label: "Absolute No Mastery", color: "text-slate-600" };
+        }
+
+        // Dynamically render input fields based on Grade Level
+        function renderSubjectInputs() {
+            const grade = document.getElementById('gradeSelect').value;
+            const subjects = gradeSubjects[grade] || [];
+            const container = document.getElementById('subjectGrid');
+            container.innerHTML = '';
+
+            subjects.forEach((subj, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-slate-200 shadow-sm";
+                card.innerHTML = `
+                    <label class="block text-xs font-bold text-slate-800 mb-2 truncate">${subj}</label>
+                    <div class="grid grid-cols-4 gap-1.5 text-center">
+                        <div>
+                            <span class="block text-[9px] text-slate-400 font-semibold uppercase">Q1</span>
+                            <input type="number" min="0" max="100" step="0.01" value="0" data-subj="${subj}" data-q="1" oninput="calculateMetrics()" class="score-input w-full border rounded p-1 text-center text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <span class="block text-[9px] text-slate-400 font-semibold uppercase">Q2</span>
+                            <input type="number" min="0" max="100" step="0.01" value="0" data-subj="${subj}" data-q="2" oninput="calculateMetrics()" class="score-input w-full border rounded p-1 text-center text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <span class="block text-[9px] text-slate-400 font-semibold uppercase">Q3</span>
+                            <input type="number" min="0" max="100" step="0.01" value="0" data-subj="${subj}" data-q="3" oninput="calculateMetrics()" class="score-input w-full border rounded p-1 text-center text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <span class="block text-[9px] text-slate-400 font-semibold uppercase">Q4</span>
+                            <input type="number" min="0" max="100" step="0.01" value="0" data-subj="${subj}" data-q="4" oninput="calculateMetrics()" class="score-input w-full border rounded p-1 text-center text-xs bg-slate-50 focus:bg-white focus:outline-none focus:border-blue-500">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            calculateMetrics();
+        }
+
+        // Calculate Overall Total MPS across subjects
+        function calculateMetrics() {
+            const selectedQtr = document.getElementById('quarterSelect').value;
+            const inputs = document.querySelectorAll('.score-input');
+            let total = 0;
+            let count = 0;
+
+            inputs.forEach(input => {
+                const qtr = input.getAttribute('data-q');
+                const val = parseFloat(input.value) || 0;
+
+                if (selectedQtr === 'ALL' || selectedQtr === `Q${qtr}`) {
+                    total += val;
+                    count++;
+                }
+            });
+
+            const mps = count > 0 ? (total / count) : 0;
+            currentCalculatedScore = mps;
+            
+            const mastery = getMasteryLevel(mps);
+            currentMasteryText = mastery.label;
+
+            document.getElementById('mpsValue').textContent = `${mps.toFixed(2)}%`;
+            const masteryEl = document.getElementById('masteryValue');
+            masteryEl.textContent = mastery.label;
+            masteryEl.className = `text-lg font-bold ${mastery.color}`;
+            
+            document.getElementById('resultStatus').textContent = `Computed successfully for Grade ${document.getElementById('gradeSelect').value} (${selectedQtr}).`;
+        }
+
+        // Parse uploaded Excel workbook directly using SheetJS
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            document.getElementById('uploadTitle').textContent = `Loaded File: ${file.name}`;
+            document.getElementById('uploadSub').textContent = "Parsing sheet headers and matrix values...";
+            document.getElementById('uploadIcon').className = "fa-solid fa-spinner fa-spin text-blue-600";
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Attempt to grab active sheet or first sheet
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    // Auto-fill values if subjects match text
+                    const inputs = document.querySelectorAll('.score-input');
+                    inputs.forEach(input => {
+                        const subj = input.getAttribute('data-subj').toLowerCase();
+                        const qtr = input.getAttribute('data-q');
+
+                        jsonData.forEach(row => {
+                            if (row.length > 0 && String(row[0]).toLowerCase().includes(subj)) {
+                                const val = parseFloat(row[qtr]);
+                                if (!isNaN(val)) input.value = val;
+                            }
+                        });
+                    });
+
+                    document.getElementById('uploadIcon').className = "fa-solid fa-circle-check text-green-600";
+                    document.getElementById('uploadSub').textContent = "Excel data imported successfully!";
+                    calculateMetrics();
+                } catch (err) {
+                    document.getElementById('uploadIcon').className = "fa-solid fa-triangle-exclamation text-amber-500";
+                    document.getElementById('uploadSub').textContent = "Uploaded template processed with default bindings.";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Save entry to IndexedDB
+        function saveRecordToDB() {
+            if (!db) return alert("Database not ready.");
+
+            const record = {
+                school: document.getElementById('schoolSelect').value,
+                grade: `Grade ${document.getElementById('gradeSelect').value}`,
+                quarter: document.getElementById('quarterSelect').value,
+                mps: currentCalculatedScore.toFixed(2),
+                mastery: currentMasteryText,
+                date: new Date().toLocaleString()
+            };
+
+            const tx = db.transaction("mps_records", "readwrite");
+            const store = tx.objectStore("mps_records");
+            store.add(record);
+
+            tx.oncomplete = () => {
+                alert("Record successfully saved to Admin Database!");
+                loadAdminRecords();
+            };
+        }
+
+        // Read entries from IndexedDB
+        function loadAdminRecords() {
+            if (!db) return;
+            const tx = db.transaction("mps_records", "readonly");
+            const store = tx.objectStore("mps_records");
+            const request = store.getAll();
+
+            request.onsuccess = () => {
+                const rows = request.result;
+                const tbody = document.getElementById('dbTableBody');
+                tbody.innerHTML = '';
+
+                if (rows.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">No records found in database.</td></tr>`;
+                    return;
+                }
+
+                rows.forEach(r => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <td class="p-3 font-semibold text-slate-400">#${r.id}</td>
+                        <td class="p-3 font-medium text-slate-800">${r.school}</td>
+                        <td class="p-3">${r.grade}</td>
+                        <td class="p-3"><span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded">${r.quarter}</span></td>
+                        <td class="p-3 font-bold text-blue-600">${r.mps}%</td>
+                        <td class="p-3 font-semibold">${r.mastery}</td>
+                        <td class="p-3 text-slate-400">${r.date}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteRecord(${r.id})" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            };
+        }
+
+        function deleteRecord(id) {
+            const tx = db.transaction("mps_records", "readwrite");
+            tx.objectStore("mps_records").delete(id);
+            tx.oncomplete = () => loadAdminRecords();
+        }
+
+        function clearDatabase() {
+            if (confirm("Are you sure you want to clear all stored database records?")) {
+                const tx = db.transaction("mps_records", "readwrite");
+                tx.objectStore("mps_records").clear();
+                tx.oncomplete = () => loadAdminRecords();
             }
         }
+
+        function exportDBToJSON() {
+            const tx = db.transaction("mps_records", "readonly");
+            const store = tx.objectStore("mps_records");
+            store.getAll().onsuccess = (e) => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(e.target.result, null, 2));
+                const anchor = document.createElement('a');
+                anchor.setAttribute("href", dataStr);
+                anchor.setAttribute("download", "SDO_Binan_MPS_Database.json");
+                document.body.appendChild(anchor);
+                anchor.click();
+                anchor.remove();
+            };
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            const btnText = document.getElementById('adminBtnText');
+            if (panel.classList.contains('hidden')) {
+                panel.classList.remove('hidden');
+                btnText.textContent = "Hide Database";
+            } else {
+                panel.classList.add('hidden');
+                btnText.textContent = "Admin Database";
+            }
+        }
+
+        // Initialize script on page load
+        window.onload = () => {
+            initDB();
+            renderSubjectInputs();
+        };
     </script>
 </body>
 </html>
