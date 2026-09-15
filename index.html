@@ -66,7 +66,7 @@
                     <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">One-Stop Shop Educational Hub</h2>
                     <p class="text-sm text-blue-200 mb-6">Centralized portal for division assessments, analytics, and automated reporting systems.</p>
                     <div class="relative">
-                        <input type="text" id="searchBox" onkeyup="filterApps()" placeholder="Search programs or projects (e.g., MPS, Summary, Attendance)..." class="w-full py-3 px-4 pl-10 rounded-xl text-slate-800 text-sm focus:outline-none shadow-md">
+                        <input type="text" id="searchBox" onkeyup="filterApps()" placeholder="Search programs or projects (e.g., MPS, Summary, Calendar)..." class="w-full py-3 px-4 pl-10 rounded-xl text-slate-800 text-sm focus:outline-none shadow-md">
                         <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
                         </a>
                     </div>
 
-                      <!-- Card 7: School Heads Attendance Monitoring -->
+                    <!-- Card 7: School Heads Attendance Monitoring -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="school heads attendance monitoring portal location verification checkin">
                         <div>
                             <div class="w-12 h-12 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl mb-4">
@@ -190,6 +190,20 @@
                         </a>
                     </div>
 
+                    <!-- Card 9: Calendar of Activities -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition flex flex-col justify-between app-card" data-title="sdo binan city calendar of activities events schedule division activities timeline">
+                        <div>
+                            <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center text-xl mb-4">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                            <h4 class="font-bold text-base text-slate-900 mb-1">Calendar of Activities</h4>
+                            <p class="text-xs text-slate-500 mb-4">Official division-wide schedule of activities, upcoming events, academic deadlines, and operational timelines for SDO Biñan City.</p>
+                        </div>
+                        <a href="calendar.html" id="btn-calendar" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+
                 </div>
             </main>
         </div>
@@ -205,7 +219,7 @@
     <script>
     // Reset all buttons when returning via browser back button
     window.addEventListener('pageshow', function(event) {
-        const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'teachers', 'attendance', 'gabay'];
+        const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'teachers', 'attendance', 'gabay', 'calendar'];
         apps.forEach(appId => {
             const btn = document.getElementById(`btn-${appId}`);
             if (btn) {
@@ -218,6 +232,7 @@
                 if(appId === 'teachers') originalColor = "bg-purple-600 hover:bg-purple-700";
                 if(appId === 'attendance') originalColor = "bg-cyan-600 hover:bg-cyan-700";
                 if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
+                if(appId === 'calendar') originalColor = "bg-orange-600 hover:bg-orange-700";
 
                 btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
                 btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
