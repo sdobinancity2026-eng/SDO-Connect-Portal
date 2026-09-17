@@ -74,15 +74,21 @@
                     <i class="fa-solid fa-chart-pie w-5"></i>
                     <span>Dashboard</span>
                 </button>
-
+            
                 <button onclick="switchTab('teachers')" id="nav-teachers" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition">
                     <i class="fa-solid fa-chalkboard-user w-5"></i>
                     <span>Teachers Data</span>
                 </button>
-
+            
                 <button onclick="switchTab('students')" id="nav-students" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition">
                     <i class="fa-solid fa-user-graduate w-5"></i>
                     <span>Student Data</span>
+                </button>
+            
+                <!-- NEW: Calendar Admin Button -->
+                <button onclick="switchTab('calendar')" id="nav-calendar" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fa-solid fa-calendar-days w-5"></i>
+                    <span>Calendar Admin</span>
                 </button>
             </nav>
 
@@ -287,27 +293,37 @@
             }
         }
 
-        // View Navigation Switcher
-        function switchTab(tabName) {
-            // Hide all views
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-teachers').classList.add('hidden');
-            document.getElementById('view-students').classList.add('hidden');
+       // View Navigation Switcher
+function switchTab(tabName) {
+    // Handle Calendar Admin External Redirection in Same Tab
+    if (tabName === 'calendar') {
+        window.location.href = "https://sdobinancity2026-eng.github.io/CalendarOfActivities-AdminDashboard/";
+        return;
+    }
 
-            // Reset Nav Button Styles
-            ['dashboard', 'teachers', 'students'].forEach(t => {
-                const btn = document.getElementById(`nav-${t}`);
-                btn.className = "w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition";
-            });
+    // Hide all views
+    document.getElementById('view-dashboard').classList.add('hidden');
+    document.getElementById('view-teachers').classList.add('hidden');
+    document.getElementById('view-students').classList.add('hidden');
 
-            // Activate Target Tab
-            document.getElementById(`view-${tabName}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`nav-${tabName}`);
-            activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl bg-blue-900 text-white hover:bg-blue-800 transition";
-
-            // Close sidebar on mobile select
-            toggleSidebar();
+    // Reset Nav Button Styles
+    ['dashboard', 'teachers', 'students', 'calendar'].forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) {
+            btn.className = "w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition";
         }
+    });
+
+    // Activate Target Tab
+    document.getElementById(`view-${tabName}`).classList.remove('hidden');
+    const activeBtn = document.getElementById(`nav-${tabName}`);
+    if (activeBtn) {
+        activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl bg-blue-900 text-white hover:bg-blue-800 transition";
+    }
+
+    // Close sidebar on mobile select
+    toggleSidebar();
+}
 
         // Alert Helper
         function showAlert(type, message) {
