@@ -552,47 +552,50 @@
                 </p>
 
                 <!-- STEP 1: School & Assessment Details -->
-                <div id="formStep1" class="space-y-4">
-                    <!-- Region -->
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
-                        <label for="inputRegion" class="md:col-span-4 text-xs sm:text-sm font-bold text-slate-800">
-                            Region <span class="text-red-600">*</span>
-                        </label>
-                        <div class="md:col-span-8">
-                            <select id="inputRegion" required class="w-full md:w-96 border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm text-slate-700 bg-white focus:outline-none focus:border-sky-600">
-                                <option value="">Select region</option>
-                                <option value="Region IV-A (CALABARZON)" selected>Region IV-A (CALABARZON)</option>
-                                <option value="NCR">NCR</option>
-                                <option value="Region III">Region III</option>
-                            </select>
-                        </div>
+               <!-- Region (Fixed to Region IV-A (CALABARZON)) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
+                    <label for="inputRegion" class="md:col-span-4 text-xs sm:text-sm font-bold text-slate-800">
+                        Region <span class="text-red-600">*</span>
+                    </label>
+                    <div class="md:col-span-8">
+                        <input type="text" id="inputRegion" name="region" value="Region IV-A (CALABARZON)" readonly required
+                            class="w-full md:w-96 border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 cursor-not-allowed focus:outline-none">
                     </div>
-
-                    <!-- Division -->
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
-                        <label for="inputDivision" class="md:col-span-4 text-xs sm:text-sm font-bold text-slate-800">
-                            Division <span class="text-red-600">*</span>
-                        </label>
-                        <div class="md:col-span-8">
-                            <select id="inputDivision" required class="w-full md:w-96 border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm text-slate-700 bg-white focus:outline-none focus:border-sky-600">
-                                <option value="">Select division</option>
-                                <option value="Biñan City" selected>Biñan City</option>
-                                <option value="Santa Rosa City">Santa Rosa City</option>
-                                <option value="Cabuyao City">Cabuyao City</option>
-                                <option value="Calamba City">Calamba City</option>
-                            </select>
-                        </div>
+                </div>
+                
+                <!-- Division (Fixed to Biñan City) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
+                    <label for="inputDivision" class="md:col-span-4 text-xs sm:text-sm font-bold text-slate-800">
+                        Division <span class="text-red-600">*</span>
+                    </label>
+                    <div class="md:col-span-8">
+                        <input type="text" id="inputDivision" name="division" value="Biñan City" readonly required
+                            class="w-full md:w-96 border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 cursor-not-allowed focus:outline-none">
                     </div>
-
-                    <!-- District -->
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
-                        <label for="inputDistrict" class="md:col-span-4 text-xs sm:text-sm font-bold text-slate-800">
-                            District <span class="text-red-600">*</span>
-                        </label>
-                        <div class="md:col-span-8">
-                            <input type="text" id="inputDistrict" required placeholder="Ex. District I" class="w-full md:w-96 border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-sky-600">
-                        </div>
+                </div>
+                
+                <!-- District (District 1 to 10 Only) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
+                    <label for="inputDistrict" class="md:col-span-4 text-xs sm:text-sm font-bold text-slate-800">
+                        District <span class="text-red-600">*</span>
+                    </label>
+                    <div class="md:col-span-8">
+                        <select id="inputDistrict" name="district" required
+                            class="w-full md:w-96 border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm text-slate-800 bg-white focus:outline-none focus:border-sky-600">
+                            <option value="">Select district</option>
+                            <option value="District 1">District 1</option>
+                            <option value="District 2">District 2</option>
+                            <option value="District 3">District 3</option>
+                            <option value="District 4">District 4</option>
+                            <option value="District 5">District 5</option>
+                            <option value="District 6">District 6</option>
+                            <option value="District 7">District 7</option>
+                            <option value="District 8">District 8</option>
+                            <option value="District 9">District 9</option>
+                            <option value="District 10">District 10</option>
+                        </select>
                     </div>
+                </div>
 
                     <!-- School ID -->
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
@@ -898,39 +901,47 @@
     };
 
     function openSubmissionModal(type) {
-        currentFormType = type;
-        currentStep = 1;
-        const cfg = formConfigs[type] || formConfigs['crla'];
+    currentFormType = type;
+    currentStep = 1;
+    const cfg = formConfigs[type] || formConfigs['crla'];
 
-        document.getElementById('modalFormTitle').textContent = cfg.title;
-        document.getElementById('modalFormSubtitle').innerHTML = cfg.subtitle;
+    // Clear stale inputs from any previous open, then re-apply fixed values
+    const form = document.getElementById('nlaSubmissionForm');
+    if (form) form.reset();
+    const fileDisplay = document.getElementById('fileNameDisplay');
+    if (fileDisplay) fileDisplay.textContent = 'Choose file';
 
-        // Toggle CRLA-only fields (Principal, Contact Number, Mother Tongue, School Summary upload)
-        const crlaFields = document.getElementById('crlaExtraFields');
-        const principalInput = document.getElementById('inputPrincipal');
-        const contactInput = document.getElementById('inputContact');
-        const langInput = document.getElementById('inputLanguage');
-        const summaryFileInput = document.getElementById('inputSummaryFile');
+    document.getElementById('inputRegion').value = 'Region IV-A (CALABARZON)';
+    document.getElementById('inputDivision').value = 'Biñan City';
+    document.getElementById('modalFormTitle').textContent = cfg.title;
+    document.getElementById('modalFormSubtitle').innerHTML = cfg.subtitle;
 
-        if (cfg.isCrla) {
-            crlaFields.classList.remove('hidden');
-            principalInput.required = true;
-            contactInput.required = true;
-            langInput.required = true;
-            summaryFileInput.required = true;
-        } else {
-            crlaFields.classList.add('hidden');
-            principalInput.required = false;
-            contactInput.required = false;
-            langInput.required = false;
-            summaryFileInput.required = false;
-        }
+    // Toggle CRLA-only fields (Principal, Contact Number, Mother Tongue, School Summary upload)
+    const crlaFields = document.getElementById('crlaExtraFields');
+    const principalInput = document.getElementById('inputPrincipal');
+    const contactInput = document.getElementById('inputContact');
+    const langInput = document.getElementById('inputLanguage');
+    const summaryFileInput = document.getElementById('inputSummaryFile');
 
-        resetStepUI();
-        const modal = document.getElementById('submissionModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+    if (cfg.isCrla) {
+        crlaFields.classList.remove('hidden');
+        principalInput.required = true;
+        contactInput.required = true;
+        langInput.required = true;
+        summaryFileInput.required = true;
+    } else {
+        crlaFields.classList.add('hidden');
+        principalInput.required = false;
+        contactInput.required = false;
+        langInput.required = false;
+        summaryFileInput.required = false;
     }
+
+    resetStepUI();
+    const modal = document.getElementById('submissionModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
 
     function closeSubmissionModal() {
         const modal = document.getElementById('submissionModal');
@@ -946,17 +957,25 @@
     }
 
     function resetStepUI() {
-        currentStep = 1;
-        document.getElementById('formStep1').classList.remove('hidden');
-        document.getElementById('formStep2').classList.add('hidden');
+    currentStep = 1;
 
-        const prevBtn = document.getElementById('btnPrevStep');
+    const step1 = document.getElementById('formStep1');
+    const step2 = document.getElementById('formStep2');
+    const prevBtn = document.getElementById('btnPrevStep');
+    const nextBtn = document.getElementById('btnNextStep');
+    const submitBtn = document.getElementById('btnSubmitForm');
+
+    if (step1) step1.classList.remove('hidden');
+    if (step2) step2.classList.add('hidden');
+
+    if (prevBtn) {
         prevBtn.disabled = true;
         prevBtn.className = 'bg-slate-100 text-slate-400 font-medium text-xs sm:text-sm px-4 py-2 rounded cursor-not-allowed transition';
-
-        document.getElementById('btnNextStep').classList.remove('hidden');
-        document.getElementById('btnSubmitForm').classList.add('hidden');
     }
+
+    if (nextBtn) nextBtn.classList.remove('hidden');
+    if (submitBtn) submitBtn.classList.add('hidden');
+}
 
     function nextFormStep() {
         const region = document.getElementById('inputRegion').value.trim();
