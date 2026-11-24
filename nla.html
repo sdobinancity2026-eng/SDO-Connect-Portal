@@ -450,9 +450,9 @@
                     </div>
                 </div>
             
-                <!-- 2-Column Submission Grid (Literacy & Numeracy) -->
+              <!-- 2-Column Submission Grid (Literacy & Numeracy) -->
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            
+                
                     <!-- Left Column: LITERACY Submission Buttons -->
                     <div class="bg-slate-50/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="bg-white border-b border-slate-200 py-3 px-4 text-center">
@@ -461,35 +461,37 @@
                                 <span>LITERACY</span>
                             </h4>
                         </div>
-            
-                        <!-- Button 1: CRLA (Grade 1 to 3) -->
-                        <button type="button" onclick="openSubmissionModal('crla')" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer">
-                            <span class="w-4"></span>
-                            <span class="text-xs font-semibold leading-snug">
-                                Comprehensive Rapid Literacy<br>Assessment (CRLA) (Grade 1 to 3)
-                            </span>
-                            <i class="fa-solid fa-file-pen text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
-                        </button>
-                        
-                        <!-- Button 2: Phil-IRI (Grade 4 to 6) -->
-                        <button type="button" onclick="openSubmissionModal('philiri-ks2')" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer">
-                            <span class="w-4"></span>
-                            <span class="text-xs font-semibold leading-snug">
-                                Philippine Informal Reading Inventory<br>(Phil-IRI) (Grade 4 to 6)
-                            </span>
-                            <i class="fa-solid fa-file-pen text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
-                        </button>
-                        
-                        <!-- Button 3: Phil-IRI (Grade 7 to 10) -->
-                        <button type="button" onclick="openSubmissionModal('philiri-ks3')" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer">
-                            <span class="w-4"></span>
-                            <span class="text-xs font-semibold leading-snug">
-                                Philippine Informal Reading Inventory<br>(Phil-IRI) (Grade 7 to 10)
-                            </span>
-                            <i class="fa-solid fa-file-pen text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
-                        </button>
+                
+                        <div class="p-5 flex flex-col gap-3.5">
+                            <!-- Button 1: CRLA (Grade 1 to 3) -->
+                            <button type="button" onclick="openSubmissionModal('crla')" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer">
+                                <span class="w-4"></span>
+                                <span class="text-xs font-semibold leading-snug">
+                                    Comprehensive Rapid Literacy<br>Assessment (CRLA) (Grade 1 to 3)
+                                </span>
+                                <i class="fa-solid fa-file-pen text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                            </button>
+                
+                            <!-- Button 2: Phil-IRI (Grade 4 to 6) -->
+                            <button type="button" onclick="openSubmissionModal('philiri-ks2')" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer">
+                                <span class="w-4"></span>
+                                <span class="text-xs font-semibold leading-snug">
+                                    Philippine Informal Reading Inventory<br>(Phil-IRI) (Grade 4 to 6)
+                                </span>
+                                <i class="fa-solid fa-file-pen text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                            </button>
+                
+                            <!-- Button 3: Phil-IRI (Grade 7 to 10) -->
+                            <button type="button" onclick="openSubmissionModal('philiri-ks3')" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3 cursor-pointer">
+                                <span class="w-4"></span>
+                                <span class="text-xs font-semibold leading-snug">
+                                    Philippine Informal Reading Inventory<br>(Phil-IRI) (Grade 7 to 10)
+                                </span>
+                                <i class="fa-solid fa-file-pen text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                            </button>
+                        </div>
                     </div>
-            
+                
                     <!-- Right Column: NUMERACY Submission Status -->
                     <div class="bg-slate-50/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                         <div class="bg-white border-b border-slate-200 py-3 px-4 text-center">
@@ -498,7 +500,7 @@
                                 <span>NUMERACY</span>
                             </h4>
                         </div>
-            
+                
                         <div class="p-8 flex flex-col items-center justify-center text-center min-h-[212px]">
                             <div class="w-11 h-11 rounded-full bg-slate-200/70 text-slate-400 flex items-center justify-center text-lg mb-3">
                                 <i class="fa-solid fa-folder-open"></i>
@@ -511,7 +513,7 @@
                             </p>
                         </div>
                     </div>
-            
+                
                 </div>
             </section>
 
@@ -1094,7 +1096,7 @@
         }
 
         const payload = {
-            school_year: '2026-2027',
+            school_year: getCurrentSchoolYearFull(),
             period: period,
             region: region,
             division: division,
@@ -1191,6 +1193,29 @@
 
         applyCrlaFilters();
     }
+
+    function updateCrlaBannerSubtitle() {
+    const subtitleEl = document.getElementById('crlaBannerSubtitle');
+    if (!subtitleEl) return;
+
+    const syLabel = getCurrentSchoolYearLabel(crlaAllRecords);
+
+    if (crlaActiveTab === 'BoSY') {
+        subtitleEl.textContent = `BoSY ${syLabel} Assessment Results (Public Schools)`;
+    } else if (crlaActiveTab === 'MoSY') {
+        subtitleEl.textContent = `MoSY ${syLabel} Assessment Results (Public Schools)`;
+    } else {
+        subtitleEl.textContent = `MoSY ${syLabel} School Submission Monitoring (Public Schools)`;
+    }
+}
+
+    function getCurrentSchoolYearFull() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const startYear = month >= 6 ? year : year - 1;
+    return `${startYear}-${startYear + 1}`;
+}
 
     async function fetchCrlaFromSupabase() {
         const statusBadge = document.getElementById('crlaSyncStatus');
@@ -1364,6 +1389,50 @@
             `;
         }).join('');
     }
+
+    function formatShortSchoolYear(syValue) {
+    if (!syValue) return getCurrentSchoolYearLabel();
+
+    const cleaned = String(syValue).trim();
+    // Matches "2026-2027", "2026–2027", "2026-27", or "2026–27"
+    const match = cleaned.match(/^(\d{4})\s*[-–]\s*(\d{2,4})$/);
+    if (match) {
+        const startYear = match[1];
+        const endPart = match[2].length === 4 ? match[2].slice(-2) : match[2];
+        return `${startYear}–${endPart}`;
+    }
+
+    // If a single year like "2026" is stored, convert to "2026–27"
+    const singleYear = cleaned.match(/^(\d{4})$/);
+    if (singleYear) {
+        const y = Number(singleYear[1]);
+        return `${y}–${String((y + 1) % 100).padStart(2, '0')}`;
+    }
+
+    return cleaned;
+}
+
+function getCurrentSchoolYearLabel(records = []) {
+    // 1. Prefer the latest school_year present in Supabase rows
+    if (Array.isArray(records) && records.length > 0) {
+        const years = records
+            .map(r => r.school_year)
+            .filter(Boolean)
+            .sort()
+            .reverse();
+        if (years.length > 0) {
+            return formatShortSchoolYear(years[0]);
+        }
+    }
+
+    // 2. Fallback based on current date (June+ starts new SY; Jan-May is prior start year)
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // 1–12
+    const startYear = month >= 6 ? year : year - 1;
+    const endTwoDigit = String((startYear + 1) % 100).padStart(2, '0');
+    return `${startYear}–${endTwoDigit}`;
+}
     
 </script>
 
