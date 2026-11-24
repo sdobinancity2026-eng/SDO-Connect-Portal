@@ -231,27 +231,28 @@
 
     <script>
     // Reset all buttons when returning via browser back button
-    window.addEventListener('pageshow', function(event) {
-        const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'teachers', 'attendance', 'gabay', 'calendar'];
-        apps.forEach(appId => {
-            const btn = document.getElementById(`btn-${appId}`);
-            if (btn) {
-                btn.disabled = false;
-                let originalColor = "bg-blue-600 hover:bg-blue-700";
-                if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
-                if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
-                if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
-                if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
-                if(appId === 'teachers') originalColor = "bg-purple-600 hover:bg-purple-700";
-                if(appId === 'attendance') originalColor = "bg-cyan-600 hover:bg-cyan-700";
-                if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
-                if(appId === 'calendar') originalColor = "bg-orange-600 hover:bg-orange-700";
+window.addEventListener('pageshow', function(event) {
+    const apps = ['mps', 'summary', 'schools', 'guidelines', 'transport', 'teachers', 'attendance', 'gabay', 'calendar', 'nla'];
+    apps.forEach(appId => {
+        const btn = document.getElementById(`btn-${appId}`);
+        if (btn) {
+            btn.disabled = false;
+            let originalColor = "bg-blue-600 hover:bg-blue-700";
+            if(appId === 'summary') originalColor = "bg-indigo-600 hover:bg-indigo-700";
+            if(appId === 'schools') originalColor = "bg-emerald-600 hover:bg-emerald-700";
+            if(appId === 'guidelines') originalColor = "bg-amber-600 hover:bg-amber-700";
+            if(appId === 'transport') originalColor = "bg-teal-600 hover:bg-teal-700";
+            if(appId === 'teachers') originalColor = "bg-purple-600 hover:bg-purple-700";
+            if(appId === 'attendance') originalColor = "bg-cyan-600 hover:bg-cyan-700";
+            if(appId === 'gabay') originalColor = "bg-rose-600 hover:bg-rose-700";
+            if(appId === 'calendar') originalColor = "bg-orange-600 hover:bg-orange-700";
+            if(appId === 'nla') originalColor = "bg-sky-600 hover:bg-sky-700";
 
-                btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
-                btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
-            }
-        });
+            btn.className = `w-full ${originalColor} text-white font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2`;
+            btn.innerHTML = `<span>Launch Module</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+        }
     });
+});
 
     // Real-time program search filtering
     function filterApps() {
