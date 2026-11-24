@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NLA Dashboard Portal - SDO Biñan City</title>
+    <title>Literacy and Numeracy Dashboards Portal - SDO Biñan City</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .logo-glow {
             filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
         }
-        /* Smooth zoom on dashboard thumbnail hover */
-        .dashboard-card:hover .preview-img {
+
+        /* Subtle hover elevation & thumbnail zoom for clickable cards */
+        .nla-item {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nla-item:hover {
+            transform: translateY(-4px);
+        }
+        .nla-item:hover .thumb-visual {
             transform: scale(1.04);
         }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-900 font-sans text-slate-800 min-h-screen flex flex-col">
 
-    <!-- Top Header (Consistent with index.html) -->
-    <header class="bg-blue-900 text-white shadow-lg py-3 px-4 shrink-0 z-20">
+    <!-- Top Header (Consistent with SDO Biñan Hub) -->
+    <header class="bg-blue-950/95 backdrop-blur-md text-white shadow-lg py-3 px-4 shrink-0 z-30 border-b border-blue-800/60">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
-            <!-- Combined Logos & Title Section -->
+            <!-- Logos & Division Title -->
             <div class="flex flex-wrap sm:flex-nowrap items-center justify-center md:justify-start gap-3 sm:gap-4 text-center sm:text-left">
                 <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
                     <img src="DepED-Logo - Copy.png" alt="DepEd Logo" class="h-10 sm:h-12 w-auto object-contain logo-glow">
@@ -38,7 +45,7 @@
                 </div>
             </div>
 
-            <!-- Right Control: Back to Hub -->
+            <!-- Back to Main Hub Button -->
             <div class="flex items-center gap-3 shrink-0">
                 <a href="index.html" class="bg-blue-800 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-xs border border-blue-600 transition flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -49,383 +56,475 @@
         </div>
     </header>
 
-    <!-- Hero Banner -->
-    <section class="bg-gradient-to-r from-blue-900 via-sky-900 to-indigo-900 text-white py-8 px-4 text-center shadow-inner">
-        <div class="max-w-4xl mx-auto">
-            <span class="inline-block bg-sky-500/20 border border-sky-400/30 text-sky-200 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3">
-                National Learning Assessment (NLA)
-            </span>
-            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
-                Welcome to Your Literacy and Numeracy Dashboards Portal!
-            </h2>
-            <p class="text-xs sm:text-sm text-blue-200 max-w-2xl mx-auto">
-                Click any dashboard preview image below to launch interactive division analytics across Key Stages 1 to 4.
-            </p>
+    <!-- Main Portal Canvas with Soft Blurred Background Image -->
+    <main class="relative flex-1 flex flex-col justify-center py-10 px-4 overflow-hidden">
+        
+        <!-- Background Image Layer (Replace 'bg-students.jpg' with your own school photo if desired) -->
+        <div class="absolute inset-0 z-0">
+            <img src="bg-students.jpg" alt="" onerror="this.style.display='none'" class="w-full h-full object-cover object-center opacity-35 blur-[2px] scale-105">
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-blue-950/75 to-slate-900/90"></div>
         </div>
-    </section>
 
-    <!-- Main Portal Content -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 space-y-10">
+        <div class="relative z-10 max-w-5xl w-full mx-auto space-y-7">
 
-        <!-- =========================================================
-             SECTION 1: LITERACY DASHBOARDS
-             ========================================================= -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <!-- Section Header -->
-            <div class="bg-gradient-to-r from-blue-50 to-sky-50 border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-book-open-reader"></i>
+            <!-- Portal Main Heading -->
+            <div class="text-center space-y-2 mb-6">
+                <span class="inline-flex items-center gap-1.5 bg-sky-500/20 border border-sky-400/30 text-sky-200 text-[11px] font-bold uppercase tracking-widest px-3.5 py-1 rounded-full">
+                    <i class="fa-solid fa-chart-column"></i> National Learning Assessment
+                </span>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight drop-shadow">
+                    Welcome to Your Literacy and Numeracy Dashboards Portal!
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-300">
+                    Click any assessment icon or dashboard preview below to open the live report.
+                </p>
+            </div>
+
+            <!-- =========================================================
+                 CONTAINER 1: LITERACY
+                 ========================================================= -->
+            <section class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/40 overflow-hidden">
+                <!-- Centered Category Banner -->
+                <div class="bg-slate-50/90 border-b border-slate-200/80 py-3.5 px-6 text-center">
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 tracking-wider uppercase flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book-open text-blue-600"></i>
+                        <span>LITERACY</span>
+                    </h3>
+                </div>
+
+                <!-- 4 Clickable Dashboard Items -->
+                <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+                    <!-- 1. CRLA -->
+                    <a href="YOUR_CRLA_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 mb-3 transition">CRLA</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <!-- Optional Real Screenshot (auto-falls back to vector chart if file missing) -->
+                            <img src="crla.png" alt="CRLA Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <!-- Vector Dashboard Thumbnail -->
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-10 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-amber-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
+                                    <div class="w-full bg-red-600 h-[85%] rounded-t-sm"></div>
+                                    <div class="w-full bg-orange-500 h-[25%] rounded-t-sm"></div>
+                                    <div class="w-full bg-amber-400 h-[35%] rounded-t-sm"></div>
+                                    <div class="w-full bg-blue-500 h-[68%] rounded-t-sm"></div>
+                                    <div class="w-full bg-emerald-500 h-[40%] rounded-t-sm"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hover Action Pill -->
+                            <div class="absolute inset-0 bg-blue-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-blue-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 2. PHIL-IRI KS2 -->
+                    <a href="YOUR_PHILIRI_KS2_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 mb-3 transition">PHIL-IRI KS2</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="phil-iri-ks2.png" alt="PHIL-IRI KS2 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-12 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-sky-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 grid grid-cols-2 gap-2">
+                                    <div class="flex items-end gap-1 border-r border-slate-100 pr-1">
+                                        <div class="w-full bg-amber-500 h-[48%] rounded-t-sm"></div>
+                                        <div class="w-full bg-sky-500 h-[78%] rounded-t-sm"></div>
+                                        <div class="w-full bg-emerald-500 h-[68%] rounded-t-sm"></div>
+                                    </div>
+                                    <div class="flex items-end gap-1 pl-1">
+                                        <div class="w-full bg-amber-500 h-[42%] rounded-t-sm"></div>
+                                        <div class="w-full bg-sky-500 h-[62%] rounded-t-sm"></div>
+                                        <div class="w-full bg-emerald-500 h-[55%] rounded-t-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-blue-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-blue-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 3. PHIL-IRI KS3 -->
+                    <a href="YOUR_PHILIRI_KS3_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 mb-3 transition">PHIL-IRI KS3</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="phil-iri-ks3.png" alt="PHIL-IRI KS3 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-12 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-emerald-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 grid grid-cols-2 gap-2">
+                                    <div class="flex items-end gap-1 border-r border-slate-100 pr-1">
+                                        <div class="w-full bg-amber-500 h-[40%] rounded-t-sm"></div>
+                                        <div class="w-full bg-sky-500 h-[72%] rounded-t-sm"></div>
+                                        <div class="w-full bg-emerald-500 h-[52%] rounded-t-sm"></div>
+                                    </div>
+                                    <div class="flex items-end gap-1 pl-1">
+                                        <div class="w-full bg-amber-500 h-[66%] rounded-t-sm"></div>
+                                        <div class="w-full bg-sky-500 h-[48%] rounded-t-sm"></div>
+                                        <div class="w-full bg-emerald-500 h-[25%] rounded-t-sm"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-blue-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-blue-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 4. SHS Literacy KS4 -->
+                    <a href="YOUR_SHS_LITERACY_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 mb-3 transition">SHS Literacy KS4</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="shs-literacy-ks4.png" alt="SHS Literacy KS4 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-14 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-indigo-300 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 flex items-end gap-0.5">
+                                    <div class="w-full bg-blue-600 h-[32%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[48%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[40%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[75%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[55%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[45%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[38%] rounded-t-xs"></div>
+                                    <div class="w-2"></div>
+                                    <div class="w-full bg-teal-500 h-[60%] rounded-t-xs"></div>
+                                    <div class="w-full bg-sky-400 h-[35%] rounded-t-xs"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-blue-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-blue-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </section>
+
+            <!-- =========================================================
+                 CONTAINER 2: NUMERACY
+                 ========================================================= -->
+            <section class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/40 overflow-hidden">
+                <!-- Centered Category Banner -->
+                <div class="bg-slate-50/90 border-b border-slate-200/80 py-3.5 px-6 text-center">
+                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 tracking-wider uppercase flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calculator text-emerald-600"></i>
+                        <span>NUMERACY</span>
+                    </h3>
+                </div>
+
+                <!-- 4 Clickable Dashboard Items -->
+                <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+                    <!-- 1. RMA KS1 -->
+                    <a href="YOUR_RMA_KS1_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 mb-3 transition">RMA KS1</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="rma-ks1.png" alt="RMA KS1 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-10 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-emerald-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
+                                    <div class="w-full bg-red-600 h-[55%] rounded-t-sm"></div>
+                                    <div class="w-full bg-orange-500 h-[85%] rounded-t-sm"></div>
+                                    <div class="w-full bg-amber-400 h-[72%] rounded-t-sm"></div>
+                                    <div class="w-full bg-blue-500 h-[26%] rounded-t-sm"></div>
+                                    <div class="w-full bg-emerald-500 h-[20%] rounded-t-sm"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-emerald-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-emerald-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 2. RMA KS2 -->
+                    <a href="YOUR_RMA_KS2_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 mb-3 transition">RMA KS2</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="rma-ks2.png" alt="RMA KS2 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-10 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-emerald-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
+                                    <div class="w-full bg-red-600 h-[62%] rounded-t-sm"></div>
+                                    <div class="w-full bg-orange-500 h-[82%] rounded-t-sm"></div>
+                                    <div class="w-full bg-amber-400 h-[54%] rounded-t-sm"></div>
+                                    <div class="w-full bg-blue-500 h-[22%] rounded-t-sm"></div>
+                                    <div class="w-full bg-emerald-500 h-[12%] rounded-t-sm"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-emerald-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-emerald-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 3. RMA KS3 -->
+                    <a href="YOUR_RMA_KS3_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 mb-3 transition">RMA KS3</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="rma-ks3.png" alt="RMA KS3 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-10 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-emerald-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
+                                    <div class="w-full bg-red-600 h-[86%] rounded-t-sm"></div>
+                                    <div class="w-full bg-orange-500 h-[24%] rounded-t-sm"></div>
+                                    <div class="w-full bg-amber-400 h-[14%] rounded-t-sm"></div>
+                                    <div class="w-full bg-blue-500 h-[10%] rounded-t-sm"></div>
+                                    <div class="w-full bg-emerald-500 h-[8%] rounded-t-sm"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-emerald-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-emerald-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- 4. SHS Numeracy KS4 -->
+                    <a href="YOUR_SHS_NUMERACY_URL" class="nla-item group flex flex-col items-center text-center bg-white rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-xl cursor-pointer">
+                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 mb-3 transition">SHS Numeracy KS4</span>
+                        
+                        <div class="relative w-full aspect-[16/10] rounded-lg border border-slate-300 overflow-hidden bg-slate-50 shadow-sm">
+                            <img src="shs-numeracy-ks4.png" alt="SHS Numeracy KS4 Dashboard" class="thumb-visual w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            
+                            <div class="thumb-visual w-full h-full transition-transform duration-300 hidden flex-col bg-white">
+                                <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
+                                    <div class="w-14 h-1 bg-white/80 rounded"></div>
+                                    <div class="w-3 h-1 bg-amber-400 rounded"></div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                    <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
+                                </div>
+                                <div class="flex-1 p-2 flex items-end gap-0.5">
+                                    <div class="w-full bg-blue-600 h-[35%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[52%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[42%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[78%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[58%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[44%] rounded-t-xs"></div>
+                                    <div class="w-full bg-blue-600 h-[36%] rounded-t-xs"></div>
+                                    <div class="w-2"></div>
+                                    <div class="w-full bg-amber-400 h-[45%] rounded-t-xs"></div>
+                                    <div class="w-full bg-orange-300 h-[22%] rounded-t-xs"></div>
+                                </div>
+                            </div>
+
+                            <div class="absolute inset-0 bg-emerald-950/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <span class="bg-white text-emerald-900 font-bold text-[11px] px-3 py-1 rounded-full shadow flex items-center gap-1">
+                                    <span>View Report</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </section>
+
+
+                <!-- =========================================================
+                 CONTAINER 3: NUMERACY & LITERACY ASSESSMENTS SUBMISSION PORTAL
+                 ========================================================= -->
+            <section class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/40 overflow-hidden">
+                
+                <!-- Section Header Banner -->
+                <div class="bg-gradient-to-r from-blue-950 to-indigo-900 border-b border-blue-800 py-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="text-center sm:text-left">
+                        <span class="inline-block text-[10px] font-bold uppercase tracking-widest text-sky-300 mb-0.5">
+                            Assessment Data Submission
+                        </span>
+                        <h3 class="text-base sm:text-lg font-extrabold text-white tracking-wide">
+                            Numeracy and Literacy Assessments Submission Portal
+                        </h3>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-extrabold text-slate-900 tracking-wide uppercase">Literacy</h3>
-                        <p class="text-xs text-slate-500">Reading & Language Proficiency Dashboards</p>
+            
+                    <!-- Latest Scoresheet Templates Quick Links (Top Right from Reference) -->
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <span class="text-[11px] font-semibold text-blue-200 mr-1">
+                            <i class="fa-solid fa-file-excel text-emerald-400 mr-1"></i>Latest Scoresheet Template:
+                        </span>
+                        <a href="YOUR_CRLA_SCORESHEET_URL" class="bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white border border-white/20 text-[11px] font-semibold px-2.5 py-1 rounded-lg transition">
+                            CRLA Scoresheet
+                        </a>
+                        <a href="YOUR_RMA_SCORESHEET_URL" class="bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white border border-white/20 text-[11px] font-semibold px-2.5 py-1 rounded-lg transition">
+                            RMA Scoresheets
+                        </a>
+                        <a href="YOUR_SHS_SCORESHEET_URL" class="bg-white/10 hover:bg-white/20 text-sky-200 hover:text-white border border-white/20 text-[11px] font-semibold px-2.5 py-1 rounded-lg transition">
+                            SHS Scoresheets
+                        </a>
                     </div>
                 </div>
-                <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
-                    <i class="fa-solid fa-arrow-pointer"></i> Click image to launch
-                </span>
-            </div>
-
-            <!-- 4-Column Grid of Clickable Dashboard Images -->
-            <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <!-- 1. CRLA -->
-                <a href="YOUR_CRLA_DASHBOARD_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 transition">CRLA</span>
-                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">KS1</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <!-- Replace src with your actual screenshot filename (e.g., crla.png) -->
-                        <img src="crla.png" alt="CRLA Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <!-- Fallback Vector Preview if image file is not yet added -->
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-10 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-amber-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
-                                <div class="w-full bg-red-600 h-[82%] rounded-t-sm"></div>
-                                <div class="w-full bg-orange-500 h-[28%] rounded-t-sm"></div>
-                                <div class="w-full bg-amber-400 h-[35%] rounded-t-sm"></div>
-                                <div class="w-full bg-blue-500 h-[65%] rounded-t-sm"></div>
-                                <div class="w-full bg-emerald-500 h-[42%] rounded-t-sm"></div>
-                            </div>
+            
+                <!-- 2-Column Submission Grid (Literacy & Numeracy) -->
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            
+                    <!-- Left Column: LITERACY Submission Buttons -->
+                    <div class="bg-slate-50/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="bg-white border-b border-slate-200 py-3 px-4 text-center">
+                            <h4 class="text-sm font-extrabold text-slate-800 tracking-wider uppercase flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-book-open text-blue-700"></i>
+                                <span>LITERACY</span>
+                            </h4>
                         </div>
-                        <!-- Hover Overlay -->
-                        <div class="absolute inset-0 bg-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-blue-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
+            
+                        <div class="p-5 flex flex-col gap-3.5">
+                            <!-- Button 1: CRLA (Grade 1 to 3) -->
+                            <a href="YOUR_CRLA_SUBMISSION_URL" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3">
+                                <span class="w-4"></span>
+                                <span class="text-xs font-semibold leading-snug">
+                                    Comprehensive Rapid Literacy<br>Assessment (CRLA) (Grade 1 to 3)
+                                </span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                            </a>
+            
+                            <!-- Button 2: Phil-IRI (Grade 4 to 6) -->
+                            <a href="YOUR_PHILIRI_G4_6_SUBMISSION_URL" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3">
+                                <span class="w-4"></span>
+                                <span class="text-xs font-semibold leading-snug">
+                                    Philippine Informal Reading Inventory<br>(Phil-IRI) (Grade 4 to 6)
+                                </span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                            </a>
+            
+                            <!-- Button 3: Phil-IRI (Grade 7 to 10) -->
+                            <a href="YOUR_PHILIRI_G7_10_SUBMISSION_URL" class="group w-full bg-blue-950 hover:bg-blue-800 text-white text-center py-3 px-5 rounded-full shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-between gap-3">
+                                <span class="w-4"></span>
+                                <span class="text-xs font-semibold leading-snug">
+                                    Philippine Informal Reading Inventory<br>(Phil-IRI) (Grade 7 to 10)
+                                </span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-blue-300 group-hover:text-white group-hover:translate-x-0.5 transition-transform"></i>
+                            </a>
                         </div>
                     </div>
-                </a>
-
-                <!-- 2. PHIL-IRI KS2 -->
-                <a href="YOUR_PHILIRI_KS2_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 transition">PHIL-IRI KS2</span>
-                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Grades 4–6</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="phil-iri-ks2.png" alt="PHIL-IRI KS2 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-12 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-sky-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 grid grid-cols-2 gap-2">
-                                <div class="flex items-end gap-1 border-r border-slate-100 pr-1">
-                                    <div class="w-full bg-amber-500 h-[48%] rounded-t-sm"></div>
-                                    <div class="w-full bg-sky-500 h-[78%] rounded-t-sm"></div>
-                                    <div class="w-full bg-emerald-500 h-[68%] rounded-t-sm"></div>
-                                </div>
-                                <div class="flex items-end gap-1 pl-1">
-                                    <div class="w-full bg-amber-500 h-[42%] rounded-t-sm"></div>
-                                    <div class="w-full bg-sky-500 h-[62%] rounded-t-sm"></div>
-                                    <div class="w-full bg-emerald-500 h-[55%] rounded-t-sm"></div>
-                                </div>
-                            </div>
+            
+                    <!-- Right Column: NUMERACY Submission Status -->
+                    <div class="bg-slate-50/90 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="bg-white border-b border-slate-200 py-3 px-4 text-center">
+                            <h4 class="text-sm font-extrabold text-slate-800 tracking-wider uppercase flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-calculator text-emerald-600"></i>
+                                <span>NUMERACY</span>
+                            </h4>
                         </div>
-                        <div class="absolute inset-0 bg-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-blue-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
+            
+                        <div class="p-8 flex flex-col items-center justify-center text-center min-h-[212px]">
+                            <div class="w-11 h-11 rounded-full bg-slate-200/70 text-slate-400 flex items-center justify-center text-lg mb-3">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">
+                                No Assessment Submission Available for Numeracy
+                            </p>
+                            <p class="text-[11px] text-slate-400 mt-1 max-w-xs">
+                                Submission links for RMA and SHS Numeracy will appear here once the reporting window opens.
+                            </p>
                         </div>
                     </div>
-                </a>
-
-                <!-- 3. PHIL-IRI KS3 -->
-                <a href="YOUR_PHILIRI_KS3_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 transition">PHIL-IRI KS3</span>
-                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">JHS</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="phil-iri-ks3.png" alt="PHIL-IRI KS3 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-12 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-emerald-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 grid grid-cols-2 gap-2">
-                                <div class="flex items-end gap-1 border-r border-slate-100 pr-1">
-                                    <div class="w-full bg-amber-500 h-[40%] rounded-t-sm"></div>
-                                    <div class="w-full bg-sky-500 h-[72%] rounded-t-sm"></div>
-                                    <div class="w-full bg-emerald-500 h-[52%] rounded-t-sm"></div>
-                                </div>
-                                <div class="flex items-end gap-1 pl-1">
-                                    <div class="w-full bg-amber-500 h-[66%] rounded-t-sm"></div>
-                                    <div class="w-full bg-sky-500 h-[48%] rounded-t-sm"></div>
-                                    <div class="w-full bg-emerald-500 h-[25%] rounded-t-sm"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-blue-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- 4. SHS Literacy KS4 -->
-                <a href="YOUR_SHS_LITERACY_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-blue-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-blue-700 transition">SHS Literacy KS4</span>
-                        <span class="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">SHS</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="shs-literacy-ks4.png" alt="SHS Literacy KS4 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-14 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-indigo-300 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 flex items-end gap-0.5">
-                                <div class="w-full bg-blue-600 h-[32%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[48%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[40%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[75%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[55%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[45%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[38%] rounded-t-xs"></div>
-                                <div class="w-2"></div>
-                                <div class="w-full bg-teal-500 h-[60%] rounded-t-xs"></div>
-                                <div class="w-full bg-sky-400 h-[35%] rounded-t-xs"></div>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-blue-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-blue-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-
-            </div>
-        </section>
-
-        <!-- =========================================================
-             SECTION 2: NUMERACY DASHBOARDS
-             ========================================================= -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <!-- Section Header -->
-            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-slate-200 px-6 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg shadow-sm">
-                        <i class="fa-solid fa-square-root-variable"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-extrabold text-slate-900 tracking-wide uppercase">Numeracy</h3>
-                        <p class="text-xs text-slate-500">Rapid Mathematics Assessment (RMA) & Numeracy Analytics</p>
-                    </div>
+            
                 </div>
-                <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">
-                    <i class="fa-solid fa-arrow-pointer"></i> Click image to launch
-                </span>
-            </div>
+            </section>
 
-            <!-- 4-Column Grid of Clickable Dashboard Images -->
-            <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <!-- 1. RMA KS1 -->
-                <a href="YOUR_RMA_KS1_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 transition">RMA KS1</span>
-                        <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">Grades 1–3</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="rma-ks1.png" alt="RMA KS1 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-10 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-emerald-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
-                                <div class="w-full bg-red-600 h-[55%] rounded-t-sm"></div>
-                                <div class="w-full bg-orange-500 h-[85%] rounded-t-sm"></div>
-                                <div class="w-full bg-amber-400 h-[72%] rounded-t-sm"></div>
-                                <div class="w-full bg-blue-500 h-[26%] rounded-t-sm"></div>
-                                <div class="w-full bg-emerald-500 h-[20%] rounded-t-sm"></div>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-emerald-900/75 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-emerald-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- 2. RMA KS2 -->
-                <a href="YOUR_RMA_KS2_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 transition">RMA KS2</span>
-                        <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">Grades 4–6</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="rma-ks2.png" alt="RMA KS2 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-10 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-emerald-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
-                                <div class="w-full bg-red-600 h-[62%] rounded-t-sm"></div>
-                                <div class="w-full bg-orange-500 h-[82%] rounded-t-sm"></div>
-                                <div class="w-full bg-amber-400 h-[54%] rounded-t-sm"></div>
-                                <div class="w-full bg-blue-500 h-[22%] rounded-t-sm"></div>
-                                <div class="w-full bg-emerald-500 h-[12%] rounded-t-sm"></div>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-emerald-900/75 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-emerald-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- 3. RMA KS3 -->
-                <a href="YOUR_RMA_KS3_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 transition">RMA KS3</span>
-                        <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">JHS</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="rma-ks3.png" alt="RMA KS3 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-10 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-emerald-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 flex items-end justify-around gap-1.5">
-                                <div class="w-full bg-red-600 h-[86%] rounded-t-sm"></div>
-                                <div class="w-full bg-orange-500 h-[24%] rounded-t-sm"></div>
-                                <div class="w-full bg-amber-400 h-[14%] rounded-t-sm"></div>
-                                <div class="w-full bg-blue-500 h-[10%] rounded-t-sm"></div>
-                                <div class="w-full bg-emerald-500 h-[8%] rounded-t-sm"></div>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-emerald-900/75 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-emerald-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- 4. SHS Numeracy KS4 -->
-                <a href="YOUR_SHS_NUMERACY_LINK" class="dashboard-card group block bg-slate-50 rounded-xl border border-slate-200 p-4 hover:border-emerald-500 hover:shadow-lg transition-all duration-200">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="font-extrabold text-sm text-slate-800 group-hover:text-emerald-700 transition">SHS Numeracy KS4</span>
-                        <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">SHS</span>
-                    </div>
-                    <div class="relative overflow-hidden rounded-lg border border-slate-300 bg-white shadow-inner aspect-[16/10]">
-                        <img src="shs-numeracy-ks4.png" alt="SHS Numeracy KS4 Dashboard" class="preview-img w-full h-full object-cover transition-transform duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="preview-img w-full h-full transition-transform duration-300 hidden flex-col">
-                            <div class="bg-blue-900 h-3.5 w-full px-1.5 flex items-center justify-between">
-                                <div class="w-14 h-1 bg-white/80 rounded"></div>
-                                <div class="w-4 h-1 bg-amber-400 rounded"></div>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 p-1.5 bg-slate-50 border-b border-slate-100">
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                                <div class="h-3 bg-white border border-slate-200 rounded-sm"></div>
-                            </div>
-                            <div class="flex-1 p-2 flex items-end gap-0.5">
-                                <div class="w-full bg-blue-600 h-[35%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[52%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[42%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[78%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[58%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[44%] rounded-t-xs"></div>
-                                <div class="w-full bg-blue-600 h-[36%] rounded-t-xs"></div>
-                                <div class="w-2"></div>
-                                <div class="w-full bg-amber-400 h-[45%] rounded-t-xs"></div>
-                                <div class="w-full bg-orange-300 h-[22%] rounded-t-xs"></div>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 bg-emerald-900/75 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span class="bg-white text-emerald-900 font-bold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5">
-                                <span>Open Dashboard</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </span>
-                        </div>
-                    </div>
-                </a>
-
-            </div>
-        </section>
-
+        </div>
     </main>
 
-    <!-- Footer (Consistent with index.html) -->
-    <footer class="bg-white border-t border-slate-200 text-center py-6 mt-8 text-xs text-slate-500 shrink-0">
+    <!-- Footer (Consistent with SDO Biñan Hub) -->
+    <footer class="bg-white border-t border-slate-200 text-center py-5 text-xs text-slate-500 shrink-0 z-20">
         <p>Schools Division Office of Biñan City &copy; 2026. All Rights Reserved.</p>
         <p class="mt-1">Curriculum and Learning Management Division (CLMD)</p>
     </footer>
